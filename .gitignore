@@ -1,27 +1,95 @@
-*.iml
+# -----------------------------
+# Android / Gradle build output
+# -----------------------------
 .gradle/
-local.properties
-keystore.properties
-*.keystore
-*.jks
-.idea/
-.DS_Store
+.kotlin/
 build/
+**/build/
 captures/
 .externalNativeBuild/
 .cxx/
+bin/
+gen/
+out/
+release/
+app/release/
+proguard/
+
+# Generated Android artifacts
 *.apk
 *.aab
 *.ap_
 *.dex
 *.class
-bin/
-gen/
-out/
-release/
-.kotlin/
+*.hprof
+
+# Keep wrapper metadata/scripts trackable, but ignore the generated wrapper jar
+# because this project intentionally regenerates it locally.
+gradle/wrapper/gradle-wrapper.jar
+
+# -----------------------------
+# Local SDK / machine settings
+# -----------------------------
+local.properties
 .navigation/
-proguard/
-app/release/
-app/build/
+
+# -----------------------------
+# Signing keys and secrets
+# -----------------------------
+keystore.properties
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+*.crt
+*.cer
+*.mobileprovision
+
+# -----------------------------
+# IDE files
+# -----------------------------
+.idea/
+*.iml
 .vscode/
+
+# -----------------------------
+# Logs and temporary files
+# -----------------------------
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*.orig
+*.bak
+*.pid
+
+# -----------------------------
+# OS files
+# -----------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# -----------------------------
+# Node / misc tooling caches
+# -----------------------------
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+
+# -----------------------------
+# Test / coverage reports
+# -----------------------------
+coverage/
+test-results/
+reports/
+
+# -----------------------------
+# Keep important generated metadata trackable
+# -----------------------------
+!app/schemas/
+!app/schemas/**/*.json
