@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CallVault</string>
+
+    <string name="channel_app_updates_name">App updates</string>
+    <string name="channel_app_updates_desc">New stable and beta releases for CallVault.</string>
+
+    <string name="channel_follow_ups_name">Follow-up reminders</string>
+    <string name="channel_follow_ups_desc">Reminders for scheduled call follow-ups.</string>
+
+    <string name="channel_sync_name">Background sync</string>
+    <string name="channel_sync_desc">Quiet status while CallVault syncs your call log.</string>
+
+    <string name="channel_realtime_call_name">Live call enrichment</string>
+    <string name="channel_realtime_call_desc">Active during a phone call to surface caller context.</string>
+
+    <!-- ===== Onboarding ===== -->
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_done">Done</string>
+    <string name="onboarding_skip">Skip for now</string>
+    <string name="onboarding_retry">Retry</string>
+
+    <!-- Welcome page -->
+    <string name="onboarding_welcome_logo_letter">C</string>
+    <string name="onboarding_welcome_headline">Never lose an inquiry call again.</string>
+    <string name="onboarding_welcome_subtext">CallVault turns your call log into an organised inquiry pipeline — entirely on your phone.</string>
+
+    <!-- Features page -->
+    <string name="onboarding_features_title">Built for busy founders.</string>
+    <string name="onboarding_features_capture_title">Capture every call</string>
+    <string name="onboarding_features_capture_body">Inbound, outbound, missed — every number is logged with SIM and time.</string>
+    <string name="onboarding_features_autosave_title">Auto-save inquiries</string>
+    <string name="onboarding_features_autosave_body">New unsaved callers land in your contacts in seconds, named the way you like.</string>
+    <string name="onboarding_features_insights_title">Insights &amp; follow-ups</string>
+    <string name="onboarding_features_insights_body">See lead scores, schedule reminders, and never let a hot lead go cold.</string>
+
+    <!-- Permissions page -->
+    <string name="onboarding_permissions_title">A few permissions, then we\'re set.</string>
+    <string name="onboarding_permissions_subtitle">Everything stays on your device. CallVault never uploads your data.</string>
+    <string name="onboarding_permissions_call_log_name">Read call log</string>
+    <string name="onboarding_permissions_call_log_reason">To import and track every inquiry call you receive.</string>
+    <string name="onboarding_permissions_contacts_name">Read contacts</string>
+    <string name="onboarding_permissions_contacts_reason">To match callers to people you already know.</string>
+    <string name="onboarding_permissions_phone_state_name">Phone state</string>
+    <string name="onboarding_permissions_phone_state_reason">To detect which SIM each call came in on, on dual-SIM devices.</string>
+    <string name="onboarding_permissions_notifications_name">Notifications</string>
+    <string name="onboarding_permissions_notifications_reason">So follow-up reminders and new-inquiry alerts can reach you.</string>
+    <string name="onboarding_permissions_grant">Grant permissions</string>
+    <string name="onboarding_permissions_grant_again">Continue anyway</string>
+
+    <!-- OEM battery page -->
+    <string name="onboarding_oem_title">Keep CallVault running.</string>
+    <string name="onboarding_oem_subtitle">%1$s aggressively closes background apps. One quick toggle stops it from killing CallVault.</string>
+    <string name="onboarding_oem_open_settings">Open settings</string>
+
+    <!-- First sync page -->
+    <string name="onboarding_first_sync_title">Importing your inquiries…</string>
+    <string name="onboarding_first_sync_indeterminate">Reading your call log — this only takes a moment.</string>
+    <string name="onboarding_first_sync_progress">Found %1$d of %2$d calls so far…</string>
+    <string name="onboarding_first_sync_done">All caught up. Welcome to CallVault.</string>
+    <string name="onboarding_first_sync_error_title">We couldn\'t finish the first import.</string>
+
+    <!-- ===== Permission rationale / denied screens ===== -->
+    <string name="permission_rationale_title">CallVault needs a couple of permissions.</string>
+    <string name="permission_rationale_body">Without these, CallVault can\'t see your inquiry calls. Tap Grant to enable them — your data never leaves the device.</string>
+    <string name="permission_rationale_cta">Grant permissions</string>
+
+    <string name="permission_denied_title">Permissions are blocked.</string>
+    <string name="permission_denied_body">You\'ve declined a permission CallVault needs. Re-enable it in Settings — we\'ll bring you right back here.</string>
+    <string name="permission_denied_cta">Open Settings</string>
+
+    <!-- ===== Placeholder for the Calls tab (Sprint 3) ===== -->
+    <string name="calls_placeholder_title">Your calls live here.</string>
+    <string name="calls_placeholder_body">The full inquiry list lands in Sprint 3 — search, filters, lead scores and all.</string>
+
+    <!-- ===== Calls list (Sprint 3) ===== -->
+    <string name="calls_title">Calls</string>
+    <string name="calls_action_search">Search calls</string>
+    <string name="calls_action_filter">Filter calls</string>
+    <string name="calls_action_view_mode">Toggle view mode</string>
+    <string name="calls_action_more">More</string>
+    <string name="calls_pinned_unsaved_title">Unsaved inquiries — last 7 days</string>
+    <string name="calls_pinned_hide">Hide section</string>
+    <string name="calls_empty_title">No calls yet</string>
+    <string name="calls_empty_body">Pull down to sync your call log.</string>
+    <string name="calls_empty_filter_title">No calls match these filters</string>
+    <string name="calls_empty_filter_clear">Clear filters</string>
+
+    <!-- Bulk action bar -->
+    <string name="bulk_done">Done</string>
+    <string name="bulk_selected_count">%1$d selected</string>
+    <string name="bulk_action_tag">Tag</string>
+    <string name="bulk_action_bookmark">Bookmark</string>
+    <string name="bulk_action_save">Save to contacts</string>
+    <string name="bulk_action_export">Export</string>
+    <string name="bulk_action_delete">Delete</string>
+
+    <!-- Filter sheet -->
+    <string name="filter_title">Filter calls</string>
+    <string name="filter_section_type">Type</string>
+    <string name="filter_section_status">Status</string>
+    <string name="filter_section_sim">SIM</string>
+    <string name="filter_section_tags">Tags include</string>
+    <string name="filter_section_sort">Sort by</string>
+    <string name="filter_chip_bookmarked">Bookmarked</string>
+    <string name="filter_chip_followup">With follow-up</string>
+    <string name="filter_chip_unsaved">Unsaved only</string>
+    <string name="filter_chip_saved">Saved only</string>
+    <string name="filter_reset">Reset</string>
+    <string name="filter_save_preset">Save preset</string>
+    <string name="filter_apply_count">Apply (%1$d)</string>
+
+    <!-- Call detail -->
+    <string name="detail_status_saved">Saved</string>
+    <string name="detail_status_unsaved">Unsaved</string>
+    <string name="detail_status_autosaved">Auto-saved</string>
+    <string name="detail_save_to_contacts">Save to contacts</string>
+    <string name="detail_action_call">Call</string>
+    <string name="detail_action_message">Message</string>
+    <string name="detail_action_whatsapp">WhatsApp</string>
+    <string name="detail_action_block">Block</string>
+    <string name="detail_section_stats">Stats</string>
+    <string name="detail_section_tags">Tags</string>
+    <string name="detail_section_notes">Notes</string>
+    <string name="detail_section_followup">Follow-up</string>
+    <string name="detail_section_history">History</string>
+    <string name="detail_followup_set">Set follow-up</string>
+    <string name="detail_followup_edit">Edit</string>
+    <string name="detail_followup_snooze">Snooze</string>
+    <string name="detail_followup_cancel">Cancel</string>
+    <string name="detail_note_placeholder">Add a note (markdown supported)</string>
+    <string name="detail_share">Share contact card</string>
+    <string name="detail_menu_edit_notes">Edit notes</string>
+    <string name="detail_menu_clear_all">Clear all data for this number</string>
+    <string name="detail_menu_report_spam">Report spam</string>
+    <string name="detail_clear_confirm_title">Clear all data?</string>
+    <string name="detail_clear_confirm_body">This permanently removes every call, note and tag for this number. This cannot be undone.</string>
+    <string name="detail_clear_confirm_cta">Clear</string>
+    <string name="detail_clear_confirm_dismiss">Cancel</string>
+    <string name="detail_tags_coming_soon">Tags coming in Sprint 4</string>
+
+    <!-- Search -->
+    <string name="search_title">Search</string>
+    <string name="search_placeholder">Try a number, name, or note keyword</string>
+    <string name="search_recent_title">Recent searches</string>
+    <string name="search_recent_clear">Clear</string>
+    <string name="search_recent_empty">Your recent searches will appear here.</string>
+    <string name="search_no_results_title">No matches</string>
+    <string name="search_no_results_body">Try a number, name, or note keyword.</string>
+
+    <!-- Errors -->
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_sync_failed">We couldn\'t start the sync. Try again in a moment.</string>
+    <string name="error_bookmark_failed">We couldn\'t update the bookmark.</string>
+    <string name="error_archive_failed">We couldn\'t archive that call.</string>
+    <string name="error_note_save_failed">We couldn\'t save that note.</string>
+    <string name="error_note_delete_failed">We couldn\'t delete that note.</string>
+
+    <!-- ===== Sprint 4: Tags ===== -->
+    <string name="tags_title">Tags</string>
+    <string name="tags_fab_new">New tag</string>
+    <string name="tags_empty_title">No tags yet</string>
+    <string name="tags_empty_body">Tags help you sort inquiries from customers, vendors, and follow-ups. Tap the + to create your first one.</string>
+    <string name="tags_usage_count">%1$d call</string>
+    <string name="tags_usage_count_plural">%1$d calls</string>
+    <string name="tags_system_badge">System</string>
+    <string name="tags_action_merge">Merge into…</string>
+    <string name="tags_action_delete">Delete</string>
+    <string name="tags_action_rename">Edit</string>
+    <string name="tags_delete_blocked">System tags can\'t be deleted.</string>
+    <string name="tags_delete_confirm_title">Delete tag?</string>
+    <string name="tags_delete_confirm_with_uses">This tag is applied to %1$d calls. Delete anyway?</string>
+    <string name="tags_delete_confirm_no_uses">This tag isn\'t applied to any calls. Delete it?</string>
+    <string name="tags_delete_confirm_cta">Delete</string>
+    <string name="tags_merge_dialog_title">Merge into another tag</string>
+    <string name="tags_merge_dialog_body">All calls tagged %1$s will be re-tagged. The original tag will be removed.</string>
+
+    <!-- Tag editor dialog -->
+    <string name="tag_editor_new_title">New tag</string>
+    <string name="tag_editor_edit_title">Edit tag</string>
+    <string name="tag_editor_name_label">Name</string>
+    <string name="tag_editor_name_placeholder">e.g. Wholesale</string>
+    <string name="tag_editor_name_too_long">Tag names are limited to 24 characters.</string>
+    <string name="tag_editor_name_required">Give your tag a name.</string>
+    <string name="tag_editor_color_label">Color</string>
+    <string name="tag_editor_emoji_label">Emoji (optional)</string>
+    <string name="tag_editor_save">Save</string>
+    <string name="tag_editor_cancel">Cancel</string>
+
+    <!-- Tag picker sheet -->
+    <string name="tag_picker_title">Apply tags</string>
+    <string name="tag_picker_create_new">Create new tag</string>
+    <string name="tag_picker_apply">Apply</string>
+    <string name="tag_picker_empty">No tags yet — tap below to create one.</string>
+
+    <!-- ===== Sprint 4: Bookmarks ===== -->
+    <string name="bookmarks_title">Bookmarks</string>
+    <string name="bookmarks_empty_title">Nothing pinned yet</string>
+    <string name="bookmarks_empty_body">Tap the star on any call to bookmark it. Pinned bookmarks appear here for one-tap access.</string>
+    <string name="bookmarks_pinned_section">Pinned</string>
+    <string name="bookmarks_pin_max">You can pin up to 5 bookmarks. Unpin one to add another.</string>
+    <string name="bookmarks_reason_title">Why bookmark this?</string>
+    <string name="bookmarks_reason_body">A short note helps you remember why this caller mattered.</string>
+    <string name="bookmarks_reason_placeholder">e.g. Big retail lead — quoted ₹2L</string>
+    <string name="bookmarks_reason_save">Save bookmark</string>
+    <string name="bookmarks_reason_skip">Skip</string>
+    <string name="bookmarks_action_pin">Pin to top</string>
+    <string name="bookmarks_action_unpin">Unpin</string>
+    <string name="bookmarks_action_move_up">Move up</string>
+    <string name="bookmarks_action_move_down">Move down</string>
+
+    <!-- ===== Sprint 4: Notes editor ===== -->
+    <string name="note_editor_new_title">New note</string>
+    <string name="note_editor_edit_title">Edit note</string>
+    <string name="note_editor_placeholder">Write a note. Markdown is supported.</string>
+    <string name="note_editor_save">Save</string>
+    <string name="note_editor_cancel">Cancel</string>
+    <string name="note_editor_preview_show">Preview</string>
+    <string name="note_editor_preview_hide">Edit</string>
+    <string name="note_editor_templates_label">Quick templates</string>
+    <string name="note_template_quoted_price">Quoted price ₹___</string>
+    <string name="note_template_asked_catalog">Asked for catalog</string>
+    <string name="note_template_followup_next_week">Follow up next week</string>
+    <string name="note_template_signed_up">Customer signed up</string>
+    <string name="note_template_not_interested">Not interested — closed</string>
+    <string name="note_delete_confirm_title">Delete this note?</string>
+    <string name="note_delete_confirm_body">This can\'t be undone — the previous version is kept in history for 5 edits.</string>
+    <string name="note_delete_confirm_cta">Delete</string>
+
+    <!-- ===== Sprint 4: Follow-ups ===== -->
+    <string name="followups_title">Follow-ups</string>
+    <string name="followups_tab_today">Today</string>
+    <string name="followups_tab_overdue">Overdue</string>
+    <string name="followups_tab_upcoming">Upcoming</string>
+    <string name="followups_tab_done">Completed</string>
+    <string name="followups_empty_today">All caught up. No follow-ups due today.</string>
+    <string name="followups_empty_overdue">No overdue follow-ups. Nice work.</string>
+    <string name="followups_empty_upcoming">No upcoming follow-ups scheduled.</string>
+    <string name="followups_empty_done">Completed follow-ups will appear here.</string>
+    <string name="followups_picker_pick_date">Pick a date</string>
+    <string name="followups_picker_pick_time">Pick a time</string>
+    <string name="followups_picker_save">Schedule reminder</string>
+    <string name="followups_action_done">Mark done</string>
+    <string name="followups_action_snooze_1h">Snooze 1h</string>
+    <string name="followups_action_snooze_1d">Snooze 1d</string>
+    <string name="followups_action_cancel">Cancel</string>
+
+    <!-- Follow-up notification copy -->
+    <string name="followup_notif_title">Follow up: %1$s</string>
+    <string name="followup_notif_default_body">Time to follow up on this inquiry.</string>
+    <string name="followup_action_call_back">Call back</string>
+    <string name="followup_action_snooze_1h">Snooze 1h</string>
+    <string name="followup_action_snooze_1d">Snooze 1d</string>
+    <string name="followup_action_mark_done">Mark done</string>
+
+    <!-- Errors -->
+    <string name="error_followup_schedule">Couldn\'t schedule reminder. Allow exact alarms?</string>
+    <string name="error_followup_schedule_cta">Open settings</string>
+    <string name="error_tag_save_failed">We couldn\'t save that tag.</string>
+    <string name="error_tag_delete_failed">We couldn\'t delete that tag.</string>
+    <string name="error_tag_merge_failed">We couldn\'t merge those tags.</string>
+    <string name="error_bookmark_pin_failed">We couldn\'t update pinned bookmarks.</string>
+
+    <!-- Banner: exact alarms unavailable -->
+    <string name="banner_exact_alarm_title">Reminders may be late</string>
+    <string name="banner_exact_alarm_body">Android is throttling our exact-alarm permission. Tap to allow it for on-time follow-ups.</string>
+    <string name="banner_exact_alarm_cta">Allow</string>
+
+    <!-- ===== Sprint 5 — My Contacts ===== -->
+    <string name="my_contacts_title">My Contacts</string>
+    <string name="my_contacts_search_hint">Search saved contacts</string>
+    <string name="my_contacts_empty_title">No contacts yet</string>
+    <string name="my_contacts_empty_body">Saved contacts from your phone will appear here once your call log syncs.</string>
+    <string name="my_contacts_promoted_badge">Promoted from inquiry</string>
+
+    <!-- ===== Sprint 5 — Inquiries ===== -->
+    <string name="inquiries_title">Inquiries</string>
+    <string name="inquiries_search_hint">Search inquiries</string>
+    <string name="inquiries_empty_title">No inquiries yet</string>
+    <string name="inquiries_empty_body">Auto-saved unsaved callers land here. Turn auto-save on in settings to populate this list.</string>
+    <string name="inquiries_action_convert">Convert to My Contact</string>
+    <string name="inquiries_action_convert_all">Convert all</string>
+    <string name="inquiries_action_bulk_save">Bulk save</string>
+    <string name="inquiries_total_calls">%1$d calls</string>
+    <string name="inquiries_convert_dialog_title">Rename and promote</string>
+    <string name="inquiries_convert_dialog_body">This contact will move to My Contacts with the name you choose.</string>
+    <string name="inquiries_convert_dialog_label">Display name</string>
+    <string name="inquiries_convert_cta">Promote</string>
+    <string name="inquiries_cancel">Cancel</string>
+
+    <!-- ===== Sprint 5 — Bulk save dialog ===== -->
+    <string name="bulk_save_title">Saving inquiries…</string>
+    <string name="bulk_save_progress">%1$d of %2$d</string>
+    <string name="bulk_save_done_title">Done</string>
+    <string name="bulk_save_done_body">Saved %1$d, skipped %2$d.</string>
+    <string name="bulk_save_close">Close</string>
+
+    <!-- ===== Sprint 5 — Auto-save settings ===== -->
+    <string name="auto_save_settings_title">Auto-save settings</string>
+    <string name="auto_save_master_toggle">Auto-save unsaved numbers</string>
+    <string name="auto_save_master_subtitle">CallVault will quietly save every new caller as a contact, named the way you choose.</string>
+    <string name="auto_save_prefix_label">Prefix</string>
+    <string name="auto_save_prefix_hint">e.g. callVault</string>
+    <string name="auto_save_sim_tag_label">Include SIM tag (-s1 / -s2)</string>
+    <string name="auto_save_suffix_label">Suffix</string>
+    <string name="auto_save_suffix_hint">Optional</string>
+    <string name="auto_save_preview_label">Preview</string>
+    <string name="auto_save_group_label">Group name</string>
+    <string name="auto_save_group_hint">CallVault Inquiries</string>
+    <string name="auto_save_group_apply">Apply</string>
+    <string name="auto_save_phone_label_section">Default phone label</string>
+    <string name="auto_save_phone_label_mobile">Mobile</string>
+    <string name="auto_save_phone_label_work">Work</string>
+    <string name="auto_save_phone_label_home">Home</string>
+    <string name="auto_save_phone_label_other">Other (custom)</string>
+    <string name="auto_save_phone_label_custom_hint">Custom label</string>
+    <string name="auto_save_region_label">Default region</string>
+    <string name="auto_save_region_hint">e.g. IN</string>
+    <string name="auto_save_open_settings">Auto-save settings</string>
+    <string name="auto_save_open_my_contacts">My Contacts</string>
+    <string name="auto_save_open_inquiries">Inquiries</string>
+
+    <!-- Sprint 6 — Auto-tag rules + lead scoring -->
+    <string name="auto_tag_rules_title">Auto-tag rules</string>
+    <string name="auto_tag_rules_new">New rule</string>
+    <string name="auto_tag_rules_empty_title">No rules yet</string>
+    <string name="auto_tag_rules_empty_body">Tap + to add your first auto-tag rule. Rules apply tags, boost lead score, or schedule follow-ups when calls match the conditions you choose.</string>
+    <string name="auto_tag_rules_unnamed">Untitled rule</string>
+    <string name="auto_tag_rules_match_count">%1$d matches</string>
+    <string name="auto_tag_rules_summary">%1$d conditions · %2$d actions · %3$d matches</string>
+    <string name="auto_tag_rules_edit">Edit</string>
+
+    <string name="rule_editor_title">Rule</string>
+    <string name="rule_editor_name_label">Rule name</string>
+    <string name="rule_editor_name_placeholder">e.g. Tag missed customers</string>
+    <string name="rule_editor_active">Rule is active</string>
+    <string name="rule_editor_when_all_true">When all of these are true…</string>
+    <string name="rule_editor_then">Then…</string>
+    <string name="rule_editor_add_condition">Add condition</string>
+    <string name="rule_editor_add_action">Add action</string>
+    <string name="rule_editor_save">Save rule</string>
+    <string name="rule_editor_preview_match_count">Live preview: matches %1$d of the latest 200 calls.</string>
+
+    <string name="calls_overflow_auto_tag_rules">Auto-tag rules</string>
+    <string name="calls_overflow_lead_scoring">Lead scoring</string>
+
+    <string name="lead_scoring_title">Lead scoring</string>
+    <string name="lead_scoring_master_toggle">Compute lead scores</string>
+    <string name="lead_scoring_weight_freq">Frequency weight</string>
+    <string name="lead_scoring_weight_duration">Duration weight</string>
+    <string name="lead_scoring_weight_recency">Recency weight</string>
+    <string name="lead_scoring_bonus_followup">Follow-up bonus</string>
+    <string name="lead_scoring_bonus_customer_tag">Customer-tag bonus</string>
+    <string name="lead_scoring_bonus_saved_contact">Saved-contact bonus</string>
+    <string name="lead_scoring_reset">Reset to defaults</string>
+
+    <!-- ===== Sprint 7 — Real-time features ===== -->
+    <string name="realtime_settings_title">Real-time features</string>
+    <string name="realtime_bubble_label">Floating bubble</string>
+    <string name="realtime_bubble_desc">Show a tappable bubble during a call to take notes on the fly.</string>
+    <string name="realtime_popup_label">Post-call popup</string>
+    <string name="realtime_popup_desc">Open a quick popup right after a call to tag, note, or save.</string>
+    <string name="realtime_timeout_label">Auto-dismiss after %1$d s</string>
+    <string name="realtime_unsaved_only_label">Only for unsaved numbers</string>
+    <string name="realtime_unsaved_only_desc">Skip the popup for contacts you already have.</string>
+    <string name="realtime_overlay_granted">Display over other apps: Granted</string>
+    <string name="realtime_overlay_denied">Display over other apps: Not granted</string>
+    <string name="realtime_open_overlay_settings">Open Settings</string>
+    <string name="realtime_service_title">CallVault is monitoring calls</string>
+    <string name="realtime_service_body">Tap to open</string>
+    <string name="calls_overflow_realtime_settings">Real-time settings</string>
+
+    <!-- Sprint 9 — Export & Backup -->
+    <string name="calls_overflow_export">Export</string>
+    <string name="calls_overflow_backup">Backup &amp; restore</string>
+    <string name="export_title">Export</string>
+    <string name="export_step_format">Choose a format</string>
+    <string name="export_step_date_range">Date range</string>
+    <string name="export_step_scope">What to export</string>
+    <string name="export_step_columns">Columns</string>
+    <string name="export_step_destination">Where to save</string>
+    <string name="export_btn_back">Back</string>
+    <string name="export_btn_next">Next</string>
+    <string name="export_btn_generate">Generate</string>
+    <string name="export_progress">Exporting…</string>
+    <string name="export_error_generic">Couldn\'t export. %1$s</string>
+    <string name="export_saved_action_open">Open</string>
+    <string name="export_saved_action_share">Share</string>
+    <string name="backup_title">Backup &amp; restore</string>
+    <string name="backup_manual_card_title">Manual backup now</string>
+    <string name="backup_restore_card_title">Restore from file</string>
+    <string name="backup_passphrase_card_title">Backup encryption passphrase</string>
+    <string name="backup_passphrase_status_set">Status: set (•••••••)</string>
+    <string name="backup_passphrase_status_unset">Status: not set</string>
+    <string name="backup_passphrase_btn_set">Set</string>
+    <string name="backup_passphrase_btn_change">Change</string>
+    <string name="backup_auto_label">Auto-backup daily at 2 AM</string>
+    <string name="backup_retention_label">Keep last %1$d backups</string>
+    <string name="backup_restore_confirm_title">Replace all data?</string>
+    <string name="backup_restore_confirm_body">This will replace all your data. Continue?</string>
+    <string name="backup_error_no_passphrase">Couldn\'t back up. Set a passphrase first.</string>
+    <string name="backup_error_generic">Couldn\'t back up. %1$s</string>
+    <string name="restore_error_generic">Couldn\'t restore. %1$s</string>
+
+    <!-- Sprint 11: notification channels -->
+    <string name="channel_daily_summary_name">Daily summary</string>
+    <string name="channel_daily_summary_desc">Once-a-day digest of your call activity.</string>
+
+    <!-- Sprint 11: Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_sync">Sync</string>
+    <string name="settings_section_auto_save">Auto-save inquiries</string>
+    <string name="settings_section_realtime">Real-time features</string>
+    <string name="settings_section_notifications">Notifications</string>
+    <string name="settings_section_lead_scoring">Lead scoring</string>
+    <string name="settings_section_auto_tag">Auto-tag rules</string>
+    <string name="settings_section_backup">Backup &amp; restore</string>
+    <string name="settings_section_display">Display</string>
+    <string name="settings_section_privacy">Privacy</string>
+    <string name="settings_section_updates">App updates</string>
+    <string name="settings_section_help">Help &amp; docs</string>
+    <string name="settings_section_about">About</string>
+
+    <string name="settings_sync_master">Background sync</string>
+    <string name="settings_sync_interval">Sync interval (minutes)</string>
+    <string name="settings_sync_wifi_only">Wi-Fi only</string>
+    <string name="settings_sync_charging_only">When charging only</string>
+    <string name="settings_sync_on_open">Sync on app open</string>
+    <string name="settings_sync_on_reboot">Sync on reboot</string>
+
+    <string name="settings_auto_save_master">Auto-save inquiries</string>
+    <string name="settings_realtime_bubble">Floating bubble during calls</string>
+    <string name="settings_realtime_popup">Post-call popup</string>
+
+    <string name="settings_notif_follow_ups">Follow-up reminders</string>
+    <string name="settings_notif_daily_summary">Daily summary at 9 AM</string>
+    <string name="settings_notif_update_alerts">Update alerts</string>
+
+    <string name="settings_lead_master">Lead scoring enabled</string>
+
+    <string name="settings_backup_master">Auto-backup daily</string>
+    <string name="settings_backup_retention">Keep last %1$d backups</string>
+
+    <string name="settings_display_pinned">Pinned unsaved at top</string>
+    <string name="settings_display_grouped">Group calls by number</string>
+
+    <string name="settings_privacy_block_hidden">Block hidden numbers</string>
+    <string name="settings_privacy_hide_blocked">Hide blocked numbers</string>
+    <string name="settings_privacy_clear_history">Clear search history</string>
+    <string name="settings_privacy_clear_notes">Clear all notes</string>
+    <string name="settings_privacy_reset_all">Reset all data</string>
+    <string name="settings_privacy_reset_confirm_title">Reset everything?</string>
+    <string name="settings_privacy_reset_confirm_body">Type DELETE to wipe all CallVault data on this device. Your call log and contacts in the OS are not affected.</string>
+    <string name="settings_privacy_reset_keyword">DELETE</string>
+
+    <string name="settings_help_getting_started">Getting started</string>
+    <string name="settings_help_faq">FAQ</string>
+    <string name="settings_help_permissions">Permission troubleshooting</string>
+    <string name="settings_help_oem">OEM battery setup</string>
+    <string name="settings_help_contact">Contact support</string>
+    <string name="settings_help_privacy_policy">Privacy policy</string>
+    <string name="settings_help_terms">Terms of use</string>
+
+    <string name="settings_about_version">Version %1$s (build %2$d)</string>
+    <string name="settings_about_last_sync">Last sync: %1$s</string>
+    <string name="settings_about_total_calls">Total calls: %1$d</string>
+
+    <!-- Sprint 11: Docs -->
+    <string name="docs_title">Help &amp; docs</string>
+    <string name="docs_helpful_q">Was this helpful?</string>
+    <string name="docs_helpful_yes">Yes</string>
+    <string name="docs_helpful_no">No</string>
+    <string name="docs_help_icon_cd">Help</string>
+
+    <!-- Sprint 11: Home / More -->
+    <string name="home_title">CallVault</string>
+    <string name="home_today_snapshot">Today\'s snapshot</string>
+    <string name="home_pinned_bookmarks">Pinned bookmarks</string>
+    <string name="home_today_followups">Today\'s follow-ups</string>
+    <string name="home_recent_unsaved">Recent unsaved</string>
+    <string name="home_quick_links">Quick links</string>
+
+    <string name="more_title">More</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_calls">Calls</string>
+    <string name="nav_my_contacts">My Contacts</string>
+    <string name="nav_inquiries">Inquiries</string>
+    <string name="nav_more">More</string>
+
+    <!-- Stats screen -->
+    <string name="stats_title">Stats</string>
+    <string name="stats_change_range">Change date range</string>
+    <string name="stats_refresh">Refresh stats</string>
+    <string name="stats_error_title">Couldn\'t load stats</string>
+    <string name="stats_error_body">Something went wrong while crunching the numbers. Try again in a moment.</string>
+    <string name="stats_retry">Try again</string>
+    <string name="stats_section_insights">Insights</string>
+    <string name="stats_chart_daily_volume">Daily volume</string>
+    <string name="stats_chart_call_types">Call types</string>
+    <string name="stats_chart_heatmap">When calls come in</string>
+    <string name="stats_chart_top_numbers">Top numbers</string>
+    <string name="stats_export_pdf">Export PDF report</string>
+    <string name="stats_overview_total_calls">Total calls</string>
+    <string name="stats_overview_talk_time">Talk time</string>
+    <string name="stats_overview_avg_duration">Avg duration</string>
+    <string name="stats_overview_missed">Missed</string>
+    <string name="stats_section_leads">Lead distribution</string>
+    <string name="stats_preset_today">Today</string>
+    <string name="stats_preset_7d">Last 7 days</string>
+    <string name="stats_preset_30d">Last 30 days</string>
+    <string name="stats_preset_this_month">This month</string>
+    <string name="stats_preset_last_month">Last month</string>
+    <string name="stats_preset_90d">Last 90 days</string>
+    <string name="stats_preset_custom">Custom range…</string>
+</resources>

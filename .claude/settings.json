@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(cat:.claude/*)",
+      "Bash(cat:CLAUDE.md)",
+      "Bash(cat:README.md)",
+      "Bash(cat:CHANGELOG.md)",
+      "Bash(cat:DECISIONS.md)",
+      "Bash(cat:DEVELOPING.md)",
+      "Bash(cat:TODO.md)",
+      "Bash(cat:docs/*)",
+      "Bash(adb devices)",
+      "Bash(adb logcat:*)",
+      "Bash(adb shell pm list packages*)",
+      "Bash(adb shell dumpsys activity services com.callvault.app:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Glob(*)",
+      "Grep(*)"
+    ],
+    "deny": [
+      "Bash(./gradlew:*)",
+      "Bash(gradle:*)",
+      "Bash(rm -rf:*)",
+      "Bash(git push:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(adb uninstall:*)",
+      "Bash(adb shell pm clear:*)",
+      "Read(/home/primathon/.ssh/**)",
+      "Read(**/.env)",
+      "Read(**/keystore.properties)",
+      "Read(**/*.keystore)",
+      "Read(**/*.jks)"
+    ],
+    "ask": [
+      "Bash(adb install:*)",
+      "Bash(adb shell am start:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  },
+  "env": {
+    "CALLVAULT_PROJECT_ROOT": "/home/primathon/Documents/p_projet/a_APP/4. callVault",
+    "CALLVAULT_PACKAGE": "com.callvault.app"
+  }
+}

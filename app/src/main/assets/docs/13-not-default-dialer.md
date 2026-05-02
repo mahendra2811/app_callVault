@@ -1,0 +1,17 @@
+# CallVault is not your default dialer
+
+CallVault deliberately stays out of the default-dialer role. We never replace your phone's call screen, and we never intercept dialling.
+
+## Why it matters
+Default-dialer apps gain extra privileges — including reading SMS, blocking calls system-wide, and full call control. They also incur extra Play Store policies and review delays. CallVault does not need any of that.
+
+## What this means for you
+- **Outgoing calls** still launch your stock dialer. CallVault just records the call once it ends.
+- **Incoming calls** ring through the stock dialer. CallVault's floating bubble overlays it instead.
+- **Block list**: you can mark numbers as *Blocked* inside CallVault, but the OS-level block list is still managed by your phone's dialer or messaging app. We surface the OS block status as a tag for clarity.
+
+## Switching back from another app
+If you accidentally set a different dialer, open **Settings → Apps → Default apps → Phone app** and pick the one you want. CallVault will keep working regardless of which dialer is active.
+
+## Privacy
+Because we are not a dialer, we cannot read or send SMS, cannot place calls on your behalf, and cannot mute your microphone.

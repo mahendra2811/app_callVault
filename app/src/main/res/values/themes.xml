@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose owns real theming; this is just the launch/system theme. -->
+    <style name="Theme.CallVault" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#E8E8EC</item>
+        <item name="android:navigationBarColor">#E8E8EC</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">@drawable/ic_launcher_background</item>
+    </style>
+</resources>
