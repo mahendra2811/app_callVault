@@ -22,17 +22,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.callvault.app.BuildConfig
+import com.callvault.app.R
 import com.callvault.app.data.work.UpdateCheckWorker
+import com.callvault.app.ui.screen.shared.StandardPage
 import java.text.DateFormat
 import java.util.Date
 
 /** Settings: channel, auto-check, manual check, last-checked, clear-skipped. */
 @Composable
 fun UpdateSettingsScreen(
+    onBack: () -> Unit = {},
     vm: UpdateSettingsViewModel = hiltViewModel()
 ) {
     val ctx: Context = LocalContext.current
@@ -40,13 +44,18 @@ fun UpdateSettingsScreen(
     val auto by vm.autoCheck.collectAsStateWithLifecycle()
     val last by vm.lastChecked.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    StandardPage(
+        title = stringResource(R.string.cv_update_settings_title),
+        description = stringResource(R.string.cv_update_settings_description),
+        emoji = "🆙",
+        onBack = onBack
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
         Text("App updates", style = MaterialTheme.typography.headlineSmall)
 
         Text(
@@ -93,6 +102,7 @@ fun UpdateSettingsScreen(
 
         TextButton(onClick = { vm.clearSkipped() }) {
             Text("Clear skipped versions")
+        }
         }
     }
 }

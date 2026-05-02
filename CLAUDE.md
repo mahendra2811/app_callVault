@@ -79,6 +79,7 @@ Cross-layer rules:
 13 sprints (0–12) shipped. 245 Kotlin files in `app/src/main/`, 15 in-app docs articles, 3 unit tests, 0 instrumentation tests landed.
 
 What to read for state:
+- `RELEASE-PLAN.md` — phased plan to ship v1.0.0, with explicit you/Claude split. Read first.
 - `CHANGELOG.md` — what each version added.
 - `DECISIONS.md` — every fallback / deferral / trade-off.
 - `docs/architecture.md` — layering, sync pipeline diagram, lead-score formula.

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- System splash icon: 80dp circle with a stroked "C" arc, used in Theme.CallVault.Splash. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 80dp circle centered in the 108dp canvas -->
+    <path
+        android:fillColor="#E8E8EC"
+        android:pathData="M54,54 m-40,0 a40,40 0 1,0 80,0 a40,40 0 1,0 -80,0 Z" />
+
+    <!-- "C" stroked arc, ~24dp radius, 30°→330° (open on the right). -->
+    <path
+        android:strokeColor="#4F7CFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M74.78,42 A24,24 0 1,0 74.78,66" />
+</vector>

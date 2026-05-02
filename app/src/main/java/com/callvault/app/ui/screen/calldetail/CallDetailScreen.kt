@@ -4,13 +4,14 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,7 +31,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.callvault.app.R
 import com.callvault.app.domain.model.Note
 import com.callvault.app.ui.components.neo.NeoIconButton
-import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.bookmarks.BookmarkReasonDialog
 import com.callvault.app.ui.screen.calldetail.sections.ActionBar
 import com.callvault.app.ui.screen.calldetail.sections.FollowUpDateTimeDialog
@@ -42,7 +42,7 @@ import com.callvault.app.ui.screen.calldetail.sections.NotesJournal
 import com.callvault.app.ui.screen.calldetail.sections.SaveStatus
 import com.callvault.app.ui.screen.calldetail.sections.StatsCard
 import com.callvault.app.ui.screen.calldetail.sections.TagsSection
-import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.screen.tags.TagPickerSheet
 import com.callvault.app.ui.util.PhoneNumberFormatter
 import kotlinx.coroutines.launch
@@ -73,57 +73,53 @@ fun CallDetailScreen(
     var followUpPickerOpen by remember { mutableStateOf(false) }
     var bookmarkReasonOpen by remember { mutableStateOf(false) }
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = state.contact?.displayName
-                    ?: PhoneNumberFormatter.pretty(state.normalizedNumber),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack,
-                actions = {
-                    NeoIconButton(
-                        icon = Icons.Filled.Share,
-                        contentDescription = stringResource(R.string.detail_share),
-                        onClick = {
-                            val text = buildVCard(
-                                name = state.contact?.displayName,
-                                number = state.normalizedNumber
-                            )
-                            val send = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/x-vcard"
-                                putExtra(Intent.EXTRA_TEXT, text)
-                            }
-                            runCatching { ctx.startActivity(Intent.createChooser(send, "Share")) }
-                        },
-                        size = 40.dp
+    StandardPage(
+        title = state.contact?.displayName
+            ?: PhoneNumberFormatter.pretty(state.normalizedNumber),
+        description = stringResource(R.string.cv_calldetail_description),
+        emoji = "👤",
+        onBack = onBack,
+        actions = {
+            NeoIconButton(
+                icon = Icons.Filled.Share,
+                contentDescription = stringResource(R.string.detail_share),
+                onClick = {
+                    val text = buildVCard(
+                        name = state.contact?.displayName,
+                        number = state.normalizedNumber
                     )
-                    NeoIconButton(
-                        icon = Icons.Filled.MoreVert,
-                        contentDescription = stringResource(R.string.calls_action_more),
-                        onClick = { menuOpen = true },
-                        size = 40.dp
-                    )
-                    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.detail_menu_edit_notes)) },
-                            onClick = {
-                                menuOpen = false
-                                noteEditorTarget = null
-                                noteEditorOpen = true
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.detail_menu_clear_all)) },
-                            onClick = { menuOpen = false; confirmClear = true }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.detail_menu_report_spam)) },
-                            onClick = { menuOpen = false }
-                        )
+                    val send = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/x-vcard"
+                        putExtra(Intent.EXTRA_TEXT, text)
                     }
-                }
+                    runCatching { ctx.startActivity(Intent.createChooser(send, "Share")) }
+                },
+                size = 40.dp
             )
+            NeoIconButton(
+                icon = Icons.Filled.MoreVert,
+                contentDescription = stringResource(R.string.calls_action_more),
+                onClick = { menuOpen = true },
+                size = 40.dp
+            )
+            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.detail_menu_edit_notes)) },
+                    onClick = {
+                        menuOpen = false
+                        noteEditorTarget = null
+                        noteEditorOpen = true
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.detail_menu_clear_all)) },
+                    onClick = { menuOpen = false; confirmClear = true }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.detail_menu_report_spam)) },
+                    onClick = { menuOpen = false }
+                )
+            }
         }
     ) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -209,20 +205,30 @@ fun CallDetailScreen(
 
     val deleteTarget = noteDeleteTarget
     if (deleteTarget != null) {
-        AlertDialog(
+        com.callvault.app.ui.components.neo.NeoDialog(
             onDismissRequest = { noteDeleteTarget = null },
-            title = { Text(stringResource(R.string.note_delete_confirm_title)) },
-            text = { Text(stringResource(R.string.note_delete_confirm_body)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.deleteNote(deleteTarget)
-                    noteDeleteTarget = null
-                }) { Text(stringResource(R.string.note_delete_confirm_cta)) }
+            header = {
+                Text(
+                    stringResource(R.string.note_delete_confirm_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
             },
-            dismissButton = {
+            body = {
+                androidx.compose.foundation.layout.Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
+                Text(stringResource(R.string.note_delete_confirm_body))
+            },
+            footer = {
                 TextButton(onClick = { noteDeleteTarget = null }) {
                     Text(stringResource(R.string.detail_clear_confirm_dismiss))
                 }
+                androidx.compose.foundation.layout.Spacer(Modifier.width(com.callvault.app.ui.theme.Spacing.Sm))
+                com.callvault.app.ui.components.neo.NeoButton(
+                    text = stringResource(R.string.note_delete_confirm_cta),
+                    onClick = {
+                        viewModel.deleteNote(deleteTarget)
+                        noteDeleteTarget = null
+                    }
+                )
             }
         )
     }
@@ -248,20 +254,30 @@ fun CallDetailScreen(
     }
 
     if (confirmClear) {
-        AlertDialog(
+        com.callvault.app.ui.components.neo.NeoDialog(
             onDismissRequest = { confirmClear = false },
-            title = { Text(stringResource(R.string.detail_clear_confirm_title)) },
-            text = { Text(stringResource(R.string.detail_clear_confirm_body)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    confirmClear = false
-                    viewModel.clearAllForThisNumber()
-                }) { Text(stringResource(R.string.detail_clear_confirm_cta)) }
+            header = {
+                Text(
+                    stringResource(R.string.detail_clear_confirm_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
             },
-            dismissButton = {
+            body = {
+                androidx.compose.foundation.layout.Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
+                Text(stringResource(R.string.detail_clear_confirm_body))
+            },
+            footer = {
                 TextButton(onClick = { confirmClear = false }) {
                     Text(stringResource(R.string.detail_clear_confirm_dismiss))
                 }
+                androidx.compose.foundation.layout.Spacer(Modifier.width(com.callvault.app.ui.theme.Spacing.Sm))
+                com.callvault.app.ui.components.neo.NeoButton(
+                    text = stringResource(R.string.detail_clear_confirm_cta),
+                    onClick = {
+                        confirmClear = false
+                        viewModel.clearAllForThisNumber()
+                    }
+                )
             }
         )
     }

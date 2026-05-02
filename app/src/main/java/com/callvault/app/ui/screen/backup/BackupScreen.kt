@@ -1,5 +1,6 @@
 package com.callvault.app.ui.screen.backup
 
+import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -10,10 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,9 @@ import androidx.compose.material3.OutlinedTextField
 import com.callvault.app.ui.components.neo.NeoToggle
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
+import androidx.compose.ui.res.stringResource
+import com.callvault.app.R
 import com.callvault.app.ui.theme.NeoColors
 
 /** Backup & restore landing screen. */
@@ -49,6 +54,7 @@ fun BackupScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
+    val activity = LocalContext.current as? Activity
 
     var passDialog by remember { mutableStateOf<PassphraseDialogReason?>(null) }
     var pendingRestoreUri by remember { mutableStateOf<android.net.Uri?>(null) }
@@ -63,17 +69,14 @@ fun BackupScreen(
         }
     }
 
-    NeoScaffold(
-        topBar = {
-            NeoTopBar(
-                title = "Backup & restore",
-                navIcon = Icons.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
-    ) { padding ->
+    StandardPage(
+        title = stringResource(R.string.cv_backup_title),
+        description = stringResource(R.string.cv_backup_description),
+        emoji = "💾",
+        onBack = onBack
+    ) {
         Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Manual backup card
@@ -162,6 +165,15 @@ fun BackupScreen(
                     )
                 }
             }
+            // Cloud (Google Drive)
+            CloudBackupCard(
+                state = state,
+                onToggleEnabled = { v -> viewModel.setDriveEnabled(v, activity) },
+                onSignIn = { activity?.let(viewModel::signIn) },
+                onSignOut = viewModel::signOut,
+                onUploadNow = viewModel::uploadToDrive,
+                onAutoUploadChange = viewModel::setDriveAutoUpload
+            )
             SnackbarHost(snackbar)
         }
     }
@@ -192,19 +204,26 @@ fun BackupScreen(
     }
 
     confirmRestore?.let { (uri, pass) ->
-        AlertDialog(
+        com.callvault.app.ui.components.neo.NeoDialog(
             onDismissRequest = { confirmRestore = null },
-            title = { Text("Replace all data?") },
-            text = { Text("This will replace all your data. Continue?") },
-            confirmButton = {
+            header = {
+                Text(
+                    "Replace all data?",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            body = {
+                Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
+                Text("This will replace all your data. Continue?")
+            },
+            footer = {
+                NeoButton(text = "Cancel", onClick = { confirmRestore = null }, variant = NeoButtonVariant.Tertiary)
+                Spacer(Modifier.width(com.callvault.app.ui.theme.Spacing.Sm))
                 NeoButton(
                     text = "Replace",
                     onClick = { viewModel.runRestore(uri, pass); confirmRestore = null },
                     variant = NeoButtonVariant.Primary
                 )
-            },
-            dismissButton = {
-                NeoButton(text = "Cancel", onClick = { confirmRestore = null })
             }
         )
     }
@@ -217,6 +236,157 @@ fun BackupScreen(
         val e = state.error ?: return@LaunchedEffect
         snackbar.showSnackbar(e); viewModel.consumeError()
     }
+    LaunchedEffect(state.driveError) {
+        val e = state.driveError ?: return@LaunchedEffect
+        snackbar.showSnackbar(e); viewModel.consumeDriveError()
+    }
+}
+
+/** Cloud-backup section. Hoist-friendly so previews can render every state. */
+@Composable
+private fun CloudBackupCard(
+    state: BackupUiState,
+    onToggleEnabled: (Boolean) -> Unit,
+    onSignIn: () -> Unit,
+    onSignOut: () -> Unit,
+    onUploadNow: () -> Unit,
+    onAutoUploadChange: (Boolean) -> Unit
+) {
+    NeoCard(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    stringResource(R.string.cv_backup_cloud_title),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                NeoToggle(
+                    checked = state.driveEnabled,
+                    onChange = onToggleEnabled
+                )
+            }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                stringResource(R.string.cv_backup_drive_toggle),
+                style = MaterialTheme.typography.bodySmall,
+                color = NeoColors.OnBaseMuted
+            )
+            val email = state.driveSignedInEmail
+            if (email != null) {
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        stringResource(R.string.cv_backup_drive_signed_in, email),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    NeoButton(
+                        text = stringResource(R.string.cv_backup_drive_signout),
+                        onClick = onSignOut,
+                        variant = NeoButtonVariant.Tertiary,
+                        enabled = !state.driveBusy
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+                NeoButton(
+                    text = if (state.driveBusy) "Working…"
+                    else stringResource(R.string.cv_backup_drive_upload_now),
+                    onClick = onUploadNow,
+                    enabled = state.passphraseSet && !state.driveBusy,
+                    variant = NeoButtonVariant.Primary
+                )
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        stringResource(R.string.cv_backup_drive_auto_upload),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    NeoToggle(
+                        checked = state.driveAutoUpload,
+                        onChange = onAutoUploadChange
+                    )
+                }
+            } else if (state.driveEnabled) {
+                Spacer(Modifier.height(12.dp))
+                NeoButton(
+                    text = "Sign in to Google",
+                    onClick = onSignIn,
+                    enabled = !state.driveBusy,
+                    variant = NeoButtonVariant.Primary
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(
+                stringResource(R.string.cv_backup_drive_explainer),
+                style = MaterialTheme.typography.bodySmall,
+                color = NeoColors.OnBaseMuted
+            )
+        }
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(name = "Cloud — Signed out", showBackground = true)
+@Composable
+private fun PreviewCloudSignedOut() {
+    com.callvault.app.ui.theme.CallVaultTheme {
+        CloudBackupCard(
+            state = BackupUiState(passphraseSet = true, driveEnabled = false),
+            onToggleEnabled = {}, onSignIn = {}, onSignOut = {}, onUploadNow = {}, onAutoUploadChange = {}
+        )
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(name = "Cloud — Signed in", showBackground = true)
+@Composable
+private fun PreviewCloudSignedIn() {
+    com.callvault.app.ui.theme.CallVaultTheme {
+        CloudBackupCard(
+            state = BackupUiState(
+                passphraseSet = true, driveEnabled = true,
+                driveSignedInEmail = "owner@example.com"
+            ),
+            onToggleEnabled = {}, onSignIn = {}, onSignOut = {}, onUploadNow = {}, onAutoUploadChange = {}
+        )
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(name = "Cloud — Uploading", showBackground = true)
+@Composable
+private fun PreviewCloudUploading() {
+    com.callvault.app.ui.theme.CallVaultTheme {
+        CloudBackupCard(
+            state = BackupUiState(
+                passphraseSet = true, driveEnabled = true,
+                driveSignedInEmail = "owner@example.com", driveBusy = true
+            ),
+            onToggleEnabled = {}, onSignIn = {}, onSignOut = {}, onUploadNow = {}, onAutoUploadChange = {}
+        )
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(name = "Cloud — Error", showBackground = true)
+@Composable
+private fun PreviewCloudError() {
+    com.callvault.app.ui.theme.CallVaultTheme {
+        CloudBackupCard(
+            state = BackupUiState(
+                passphraseSet = true, driveEnabled = true,
+                driveSignedInEmail = "owner@example.com",
+                driveError = "Couldn't upload to Drive. Network unreachable."
+            ),
+            onToggleEnabled = {}, onSignIn = {}, onSignOut = {}, onUploadNow = {}, onAutoUploadChange = {}
+        )
+    }
 }
 
 private enum class PassphraseDialogReason { SetOnly, SetForBackup, Restore }
@@ -228,10 +398,16 @@ private fun PassphraseDialog(
     onDismiss: () -> Unit
 ) {
     var value by remember { mutableStateOf("") }
-    AlertDialog(
+    com.callvault.app.ui.components.neo.NeoDialog(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = {
+        header = {
+            Text(
+                title,
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        body = {
+            Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
             OutlinedTextField(
                 value = value,
                 onValueChange = { value = it },
@@ -241,13 +417,14 @@ private fun PassphraseDialog(
                 singleLine = true
             )
         },
-        confirmButton = {
+        footer = {
+            NeoButton(text = "Cancel", onClick = onDismiss, variant = NeoButtonVariant.Tertiary)
+            Spacer(Modifier.width(com.callvault.app.ui.theme.Spacing.Sm))
             NeoButton(
                 text = "OK",
                 onClick = { if (value.isNotBlank()) onConfirm(value) },
                 variant = NeoButtonVariant.Primary
             )
-        },
-        dismissButton = { NeoButton(text = "Cancel", onClick = onDismiss) }
+        }
     )
 }

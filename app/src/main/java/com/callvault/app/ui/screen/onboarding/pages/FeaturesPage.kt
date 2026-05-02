@@ -14,13 +14,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.PersonAddAlt1
-import androidx.compose.material.icons.filled.PhoneCallback
+import androidx.compose.material.icons.automirrored.filled.PhoneCallback
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +33,9 @@ import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.CallVaultTheme
+import com.callvault.app.ui.theme.IconCallsTint
+import com.callvault.app.ui.theme.IconInquiriesTint
+import com.callvault.app.ui.theme.IconStatsTint
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
 
@@ -62,21 +66,24 @@ fun FeaturesPage(
         )
         Spacer(Modifier.height(24.dp))
         FeatureRow(
-            icon = Icons.Filled.PhoneCallback,
+            icon = Icons.AutoMirrored.Filled.PhoneCallback,
             title = stringResource(R.string.onboarding_features_capture_title),
-            body = stringResource(R.string.onboarding_features_capture_body)
+            body = stringResource(R.string.onboarding_features_capture_body),
+            iconTint = IconCallsTint,
         )
         Spacer(Modifier.height(12.dp))
         FeatureRow(
             icon = Icons.Filled.PersonAddAlt1,
             title = stringResource(R.string.onboarding_features_autosave_title),
-            body = stringResource(R.string.onboarding_features_autosave_body)
+            body = stringResource(R.string.onboarding_features_autosave_body),
+            iconTint = IconInquiriesTint,
         )
         Spacer(Modifier.height(12.dp))
         FeatureRow(
             icon = Icons.Filled.Insights,
             title = stringResource(R.string.onboarding_features_insights_title),
-            body = stringResource(R.string.onboarding_features_insights_body)
+            body = stringResource(R.string.onboarding_features_insights_body),
+            iconTint = IconStatsTint,
         )
         Spacer(Modifier.height(32.dp))
         NeoButton(
@@ -91,7 +98,8 @@ fun FeaturesPage(
 private fun FeatureRow(
     icon: ImageVector,
     title: String,
-    body: String
+    body: String,
+    iconTint: Color = NeoColors.AccentBlue,
 ) {
     NeoCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -101,7 +109,7 @@ private fun FeatureRow(
                 shape = CircleShape
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Icon(imageVector = icon, contentDescription = null, tint = NeoColors.AccentBlue)
+                    Icon(imageVector = icon, contentDescription = null, tint = iconTint)
                 }
             }
             Spacer(Modifier.size(16.dp))

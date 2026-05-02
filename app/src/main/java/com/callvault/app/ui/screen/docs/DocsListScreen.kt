@@ -33,6 +33,7 @@ import com.callvault.app.ui.components.neo.NeoEmptyState
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.navigation.Destinations
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 
@@ -48,26 +49,22 @@ fun DocsListScreen(
 ) {
     val articles by vm.articles.collectAsStateWithLifecycle()
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.docs_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = { navController.popBackStack() }
-            )
-        }
-    ) { _ ->
+    StandardPage(
+        title = stringResource(R.string.cv_docs_title),
+        description = stringResource(R.string.cv_docs_description),
+        emoji = "📚",
+        onBack = { navController.popBackStack() }
+    ) {
         if (articles.isEmpty()) {
             NeoEmptyState(
                 icon = Icons.Filled.Description,
                 title = "No help articles yet",
                 message = "We're packaging the help library. Try again after the next update."
             )
-            return@NeoScaffold
+            return@StandardPage
         }
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(articles, key = { it.id }) { meta ->

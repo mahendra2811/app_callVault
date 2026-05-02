@@ -369,3 +369,10 @@ transaction rather than four.
 - **Auto-backup retention via MediaStore query.** `DailyBackupWorker`
   globs `callvault-backup-%.cvb` in Downloads, sorted by `DATE_ADDED DESC`,
   and deletes everything past index `keep`. Pre-Q devices skip rotation.
+
+### 2026-05-02 — Drive backup deviates from spec §13
+Optional cloud backup added per user request. Gated behind `backupDriveEnabled`
+setting (default OFF). Uses AppAuth (NOT play-services-auth) to remain GMS-free
+per spec §1. Encrypted local backup runs first; the encrypted .cvb is uploaded
+unchanged. Documented in-app at assets/docs/16-google-drive-backup.md and in
+docs/locale/06-google-cloud-setup.md.

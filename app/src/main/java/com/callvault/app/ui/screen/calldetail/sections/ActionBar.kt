@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.runtime.Composable
@@ -57,7 +57,7 @@ fun ActionBar(
             }
         )
         NeoIconButton(
-            icon = Icons.Filled.Chat,
+            icon = Icons.AutoMirrored.Filled.Chat,
             contentDescription = "WhatsApp",
             onClick = {
                 val digits = normalizedNumber.filter { it.isDigit() }

@@ -1,7 +1,7 @@
 package com.callvault.app.ui.components.neo
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,7 +25,7 @@ fun NeoHelpIcon(
     modifier: Modifier = Modifier
 ) {
     NeoIconButton(
-        icon = Icons.Filled.HelpOutline,
+        icon = Icons.AutoMirrored.Filled.HelpOutline,
         onClick = { navController.navigate(Destinations.DocsArticle.routeFor(articleId)) },
         contentDescription = stringResource(R.string.docs_help_icon_cd),
         size = 40.dp,

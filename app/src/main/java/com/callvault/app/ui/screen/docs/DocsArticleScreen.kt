@@ -33,6 +33,7 @@ import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.navigation.Destinations
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.util.MarkdownText
@@ -57,16 +58,12 @@ fun DocsArticleScreen(
 
     LaunchedEffect(articleId) { if (articleId.isNotBlank()) vm.open(articleId) }
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = current?.title ?: " ",
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = { navController.popBackStack() }
-            )
-        }
-    ) { _ ->
+    StandardPage(
+        title = current?.title ?: " ",
+        description = stringResource(R.string.cv_docs_article_description_fallback),
+        emoji = "📖",
+        onBack = { navController.popBackStack() }
+    ) {
         val a = current
         if (a == null) {
             Text(
@@ -74,13 +71,12 @@ fun DocsArticleScreen(
                 color = NeoColors.OnBaseMuted,
                 modifier = Modifier.padding(24.dp)
             )
-            return@NeoScaffold
+            return@StandardPage
         }
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             MarkdownText(source = a.markdown, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(20.dp))

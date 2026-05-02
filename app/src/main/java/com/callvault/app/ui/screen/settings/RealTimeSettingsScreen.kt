@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +32,7 @@ import com.callvault.app.R
 import com.callvault.app.ui.components.neo.NeoButton
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.components.neo.NeoToggle
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
@@ -67,21 +70,16 @@ fun RealTimeSettingsScreen(
 
     var localTimeout by remember(state.timeoutSec) { mutableFloatStateOf(state.timeoutSec.toFloat()) }
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.realtime_settings_title),
-                navIcon = androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
-    ) { _ ->
+    StandardPage(
+        title = stringResource(R.string.cv_realtime_title_v2),
+        description = stringResource(R.string.cv_realtime_description),
+        emoji = "✨",
+        onBack = onBack
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ToggleRow(

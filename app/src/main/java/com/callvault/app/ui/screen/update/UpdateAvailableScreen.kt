@@ -19,10 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.callvault.app.R
 import com.callvault.app.domain.repository.UpdateState
+import com.callvault.app.ui.screen.shared.StandardPage
 
 /**
  * Full-screen presentation of the current [UpdateState]. Renders different
@@ -35,15 +38,20 @@ fun UpdateAvailableScreen(
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.Start
+    StandardPage(
+        title = stringResource(R.string.cv_update_available_title),
+        description = stringResource(R.string.cv_update_available_description),
+        emoji = "🆕",
+        onBack = onClose
     ) {
-        when (val s = state) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            when (val s = state) {
             is UpdateState.Available -> AvailableBody(s, vm)
             is UpdateState.Downloading -> {
                 Text(
@@ -82,6 +90,7 @@ fun UpdateAvailableScreen(
             UpdateState.Idle -> {
                 Text("No update in progress.")
                 TextButton(onClick = onClose) { Text("Close") }
+            }
             }
         }
     }

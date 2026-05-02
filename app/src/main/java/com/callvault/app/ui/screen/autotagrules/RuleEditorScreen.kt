@@ -41,6 +41,7 @@ import com.callvault.app.ui.screen.autotagrules.components.ActionRow
 import com.callvault.app.ui.screen.autotagrules.components.ConditionRow
 import com.callvault.app.ui.screen.autotagrules.components.LivePreviewBox
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
@@ -63,20 +64,16 @@ fun RuleEditorScreen(
         if (state.saved) onBack()
     }
 
-    NeoScaffold(
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.rule_editor_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
+    StandardPage(
+        title = state.draft.name.ifBlank { stringResource(R.string.cv_rule_editor_title_default) },
+        description = stringResource(R.string.cv_rule_editor_description),
+        emoji = "⚙️",
+        onBack = onBack
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             NeoTextField(

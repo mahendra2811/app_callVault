@@ -1,9 +1,15 @@
 package com.callvault.app.ui.components.neo
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
@@ -13,17 +19,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.callvault.app.ui.theme.BorderSoft
 import com.callvault.app.ui.theme.CallVaultTheme
+import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
+import com.callvault.app.ui.theme.ToggleOff
+import com.callvault.app.ui.theme.ToggleOn
 
 /**
  * Neumorphic switch / toggle.
  *
- * The track is concave; the thumb is convex and slides between the two ends
- * with a spring animation matching the global press spec.
+ * The 32×56dp track tints between [ToggleOff] (gray) and [ToggleOn] (green)
+ * with a 1.dp [NeoColors.BorderSoft] outline; the convex thumb slides between
+ * the two ends with a press-spring scale animation.
  */
 @Composable
 fun NeoToggle(
@@ -36,24 +50,45 @@ fun NeoToggle(
     val thumbSize = 24.dp
     val pad = 4.dp
     val targetOffset = if (checked) trackWidth - thumbSize - pad else pad
+
     val animOffset by animateDpAsState(
         targetValue = targetOffset,
         animationSpec = spring(stiffness = 700f, dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "neo-toggle-thumb"
     )
 
-    NeoSurface(
+    val trackColor by animateColorAsState(
+        targetValue = if (checked) ToggleOn else ToggleOff,
+        animationSpec = spring(stiffness = 700f),
+        label = "neo-toggle-track"
+    )
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val thumbScale by animateFloatAsState(
+        targetValue = if (pressed) 0.92f else 1f,
+        animationSpec = spring(stiffness = 700f, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "neo-toggle-thumb-scale"
+    )
+
+    val trackShape = RoundedCornerShape(999.dp)
+    Box(
         modifier = modifier
             .size(width = trackWidth, height = trackHeight)
-            .clickable { onChange(!checked) },
-        elevation = NeoElevation.ConcaveSmall,
-        shape = RoundedCornerShape(999.dp)
+            .clip(trackShape)
+            .background(trackColor)
+            .border(1.dp, NeoColors.BorderSoft, trackShape)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { onChange(!checked) }
     ) {
         Box(modifier = Modifier.fillMaxHeight().padding(vertical = pad)) {
             NeoSurface(
                 modifier = Modifier
                     .offset(x = animOffset)
-                    .size(thumbSize),
+                    .size(thumbSize)
+                    .scale(thumbScale),
                 elevation = NeoElevation.ConvexSmall,
                 shape = CircleShape
             ) { }
@@ -61,12 +96,22 @@ fun NeoToggle(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC)
+@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC, name = "on")
 @Composable
-private fun NeoTogglePreview() {
+private fun NeoToggleOnPreview() {
     CallVaultTheme {
         Box(modifier = Modifier.padding(24.dp)) {
             NeoToggle(checked = true, onChange = {})
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC, name = "off")
+@Composable
+private fun NeoToggleOffPreview() {
+    CallVaultTheme {
+        Box(modifier = Modifier.padding(24.dp)) {
+            NeoToggle(checked = false, onChange = {})
         }
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,9 @@ import com.callvault.app.ui.theme.NeoElevation
 data class NeoTab(
     val label: String,
     val icon: ImageVector,
-    val badge: Int? = null
+    val badge: Int? = null,
+    /** Optional accent tint used when this tab is active. Defaults to AccentBlue. */
+    val activeTint: Color? = null,
 )
 
 /**
@@ -85,7 +88,7 @@ fun NeoTabBar(
                                     Icon(
                                         imageVector = tab.icon,
                                         contentDescription = tab.label,
-                                        tint = NeoColors.AccentBlue
+                                        tint = tab.activeTint ?: NeoColors.AccentBlue
                                     )
                                 }
                             }
@@ -94,7 +97,7 @@ fun NeoTabBar(
                                 Icon(
                                     imageVector = tab.icon,
                                     contentDescription = tab.label,
-                                    tint = NeoColors.OnBaseMuted
+                                    tint = NeoColors.OnBaseSubtle
                                 )
                             }
                         }
@@ -106,7 +109,7 @@ fun NeoTabBar(
                     }
                     Text(
                         text = tab.label,
-                        color = if (active) NeoColors.AccentBlue else NeoColors.OnBaseMuted,
+                        color = if (active) (tab.activeTint ?: NeoColors.AccentBlue) else NeoColors.OnBaseSubtle,
                         style = MaterialTheme.typography.labelSmall
                     )
                 }

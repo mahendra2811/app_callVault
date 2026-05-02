@@ -12,6 +12,7 @@ Read in order:
 | 4 | `03-debugging.md` | Console / DevTools / DB inspector — Android equivalents. |
 | 5 | `04-common-tasks.md` | "Change a string", "Change a button", "Add a screen" — translated from React. |
 | 6 | `05-expo-and-rn-faq.md` | Why Expo Go won't run this app, and what the closest workflows are. |
+| 7 | `06-google-cloud-setup.md` | OAuth setup runbook for the optional Drive backup feature (Phase G). |
 
 Each file is short (≤ 200 lines). Skim, don't memorize.
 

@@ -20,7 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Refresh
@@ -69,6 +69,7 @@ import com.callvault.app.ui.components.neo.NeoIconButton
 import com.callvault.app.ui.components.neo.NeoProgressBar
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.screen.stats.charts.DailyVolumeChart
 import com.callvault.app.ui.screen.stats.charts.HourlyHeatmap
 import com.callvault.app.ui.screen.stats.charts.TopNumbersList
@@ -100,30 +101,26 @@ fun StatsScreen(
         }
     }
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.stats_title),
-                navIcon = Icons.Filled.ArrowBack,
-                onNavClick = onBack,
-                actions = {
-                    NeoIconButton(
-                        icon = Icons.Filled.FilterList,
-                        onClick = { sheetOpen = true },
-                        contentDescription = stringResource(R.string.stats_change_range),
-                        size = 40.dp
-                    )
-                    NeoIconButton(
-                        icon = Icons.Filled.Refresh,
-                        onClick = viewModel::refresh,
-                        contentDescription = stringResource(R.string.stats_refresh),
-                        size = 40.dp
-                    )
-                }
+    StandardPage(
+        title = stringResource(R.string.cv_stats_title),
+        description = stringResource(R.string.cv_stats_description),
+        emoji = "📊",
+        onBack = onBack,
+        actions = {
+            NeoIconButton(
+                icon = Icons.Filled.FilterList,
+                onClick = { sheetOpen = true },
+                contentDescription = stringResource(R.string.stats_change_range),
+                size = 40.dp
+            )
+            NeoIconButton(
+                icon = Icons.Filled.Refresh,
+                onClick = viewModel::refresh,
+                contentDescription = stringResource(R.string.stats_refresh),
+                size = 40.dp
             )
         }
-    ) { _: PaddingValues ->
+    ) {
         Box(modifier = Modifier.fillMaxSize()) {
             when {
                 state.loading && state.snapshot == null -> {

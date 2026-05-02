@@ -2,6 +2,24 @@
 <resources>
     <string name="app_name">CallVault</string>
 
+    <!-- ===== Main scaffold (Phase B) ===== -->
+    <string name="cv_main_brand">callVault</string>
+    <string name="cv_tab_home">Home</string>
+    <string name="cv_tab_calls">Calls</string>
+    <string name="cv_tab_inquiries">Inquiries</string>
+    <string name="cv_tab_more">More</string>
+    <string name="cv_topbar_search_cd">Search</string>
+    <string name="cv_topbar_more_cd">More options</string>
+    <string name="cv_overflow_profile">Profile</string>
+    <string name="cv_overflow_settings">Settings</string>
+    <string name="cv_overflow_backup">Backup</string>
+    <string name="cv_overflow_quick_export">Quick Export</string>
+    <string name="cv_overflow_stats">Stats</string>
+    <string name="cv_overflow_tags">Tags</string>
+    <string name="cv_overflow_rules">Auto-tag rules</string>
+    <string name="cv_overflow_updates">App updates</string>
+    <string name="cv_overflow_help">Help &amp; Docs</string>
+
     <string name="channel_app_updates_name">App updates</string>
     <string name="channel_app_updates_desc">New stable and beta releases for CallVault.</string>
 
@@ -513,4 +531,97 @@
     <string name="stats_preset_last_month">Last month</string>
     <string name="stats_preset_90d">Last 90 days</string>
     <string name="stats_preset_custom">Custom range…</string>
+
+    <!-- Phase D — Home rebuild -->
+    <string name="cv_home_title">Home</string>
+    <string name="cv_home_description">Today at a glance</string>
+    <string name="cv_home_card_today">Today</string>
+    <string name="cv_home_metric_calls">Calls</string>
+    <string name="cv_home_metric_missed">Missed</string>
+    <string name="cv_home_metric_unsaved">Unsaved</string>
+    <string name="cv_home_metric_followups">Follow-ups</string>
+    <string name="cv_home_card_recent_unsaved">Recent unsaved</string>
+    <string name="cv_home_save_all">Save all</string>
+    <string name="cv_home_unsaved_empty">Nothing pending</string>
+    <string name="cv_home_card_quick_actions">Quick actions</string>
+    <string name="cv_home_action_calls">Calls</string>
+    <string name="cv_home_action_stats">Stats</string>
+    <string name="cv_home_action_backup">Backup</string>
+    <string name="cv_home_action_quick_export">Quick Export</string>
+    <string name="cv_splash_brand">callVault</string>
+    <string name="cv_splash_logo_letter">C</string>
+    <!-- Phase E — StandardPage migration -->
+    <string name="cv_calls_title">Calls</string>
+    <string name="cv_calls_description">Every call your phone has logged.</string>
+    <string name="cv_calldetail_description">Lead score, history, notes, tags.</string>
+    <string name="cv_mycontacts_title">My Contacts</string>
+    <string name="cv_mycontacts_description">People you\'ve saved.</string>
+    <string name="cv_inquiries_title">Inquiries</string>
+    <string name="cv_inquiries_description">Numbers CallVault auto-saved for you.</string>
+    <string name="cv_stats_title">Stats</string>
+    <string name="cv_stats_description">Your call volume and lead quality.</string>
+    <string name="cv_bookmarks_title">Bookmarks</string>
+    <string name="cv_bookmarks_description">Calls you\'ve starred.</string>
+    <string name="cv_followups_title">Follow-ups</string>
+    <string name="cv_followups_description">Reminders due today and ahead.</string>
+    <string name="cv_tags_title">Tags</string>
+    <string name="cv_tags_description">Categories for your calls.</string>
+    <string name="cv_rules_title">Rules</string>
+    <string name="cv_rules_description">Automatic tagging that runs every sync.</string>
+    <string name="cv_rule_editor_description">When all conditions match, do these actions.</string>
+    <string name="cv_rule_editor_title_default">New rule</string>
+    <string name="cv_export_title">Export</string>
+    <string name="cv_export_description">Send your data out.</string>
+    <string name="cv_backup_title">Backup</string>
+    <string name="cv_backup_description">Save and restore your data.</string>
+    <string name="cv_settings_title">Settings</string>
+    <string name="cv_settings_description">Sync, real-time, lead score, privacy.</string>
+    <string name="cv_autosave_title">Auto-save</string>
+    <string name="cv_autosave_description">How CallVault names new inquiries.</string>
+    <string name="cv_realtime_title_v2">Real-time</string>
+    <string name="cv_realtime_description">Floating bubble and post-call popup.</string>
+    <string name="cv_leadscore_title">Lead scoring</string>
+    <string name="cv_leadscore_description">Tune what makes a hot lead.</string>
+    <string name="cv_update_settings_title">App updates</string>
+    <string name="cv_update_settings_description">Stable or beta channel, auto-check.</string>
+    <string name="cv_update_available_title">Update available</string>
+    <string name="cv_update_available_description">What\'s new in this version.</string>
+    <string name="cv_docs_title">Help</string>
+    <string name="cv_docs_description">15 guides about CallVault.</string>
+    <string name="cv_docs_article_description_fallback">Open this guide.</string>
+    <string name="cv_permission_rationale_title">Permissions</string>
+    <string name="cv_permission_rationale_description">Why CallVault needs access.</string>
+    <string name="cv_quick_export_title">Quick Export</string>
+    <string name="cv_quick_export_subtitle">Saves to your Downloads folder.</string>
+    <string name="cv_quick_export_csv_label">CSV (current filter)</string>
+    <string name="cv_quick_export_excel_label">Excel workbook (current filter)</string>
+    <string name="cv_quick_export_json_label">Whole DB as JSON</string>
+    <string name="cv_quick_export_running">Exporting…</string>
+    <string name="cv_quick_export_success">Exported %1$s (%2$d KB)</string>
+    <string name="cv_quick_export_error">Couldn\'t export. %1$s</string>
+    <string name="cv_quick_export_open">Open</string>
+    <string name="cv_quick_export_share">Share</string>
+    <string name="cv_quick_export_retry">Retry</string>
+    <string name="cv_search_clear_cd">Clear search</string>
+    <string name="cv_common_retry">Retry</string>
+    <string name="cv_common_loading">Loading&#8230;</string>
+    <string name="cv_common_error_title">Couldn&apos;t load</string>
+    <string name="cv_common_error_body">Something went wrong. Tap retry.</string>
+    <string name="cv_common_cancel">Cancel</string>
+    <string name="cv_common_ok">OK</string>
+    <string name="cv_common_delete">Delete</string>
+    <string name="cv_common_save">Save</string>
+
+    <!-- ===== Cloud (Drive) backup (Phase G) ===== -->
+    <string name="cv_backup_cloud_title">Cloud (Google Drive)</string>
+    <string name="cv_backup_drive_toggle">Save to Google Drive</string>
+    <string name="cv_backup_drive_signed_in">Signed in as %1$s</string>
+    <string name="cv_backup_drive_signout">Sign out</string>
+    <string name="cv_backup_drive_upload_now">Upload now</string>
+    <string name="cv_backup_drive_auto_upload">Auto-upload after each local backup</string>
+    <string name="cv_backup_drive_explainer">Backups are encrypted with your passphrase before upload — nothing readable leaves your device.</string>
+    <string name="cv_backup_drive_signin_failed">Couldn\'t sign in. %1$s</string>
+    <string name="cv_backup_drive_upload_failed">Couldn\'t upload to Drive. %1$s</string>
+    <string name="cv_backup_drive_uploaded">Uploaded %1$s to Drive.</string>
+    <string name="cv_backup_drive_oauth_unconfigured">Drive isn\'t configured. See docs/locale/06-google-cloud-setup.md.</string>
 </resources>

@@ -6,10 +6,14 @@ import android.net.Uri
  * Type-safe enumeration of every top-level navigation destination in CallVault.
  *
  * Each entry exposes a stable [route] string used as the Compose Navigation key.
- * Sub-routes (call detail, settings sub-screens, etc.) are added in later
- * sprints as the surface grows.
  */
 sealed class Destinations(val route: String) {
+    /** Tabbed surface — hosts Home/Calls/Inquiries/More inside a single Scaffold. */
+    data object Main : Destinations("main")
+
+    /** Splash route — populated in Phase C. */
+    data object Splash : Destinations("splash")
+
     /** First-launch tour — 5 pages including permissions + first sync. */
     data object Onboarding : Destinations("onboarding")
 
@@ -62,7 +66,7 @@ sealed class Destinations(val route: String) {
     /** Sprint 7 — Real-time features (floating bubble + post-call popup). */
     data object RealTimeSettings : Destinations("settings/real_time")
 
-    /** Sprint 9 — Export wizard (format → date → scope → columns → destination). */
+    /** Sprint 9 — Export wizard. */
     data object Export : Destinations("export")
 
     /** Sprint 9 — Backup & restore landing screen. */
@@ -86,9 +90,25 @@ sealed class Destinations(val route: String) {
         fun routeFor(articleId: String): String = "docs/${Uri.encode(articleId)}"
     }
 
-    /** Sprint 11 — Home tab (greeting, today snapshot, quick links). */
+    /** Sprint 11 — Home tab. */
     data object Home : Destinations("home")
 
-    /** Sprint 11 — More tab (overflow of secondary surfaces). */
+    /** Sprint 11 — More tab. */
     data object More : Destinations("more")
+}
+
+/**
+ * Routes for the four bottom-nav tabs hosted by [MainScaffold].
+ *
+ * Labels are hardcoded for Phase B; Phase E migrates them to string resources.
+ */
+sealed class MainTabRoute(
+    val route: String,
+    val label: String,
+    val emoji: String
+) {
+    data object Home : MainTabRoute("home", "Home", "🏠")
+    data object Calls : MainTabRoute("calls", "Calls", "📞")
+    data object Inquiries : MainTabRoute("inquiries", "Inquiries", "📥")
+    data object More : MainTabRoute("more", "More", "☰")
 }

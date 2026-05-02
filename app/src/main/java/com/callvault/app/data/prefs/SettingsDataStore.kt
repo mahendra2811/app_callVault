@@ -129,6 +129,14 @@ class SettingsDataStore @Inject constructor(
     val autoBackupRetention: Flow<Int> = ds.data.read(K_AUTO_BACKUP_RETENTION, 7)
     suspend fun setAutoBackupRetention(v: Int) = write(K_AUTO_BACKUP_RETENTION, v)
 
+    /** Master toggle for "save encrypted backup to Google Drive". */
+    val backupDriveEnabled: Flow<Boolean> = ds.data.read(K_BACKUP_DRIVE_ENABLED, false)
+    suspend fun setBackupDriveEnabled(enabled: Boolean) = write(K_BACKUP_DRIVE_ENABLED, enabled)
+
+    /** Auto-upload after each local backup; only meaningful when [backupDriveEnabled] is true. */
+    val driveAutoUpload: Flow<Boolean> = ds.data.read(K_DRIVE_AUTO_UPLOAD, true)
+    suspend fun setDriveAutoUpload(enabled: Boolean) = write(K_DRIVE_AUTO_UPLOAD, enabled)
+
     // ---------- Display ----------
     val displayShowUnsavedPinned: Flow<Boolean> =
         ds.data.read(K_DISPLAY_UNSAVED_PINNED, true)
@@ -240,6 +248,8 @@ class SettingsDataStore @Inject constructor(
         // Backup
         val K_AUTO_BACKUP_ENABLED = booleanPreferencesKey("autoBackupEnabled")
         val K_AUTO_BACKUP_RETENTION = intPreferencesKey("autoBackupRetention")
+        val K_BACKUP_DRIVE_ENABLED = booleanPreferencesKey("backupDriveEnabled")
+        val K_DRIVE_AUTO_UPLOAD = booleanPreferencesKey("driveAutoUpload")
 
         // Display
         val K_DISPLAY_UNSAVED_PINNED = booleanPreferencesKey("displayShowUnsavedPinned")

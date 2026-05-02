@@ -30,6 +30,7 @@ import com.callvault.app.ui.components.neo.NeoSlider
 import com.callvault.app.ui.components.neo.NeoToggle
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 
@@ -47,20 +48,16 @@ fun LeadScoringSettingsScreen(
     viewModel: LeadScoringSettingsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    NeoScaffold(
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.lead_scoring_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
+    StandardPage(
+        title = stringResource(R.string.cv_leadscore_title),
+        description = stringResource(R.string.cv_leadscore_description),
+        emoji = "🎯",
+        onBack = onBack
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {

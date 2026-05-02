@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Inbox
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,6 +40,7 @@ import com.callvault.app.ui.components.neo.NeoButton
 import com.callvault.app.ui.components.neo.NeoEmptyState
 import com.callvault.app.ui.components.neo.NeoSearchBar
 import com.callvault.app.ui.components.neo.NeoTextField
+import com.callvault.app.ui.components.neo.NeoPageHeader
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.theme.CallVaultTheme
@@ -75,7 +75,7 @@ fun InquiriesScreen(
         modifier = modifier,
         topBar = {
             NeoTopBar(
-                title = stringResource(R.string.inquiries_title),
+                title = stringResource(R.string.cv_inquiries_title),
                 navIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 onNavClick = onBack
             )
@@ -103,7 +103,13 @@ fun InquiriesScreen(
             }
         } else null
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            NeoPageHeader(
+                title = stringResource(R.string.cv_inquiries_title),
+                description = stringResource(R.string.cv_inquiries_description),
+                emoji = "📥"
+            )
+            Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
             Spacer(Modifier.height(8.dp))
             NeoSearchBar(
                 query = query,
@@ -138,6 +144,7 @@ fun InquiriesScreen(
                         )
                     }
                 }
+            }
             }
         }
     }
@@ -207,32 +214,36 @@ private fun ConvertDialog(
     onConfirm: (String) -> Unit
 ) {
     var value by remember { mutableStateOf(initialName) }
-    AlertDialog(
+    com.callvault.app.ui.components.neo.NeoDialog(
         onDismissRequest = onCancel,
-        title = { Text(stringResource(R.string.inquiries_convert_dialog_title)) },
-        text = {
-            Column {
-                Text(
-                    stringResource(R.string.inquiries_convert_dialog_body),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(12.dp))
-                NeoTextField(
-                    value = value,
-                    onChange = { value = it },
-                    label = stringResource(R.string.inquiries_convert_dialog_label)
-                )
-            }
+        header = {
+            Text(
+                stringResource(R.string.inquiries_convert_dialog_title),
+                style = MaterialTheme.typography.titleLarge
+            )
         },
-        confirmButton = {
-            TextButton(
-                onClick = { onConfirm(value.trim().ifEmpty { initialName }) }
-            ) { Text(stringResource(R.string.inquiries_convert_cta)) }
+        body = {
+            Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
+            Text(
+                stringResource(R.string.inquiries_convert_dialog_body),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Md))
+            NeoTextField(
+                value = value,
+                onChange = { value = it },
+                label = stringResource(R.string.inquiries_convert_dialog_label)
+            )
         },
-        dismissButton = {
+        footer = {
             TextButton(onClick = onCancel) {
                 Text(stringResource(R.string.inquiries_cancel))
             }
+            Spacer(Modifier.width(com.callvault.app.ui.theme.Spacing.Sm))
+            com.callvault.app.ui.components.neo.NeoButton(
+                text = stringResource(R.string.inquiries_convert_cta),
+                onClick = { onConfirm(value.trim().ifEmpty { initialName }) }
+            )
         }
     )
 }

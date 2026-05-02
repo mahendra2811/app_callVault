@@ -37,3 +37,23 @@ object NeoColors {
     val AccentViolet = Color(0xFF8266E5)
     val AccentGreen = Color(0xFF34A853)
 }
+
+/** Soft neutral border for cards / dialogs / toggle tracks. */
+val NeoColors.BorderSoft: Color get() = NeoColors.Dark.copy(alpha = 0.18f)
+
+/** Subtle accent border for primary cards. */
+val NeoColors.BorderAccent: Color get() = NeoColors.AccentBlue.copy(alpha = 0.20f)
+
+/** iOS-style green for switched-on toggle tracks. */
+val ToggleOn: Color = Color(0xFF34C759)
+
+/** Cool gray for switched-off toggle tracks. */
+val ToggleOff: Color = Color(0xFFC7C7CC)
+
+val IconCallsTint: Color get() = NeoColors.AccentBlue
+val IconInquiriesTint: Color get() = NeoColors.AccentViolet
+val IconStatsTint: Color get() = NeoColors.AccentAmber
+val IconBackupTint: Color get() = NeoColors.AccentTeal
+val IconTagsTint: Color get() = NeoColors.AccentRose
+val IconHomeTint: Color get() = NeoColors.AccentGreen
+

@@ -40,6 +40,7 @@ import com.callvault.app.ui.components.neo.NeoIconButton
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
@@ -68,15 +69,11 @@ fun BookmarksScreen(
         viewModel.consumeError()
     }
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.bookmarks_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
+    StandardPage(
+        title = stringResource(R.string.cv_bookmarks_title),
+        description = stringResource(R.string.cv_bookmarks_description),
+        emoji = "⭐",
+        onBack = onBack
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (state.pinned.isEmpty() && state.others.isEmpty()) {

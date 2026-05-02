@@ -21,7 +21,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +52,7 @@ import com.callvault.app.ui.components.neo.NeoIconButton
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
@@ -82,15 +82,11 @@ fun TagsManagerScreen(
         viewModel.consumeError()
     }
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.tags_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
+    StandardPage(
+        title = stringResource(R.string.cv_tags_title),
+        description = stringResource(R.string.cv_tags_description),
+        emoji = "🏷️",
+        onBack = onBack
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (state.rows.isEmpty()) {
@@ -153,19 +149,32 @@ fun TagsManagerScreen(
 
     val target = deleteTarget
     if (target != null) {
-        AlertDialog(
+        com.callvault.app.ui.components.neo.NeoDialog(
             onDismissRequest = { deleteTarget = null },
-            containerColor = NeoColors.Base,
-            title = { Text(stringResource(R.string.tags_delete_confirm_title)) },
-            text = {
+            header = {
+                Text(
+                    stringResource(R.string.tags_delete_confirm_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            body = {
+                Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
                 Text(
                     if (target.usageCount > 0)
                         stringResource(R.string.tags_delete_confirm_with_uses, target.usageCount)
                     else
-                        stringResource(R.string.tags_delete_confirm_no_uses)
+                        stringResource(R.string.tags_delete_confirm_no_uses),
+                    color = NeoColors.OnBaseMuted,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             },
-            confirmButton = {
+            footer = {
+                NeoButton(
+                    text = stringResource(R.string.tag_editor_cancel),
+                    onClick = { deleteTarget = null },
+                    variant = NeoButtonVariant.Tertiary
+                )
+                Spacer(Modifier.width(com.callvault.app.ui.theme.Spacing.Sm))
                 NeoButton(
                     text = stringResource(R.string.tags_delete_confirm_cta),
                     onClick = {
@@ -173,13 +182,6 @@ fun TagsManagerScreen(
                         deleteTarget = null
                     },
                     variant = NeoButtonVariant.Primary
-                )
-            },
-            dismissButton = {
-                NeoButton(
-                    text = stringResource(R.string.tag_editor_cancel),
-                    onClick = { deleteTarget = null },
-                    variant = NeoButtonVariant.Tertiary
                 )
             }
         )
@@ -295,31 +297,34 @@ private fun MergeIntoDialog(
     onDismiss: () -> Unit,
     onPick: (Tag) -> Unit
 ) {
-    AlertDialog(
+    com.callvault.app.ui.components.neo.NeoDialog(
         onDismissRequest = onDismiss,
-        containerColor = NeoColors.Base,
-        title = { Text(stringResource(R.string.tags_merge_dialog_title)) },
-        text = {
-            Column {
-                Text(
-                    stringResource(R.string.tags_merge_dialog_body, source.name),
-                    color = NeoColors.OnBaseMuted,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(12.dp))
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    items(others, key = { it.id }) { t ->
-                        NeoButton(
-                            text = "${t.emoji ?: ""} ${t.name}".trim(),
-                            onClick = { onPick(t) },
-                            variant = NeoButtonVariant.Secondary,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+        header = {
+            Text(
+                stringResource(R.string.tags_merge_dialog_title),
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        body = {
+            Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
+            Text(
+                stringResource(R.string.tags_merge_dialog_body, source.name),
+                color = NeoColors.OnBaseMuted,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Md))
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                items(others, key = { it.id }) { t ->
+                    NeoButton(
+                        text = "${t.emoji ?: ""} ${t.name}".trim(),
+                        onClick = { onPick(t) },
+                        variant = NeoButtonVariant.Secondary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         },
-        confirmButton = {
+        footer = {
             NeoButton(
                 text = stringResource(R.string.tag_editor_cancel),
                 onClick = onDismiss,

@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,6 +28,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.callvault.app.ui.components.neo.NeoButton
 import com.callvault.app.ui.components.neo.NeoButtonVariant
+import androidx.compose.ui.res.stringResource
+import com.callvault.app.R
+import com.callvault.app.ui.components.neo.NeoPageHeader
 import com.callvault.app.ui.components.neo.NeoProgressBar
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.export.steps.ColumnsStep
@@ -56,8 +59,8 @@ fun ExportScreen(
     NeoScaffold(
         topBar = {
             NeoTopBar(
-                title = "Export",
-                navIcon = Icons.Filled.ArrowBack,
+                title = stringResource(R.string.cv_export_title),
+                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 onNavClick = onBack
             )
         },
@@ -95,7 +98,13 @@ fun ExportScreen(
             }
         },
     ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().padding(padding)) {
+        NeoPageHeader(
+            title = stringResource(R.string.cv_export_title),
+            description = stringResource(R.string.cv_export_description),
+            emoji = "📤"
+        )
+        Box(Modifier.fillMaxSize()) {
             when (state.step) {
                 0 -> FormatStep(state.format, viewModel::setFormat)
                 1 -> DateRangeStep(state.dateRange, viewModel::setDateRange)
@@ -125,6 +134,7 @@ fun ExportScreen(
                     NeoProgressBar(progress = 0.5f, modifier = Modifier.fillMaxWidth(0.7f))
                 }
             }
+        }
         }
     }
 

@@ -41,8 +41,19 @@ class SecurePrefs @Inject constructor(
         }.apply()
     }
 
+    /** Persisted AppAuth `AuthState` (JSON), or `null`. */
+    fun getDriveAuthStateJson(): String? = prefs.getString(KEY_DRIVE_AUTH_STATE, null)
+
+    /** Pass `null` to clear the persisted Drive auth. */
+    fun setDriveAuthStateJson(value: String?) {
+        prefs.edit().apply {
+            if (value == null) remove(KEY_DRIVE_AUTH_STATE) else putString(KEY_DRIVE_AUTH_STATE, value)
+        }.apply()
+    }
+
     private companion object {
         const val FILE_NAME = "callvault_secure"
         const val KEY_BACKUP_PASSPHRASE = "backupPassphrase"
+        const val KEY_DRIVE_AUTH_STATE = "drive_auth_state"
     }
 }

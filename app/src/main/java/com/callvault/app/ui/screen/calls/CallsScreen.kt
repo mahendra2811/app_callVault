@@ -14,7 +14,7 @@ import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewAgenda
-import androidx.compose.material.icons.filled.ViewList
+import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.callvault.app.domain.model.FilterState
 import com.callvault.app.ui.components.neo.NeoEmptyState
 import com.callvault.app.ui.components.neo.NeoIconButton
+import com.callvault.app.ui.components.neo.NeoPageHeader
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.theme.NeoColors
@@ -80,7 +81,7 @@ fun CallsScreen(
         modifier = modifier,
         topBar = {
             NeoTopBar(
-                title = "Calls",
+                title = androidx.compose.ui.res.stringResource(com.callvault.app.R.string.cv_calls_title),
                 actions = {
                     NeoIconButton(
                         icon = Icons.Filled.Search,
@@ -96,7 +97,7 @@ fun CallsScreen(
                     )
                     NeoIconButton(
                         icon = if (state.viewMode == CallsViewMode.Grouped)
-                            Icons.Filled.ViewAgenda else Icons.Filled.ViewList,
+                            Icons.Filled.ViewAgenda else Icons.AutoMirrored.Filled.ViewList,
                         onClick = viewModel::toggleViewMode,
                         contentDescription = "Toggle view mode",
                         size = 40.dp
@@ -224,6 +225,12 @@ fun CallsScreen(
             }
         } else null
     ) {
+        androidx.compose.foundation.layout.Column(modifier = Modifier.fillMaxSize()) {
+        NeoPageHeader(
+            title = androidx.compose.ui.res.stringResource(com.callvault.app.R.string.cv_calls_title),
+            description = androidx.compose.ui.res.stringResource(com.callvault.app.R.string.cv_calls_description),
+            emoji = "📞"
+        )
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = viewModel::refresh,
@@ -314,6 +321,7 @@ fun CallsScreen(
                     }
                 }
             }
+        }
         }
     }
 

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -19,39 +21,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.callvault.app.ui.screen.calldetail.CallDetailScreen
-import com.callvault.app.ui.screen.calls.CallsScreen
-import com.callvault.app.ui.screen.inquiries.InquiriesScreen
-import com.callvault.app.ui.screen.mycontacts.MyContactsScreen
-import com.callvault.app.ui.screen.search.SearchScreen
+import com.callvault.app.R
+import com.callvault.app.data.prefs.SettingsDataStore
 import com.callvault.app.ui.screen.autotagrules.AutoTagRulesScreen
 import com.callvault.app.ui.screen.autotagrules.RuleEditorScreen
 import com.callvault.app.ui.screen.backup.BackupScreen
+import com.callvault.app.ui.screen.calldetail.CallDetailScreen
+import com.callvault.app.ui.screen.docs.DocsArticleScreen
+import com.callvault.app.ui.screen.docs.DocsListScreen
 import com.callvault.app.ui.screen.export.ExportScreen
+import com.callvault.app.ui.screen.inquiries.InquiriesScreen
+import com.callvault.app.ui.screen.mycontacts.MyContactsScreen
+import com.callvault.app.ui.screen.onboarding.OnboardingScreen
+import com.callvault.app.ui.screen.onboarding.findActivity
+import com.callvault.app.ui.screen.permission.PermissionDeniedScreen
+import com.callvault.app.ui.screen.permission.PermissionRationaleScreen
+import com.callvault.app.ui.screen.search.SearchScreen
+import com.callvault.app.ui.screen.splash.SplashScreen
 import com.callvault.app.ui.screen.settings.AutoSaveSettingsScreen
 import com.callvault.app.ui.screen.settings.LeadScoringSettingsScreen
 import com.callvault.app.ui.screen.settings.RealTimeSettingsScreen
 import com.callvault.app.ui.screen.settings.SettingsScreen
 import com.callvault.app.ui.screen.settings.UpdateSettingsScreen
 import com.callvault.app.ui.screen.update.UpdateAvailableScreen
-import com.callvault.app.ui.screen.docs.DocsListScreen
-import com.callvault.app.ui.screen.docs.DocsArticleScreen
-import com.callvault.app.ui.screen.home.HomeScreen
-import com.callvault.app.ui.screen.more.MoreScreen
-import androidx.compose.runtime.LaunchedEffect
-import com.callvault.app.R
-import com.callvault.app.data.prefs.SettingsDataStore
-import com.callvault.app.ui.screen.onboarding.OnboardingScreen
-import com.callvault.app.ui.screen.onboarding.findActivity
-import com.callvault.app.ui.screen.permission.PermissionDeniedScreen
-import com.callvault.app.ui.screen.permission.PermissionRationaleScreen
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.util.PermissionManager
@@ -79,10 +77,9 @@ interface NavHostEntryPoint {
  * Picks the start destination at runtime:
  * - If [SettingsDataStore.onboardingComplete] is `false` → [Destinations.Onboarding].
  * - Else if [PermissionManager.isCriticalGranted] is `false` → [Destinations.PermissionRationale].
- * - Else → [Destinations.Calls] (the placeholder Calls home until Sprint 3).
+ * - Else → [Destinations.Main] (the tabbed surface).
  *
- * The graph re-evaluates the start destination only on first composition;
- * later transitions happen via explicit nav events.
+ * Phase C will swap the post-permission destination to [Destinations.Splash].
  */
 @Composable
 fun CallVaultNavHost(
@@ -102,24 +99,33 @@ fun CallVaultNavHost(
 
     val navController = rememberNavController()
 
-    val startRoute = remember(onboardingComplete, permState) {
+    val initialPostSplashRoute = remember(onboardingComplete, permState) {
         when {
             !onboardingComplete -> Destinations.Onboarding.route
             !permissionManager.isCriticalGranted() -> Destinations.PermissionRationale.route
-            else -> Destinations.Calls.route
+            else -> Destinations.Main.route
         }
     }
 
     NavHost(
         navController = navController,
-        startDestination = startRoute,
+        startDestination = Destinations.Splash.route,
         modifier = modifier
     ) {
+        composable(Destinations.Splash.route) {
+            SplashScreen(
+                onFinished = {
+                    navController.navigate(initialPostSplashRoute) {
+                        popUpTo(Destinations.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(Destinations.Onboarding.route) {
             OnboardingScreen(
                 onFinished = {
                     val target = if (permissionManager.isCriticalGranted()) {
-                        Destinations.Calls.route
+                        Destinations.Main.route
                     } else Destinations.PermissionRationale.route
                     navController.navigate(target) {
                         popUpTo(Destinations.Onboarding.route) { inclusive = true }
@@ -134,11 +140,10 @@ fun CallVaultNavHost(
                 activity = activity,
                 onResult = {
                     if (permissionManager.isCriticalGranted()) {
-                        navController.navigate(Destinations.Calls.route) {
+                        navController.navigate(Destinations.Main.route) {
                             popUpTo(Destinations.PermissionRationale.route) { inclusive = true }
                         }
                     } else {
-                        // If the user picked "Don't ask again", route to denied.
                         val anyPerm = permState
                         val anyPermanent = listOf(
                             anyPerm.readCallLog,
@@ -170,39 +175,8 @@ fun CallVaultNavHost(
         composable(Destinations.PermissionDenied.route) {
             PermissionDeniedScreen(permissionManager = permissionManager)
         }
-        composable(Destinations.Calls.route) {
-            CallsScreen(
-                onOpenDetail = { number ->
-                    navController.navigate(Destinations.CallDetail.routeFor(number))
-                },
-                onOpenSearch = { navController.navigate(Destinations.Search.route) },
-                onOpenFilterPresets = {
-                    navController.navigate(Destinations.FilterPresets.route)
-                },
-                onPermissionMissing = {
-                    navController.navigate(Destinations.PermissionRationale.route)
-                },
-                onOpenMyContacts = { navController.navigate(Destinations.MyContacts.route) },
-                onOpenInquiries = { navController.navigate(Destinations.Inquiries.route) },
-                onOpenAutoSaveSettings = {
-                    navController.navigate(Destinations.AutoSaveSettings.route)
-                },
-                onOpenAutoTagRules = {
-                    navController.navigate(Destinations.AutoTagRules.route)
-                },
-                onOpenLeadScoringSettings = {
-                    navController.navigate(Destinations.LeadScoringSettings.route)
-                },
-                onOpenRealTimeSettings = {
-                    navController.navigate(Destinations.RealTimeSettings.route)
-                },
-                onOpenExport = { navController.navigate(Destinations.Export.route) },
-                onOpenBackup = { navController.navigate(Destinations.Backup.route) },
-                onOpenUpdateAvailable = { navController.navigate(Destinations.UpdateAvailable.route) },
-                onOpenUpdateSettings = { navController.navigate(Destinations.UpdateSettings.route) },
-                onOpenSettings = { navController.navigate(Destinations.Settings.route) },
-                onOpenDocs = { navController.navigate(Destinations.DocsList.route) }
-            )
+        composable(Destinations.Main.route) {
+            MainScaffold(rootNavController = navController)
         }
         composable(Destinations.Export.route) {
             ExportScreen(onBack = { navController.popBackStack() })
@@ -293,19 +267,12 @@ fun CallVaultNavHost(
         ) {
             DocsArticleScreen(navController = navController)
         }
-        composable(Destinations.Home.route) {
-            HomeScreen(navController = navController)
-        }
-        composable(Destinations.More.route) {
-            MoreScreen(navController = navController)
-        }
     }
 
-    // Deep-link from notification (e.g. "update_available" → UpdateAvailable route).
     LaunchedEffect(initialDeepLink) {
         when (initialDeepLink) {
             "update_available" -> navController.navigate(Destinations.UpdateAvailable.route)
-            "daily_summary" -> navController.navigate(Destinations.Calls.route)
+            "daily_summary" -> navController.navigate(Destinations.Main.route)
             else -> Unit
         }
     }
@@ -320,8 +287,7 @@ private fun friendlyMissing(state: com.callvault.app.util.PermissionState): List
 }
 
 /**
- * Placeholder destination for the Calls home tab — replaces Sprint 0's
- * `PlaceholderScreen`. The real list lands in Sprint 3.
+ * Placeholder destination used by routes that haven't been built yet.
  */
 @Composable
 private fun CallsPlaceholderScreen(modifier: Modifier = Modifier) {

@@ -12,7 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,7 +75,7 @@ fun NotesJournal(
             )
             Spacer(modifier = Modifier.width(8.dp))
             NeoIconButton(
-                icon = Icons.Filled.Send,
+                icon = Icons.AutoMirrored.Filled.Send,
                 contentDescription = "Save note",
                 onClick = {
                     if (draft.isNotBlank()) {

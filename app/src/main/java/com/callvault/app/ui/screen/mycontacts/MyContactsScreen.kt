@@ -35,6 +35,7 @@ import com.callvault.app.ui.components.neo.NeoEmptyState
 import com.callvault.app.ui.components.neo.NeoSearchBar
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.util.PhoneNumberFormatter
@@ -57,17 +58,13 @@ fun MyContactsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.my_contacts_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
+    StandardPage(
+        title = stringResource(R.string.cv_mycontacts_title),
+        description = stringResource(R.string.cv_mycontacts_description),
+        emoji = "👥",
+        onBack = onBack
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Spacer(Modifier.height(8.dp))
             NeoSearchBar(
                 query = query,

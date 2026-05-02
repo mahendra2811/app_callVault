@@ -93,3 +93,6 @@ reports/
 # -----------------------------
 !app/schemas/
 !app/schemas/**/*.json
+
+# Drive OAuth secrets — never commit
+app/src/main/res/values/secrets.xml

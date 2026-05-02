@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +40,7 @@ import com.callvault.app.ui.components.neo.NeoToggle
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.navigation.Destinations
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import kotlinx.coroutines.launch
@@ -66,18 +67,14 @@ fun SettingsScreen(
     var resetText by remember { mutableStateOf("") }
     var resetBusy by remember { mutableStateOf(false) }
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.settings_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = { navController.popBackStack() }
-            )
-        }
-    ) { _ ->
+    StandardPage(
+        title = stringResource(R.string.cv_settings_title),
+        description = stringResource(R.string.cv_settings_description),
+        emoji = "⚙️",
+        onBack = { navController.popBackStack() }
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // ---- Sync ----
@@ -237,22 +234,30 @@ fun SettingsScreen(
     }
 
     if (resetOpen) {
-        AlertDialog(
+        com.callvault.app.ui.components.neo.NeoDialog(
             onDismissRequest = { if (!resetBusy) resetOpen = false },
-            title = { Text(stringResource(R.string.settings_privacy_reset_confirm_title)) },
-            text = {
-                Column {
-                    Text(stringResource(R.string.settings_privacy_reset_confirm_body))
-                    Spacer(Modifier.height(8.dp))
-                    TextField(
-                        value = resetText,
-                        onValueChange = { resetText = it },
-                        singleLine = true,
-                        enabled = !resetBusy
-                    )
-                }
+            header = {
+                Text(
+                    stringResource(R.string.settings_privacy_reset_confirm_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
             },
-            confirmButton = {
+            body = {
+                Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
+                Text(stringResource(R.string.settings_privacy_reset_confirm_body))
+                Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
+                TextField(
+                    value = resetText,
+                    onValueChange = { resetText = it },
+                    singleLine = true,
+                    enabled = !resetBusy
+                )
+            },
+            footer = {
+                TextButton(enabled = !resetBusy, onClick = { resetOpen = false }) {
+                    Text(stringResource(R.string.cv_common_cancel))
+                }
+                Spacer(Modifier.width(com.callvault.app.ui.theme.Spacing.Sm))
                 TextButton(
                     enabled = resetText == stringResource(R.string.settings_privacy_reset_keyword) && !resetBusy,
                     onClick = {
@@ -264,11 +269,6 @@ fun SettingsScreen(
                         }
                     }
                 ) { Text("Wipe") }
-            },
-            dismissButton = {
-                TextButton(enabled = !resetBusy, onClick = { resetOpen = false }) {
-                    Text("Cancel")
-                }
             }
         )
     }

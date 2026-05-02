@@ -40,6 +40,7 @@ import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.components.neo.NeoToggle
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
@@ -60,14 +61,11 @@ fun AutoTagRulesScreen(
     viewModel: AutoTagRulesViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    NeoScaffold(
-        topBar = {
-            NeoTopBar(
-                title = stringResource(R.string.auto_tag_rules_title),
-                navIcon = Icons.AutoMirrored.Filled.ArrowBack,
-                onNavClick = onBack
-            )
-        }
+    StandardPage(
+        title = stringResource(R.string.cv_rules_title),
+        description = stringResource(R.string.cv_rules_description),
+        emoji = "🪄",
+        onBack = onBack
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (state.rules.isEmpty()) {

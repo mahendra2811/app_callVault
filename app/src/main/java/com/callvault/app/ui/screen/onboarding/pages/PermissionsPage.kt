@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -39,6 +40,8 @@ import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.CallVaultTheme
+import com.callvault.app.ui.theme.IconCallsTint
+import com.callvault.app.ui.theme.IconInquiriesTint
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
 
@@ -83,25 +86,29 @@ fun PermissionsPage(
         PermissionRow(
             icon = Icons.Filled.Phone,
             title = stringResource(R.string.onboarding_permissions_call_log_name),
-            reason = stringResource(R.string.onboarding_permissions_call_log_reason)
+            reason = stringResource(R.string.onboarding_permissions_call_log_reason),
+            iconTint = IconCallsTint,
         )
         Spacer(Modifier.height(10.dp))
         PermissionRow(
             icon = Icons.Filled.Contacts,
             title = stringResource(R.string.onboarding_permissions_contacts_name),
-            reason = stringResource(R.string.onboarding_permissions_contacts_reason)
+            reason = stringResource(R.string.onboarding_permissions_contacts_reason),
+            iconTint = IconInquiriesTint,
         )
         Spacer(Modifier.height(10.dp))
         PermissionRow(
             icon = Icons.Filled.PhonelinkRing,
             title = stringResource(R.string.onboarding_permissions_phone_state_name),
-            reason = stringResource(R.string.onboarding_permissions_phone_state_reason)
+            reason = stringResource(R.string.onboarding_permissions_phone_state_reason),
+            iconTint = IconCallsTint,
         )
         Spacer(Modifier.height(10.dp))
         PermissionRow(
             icon = Icons.Filled.Notifications,
             title = stringResource(R.string.onboarding_permissions_notifications_name),
-            reason = stringResource(R.string.onboarding_permissions_notifications_reason)
+            reason = stringResource(R.string.onboarding_permissions_notifications_reason),
+            iconTint = NeoColors.AccentAmber,
         )
         Spacer(Modifier.height(28.dp))
         NeoButton(
@@ -127,7 +134,12 @@ fun PermissionsPage(
 }
 
 @Composable
-private fun PermissionRow(icon: ImageVector, title: String, reason: String) {
+private fun PermissionRow(
+    icon: ImageVector,
+    title: String,
+    reason: String,
+    iconTint: Color = NeoColors.OnBase,
+) {
     NeoCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             NeoSurface(
@@ -136,7 +148,7 @@ private fun PermissionRow(icon: ImageVector, title: String, reason: String) {
                 shape = CircleShape
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Icon(imageVector = icon, contentDescription = null, tint = NeoColors.OnBase)
+                    Icon(imageVector = icon, contentDescription = null, tint = iconTint)
                 }
             }
             Spacer(Modifier.size(14.dp))

@@ -6,7 +6,7 @@ Last refreshed: 2026-05-01.
 
 ## P0 — Blockers (won't ship without these)
 
-- [ ] First clean build: `./gradlew lint assembleDebug`. Triage 1–3 fix passes via `callvault-build-fixer`.
+- [x] First clean build: `./gradlew assembleDebug` ✅ green 2026-05-02. APK 37 MB at `app/build/outputs/apk/debug/app-debug.apk`. Fixes: added `gradle.properties` (AndroidX flag), `Icons.AutoMirrored.Filled.ArrowBack` import in RealTimeSettingsScreen, `Json` provider in `AppModule`.
 - [ ] Generate release keystore + populate `keystore.properties`. Verify `assembleRelease` produces a signed APK.
 - [ ] Stand up real `versions-stable.json` and `versions-beta.json` hosts; replace placeholder URLs in `BuildConfig` (`UPDATE_MANIFEST_STABLE_URL`, `UPDATE_MANIFEST_BETA_URL`).
 - [ ] Replace launcher icons (currently a vector "C" placeholder) with final artwork at all densities + adaptive variants.

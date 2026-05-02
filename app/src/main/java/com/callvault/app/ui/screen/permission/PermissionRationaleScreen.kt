@@ -22,6 +22,7 @@ import com.callvault.app.R
 import com.callvault.app.ui.components.neo.NeoButton
 import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.components.neo.NeoCard
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 
@@ -39,13 +40,10 @@ fun PermissionRationaleScreen(
     onGrant: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(NeoColors.Base)
-            .padding(horizontal = 24.dp, vertical = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    StandardPage(
+        title = stringResource(R.string.cv_permission_rationale_title),
+        description = stringResource(R.string.cv_permission_rationale_description),
+        emoji = "🔐"
     ) {
         Text(
             text = stringResource(R.string.permission_rationale_title),
@@ -53,7 +51,6 @@ fun PermissionRationaleScreen(
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
-        Spacer(Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.permission_rationale_body),
             color = NeoColors.OnBaseMuted,
@@ -61,7 +58,6 @@ fun PermissionRationaleScreen(
             textAlign = TextAlign.Center
         )
         if (missing.isNotEmpty()) {
-            Spacer(Modifier.height(20.dp))
             NeoCard(modifier = Modifier.fillMaxWidth()) {
                 Column {
                     missing.forEach { name ->
@@ -75,7 +71,6 @@ fun PermissionRationaleScreen(
                 }
             }
         }
-        Spacer(Modifier.height(28.dp))
         NeoButton(
             text = stringResource(R.string.permission_rationale_cta),
             onClick = onGrant,
