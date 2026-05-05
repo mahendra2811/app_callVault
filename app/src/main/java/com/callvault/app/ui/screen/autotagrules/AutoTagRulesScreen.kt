@@ -43,6 +43,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import kotlinx.datetime.Clock
 
@@ -123,7 +124,7 @@ private fun RuleListItem(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = row.rule.name.ifBlank { stringResource(R.string.auto_tag_rules_unnamed) },
-                        color = NeoColors.OnBase,
+                        color = SageColors.TextPrimary,
                         style = MaterialTheme.typography.titleSmall
                     )
                     Spacer(Modifier.height(2.dp))
@@ -134,7 +135,7 @@ private fun RuleListItem(
                             row.rule.actions.size,
                             row.matchCount
                         ),
-                        color = NeoColors.OnBaseMuted,
+                        color = SageColors.TextSecondary,
                         style = MaterialTheme.typography.labelSmall
                     )
                 }

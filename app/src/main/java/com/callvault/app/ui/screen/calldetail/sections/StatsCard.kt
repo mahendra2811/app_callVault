@@ -18,6 +18,7 @@ import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.screen.calldetail.DetailStats
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import com.callvault.app.ui.util.DateFormatter
 import com.callvault.app.ui.util.DurationFormatter
@@ -35,7 +36,7 @@ fun StatsCard(stats: DetailStats, modifier: Modifier = Modifier) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 "Stats",
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold
             )
@@ -54,7 +55,7 @@ fun StatsCard(stats: DetailStats, modifier: Modifier = Modifier) {
             stats.firstDate?.let { first ->
                 Text(
                     text = "First: ${DateFormatter.longDate(first)}",
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 12.dp)
                 )
@@ -62,7 +63,7 @@ fun StatsCard(stats: DetailStats, modifier: Modifier = Modifier) {
             stats.lastDate?.let { last ->
                 Text(
                     text = "Last: ${DateFormatter.longDate(last)}",
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -75,11 +76,11 @@ private fun Stat(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             value,
-            color = NeoColors.OnBase,
+            color = SageColors.TextPrimary,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
-        Text(label, color = NeoColors.OnBaseMuted, style = MaterialTheme.typography.labelSmall)
+        Text(label, color = SageColors.TextSecondary, style = MaterialTheme.typography.labelSmall)
     }
 }
 

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.components.neo.NeoChip
 import com.callvault.app.ui.screen.export.DateRangeChoice
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /** Wizard step 1 — pick the date range with quick chips. */
 @OptIn(ExperimentalLayoutApi::class)
@@ -26,7 +27,7 @@ fun DateRangeStep(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        Text("Date range", style = MaterialTheme.typography.titleLarge, color = NeoColors.OnBase)
+        Text("Date range", style = MaterialTheme.typography.titleLarge, color = SageColors.TextPrimary)
         Spacer(Modifier.height(12.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             chip("All time", selected is DateRangeChoice.AllTime) { onSelect(DateRangeChoice.AllTime) }
@@ -39,7 +40,7 @@ fun DateRangeStep(
         Text(
             "Custom date pickers land in a follow-up — pick a preset for now.",
             style = MaterialTheme.typography.bodySmall,
-            color = NeoColors.OnBaseMuted
+            color = SageColors.TextSecondary
         )
     }
 }

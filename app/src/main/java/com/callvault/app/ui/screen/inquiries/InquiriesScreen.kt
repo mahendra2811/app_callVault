@@ -45,6 +45,7 @@ import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.DateFormatter
 import com.callvault.app.ui.util.PhoneNumberFormatter
 import kotlinx.datetime.Instant
@@ -181,28 +182,32 @@ private fun InquiryRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(64.dp)
             .combinedClickable(onClick = onClick, onLongClick = onLongPress)
             .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NeoAvatar(name = meta.displayName ?: meta.normalizedNumber)
+        NeoAvatar(name = meta.displayName ?: meta.normalizedNumber, size = 36.dp)
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = meta.displayName ?: PhoneNumberFormatter.pretty(meta.normalizedNumber),
-                color = if (selected) NeoColors.AccentBlue else NeoColors.OnBase,
-                style = MaterialTheme.typography.titleSmall,
+                color = if (selected) SageColors.Sage else SageColors.TextPrimary,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
                 text = stringResource(R.string.inquiries_total_calls, meta.totalCalls) +
                     " · " + DateFormatter.rowTime(meta.lastCallDate),
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.bodySmall
             )
         }
         TextButton(onClick = onConvert) {
-            Text(text = stringResource(R.string.inquiries_action_convert))
+            Text(
+                text = stringResource(R.string.inquiries_action_convert),
+                color = SageColors.Sage
+            )
         }
     }
 }

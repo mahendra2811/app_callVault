@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.data.export.ExportColumns
 import com.callvault.app.ui.components.neo.NeoToggle
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /** Wizard step 3 — toggle each available column. CSV/Excel only. */
 @Composable
@@ -28,7 +29,7 @@ fun ColumnsStep(
 ) {
     val scroll = rememberScrollState()
     Column(modifier = modifier.padding(16.dp).verticalScroll(scroll)) {
-        Text("Columns", style = MaterialTheme.typography.titleLarge, color = NeoColors.OnBase)
+        Text("Columns", style = MaterialTheme.typography.titleLarge, color = SageColors.TextPrimary)
         Spacer(Modifier.height(12.dp))
         row("Date", columns.date) { onChange(columns.copy(date = it)) }
         row("Number", columns.number) { onChange(columns.copy(number = it)) }
@@ -52,7 +53,7 @@ private fun row(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, style = MaterialTheme.typography.bodyLarge, color = NeoColors.OnBase)
+        Text(label, style = MaterialTheme.typography.bodyLarge, color = SageColors.TextPrimary)
         NeoToggle(checked = checked, onChange = onChange)
     }
 }

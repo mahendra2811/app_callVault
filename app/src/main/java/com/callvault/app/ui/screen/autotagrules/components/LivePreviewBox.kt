@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.R
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 
 /**
@@ -31,7 +32,7 @@ fun LivePreviewBox(matchCount: Int, modifier: Modifier = Modifier) {
         Box(modifier = Modifier.padding(12.dp)) {
             Text(
                 text = stringResource(R.string.rule_editor_preview_match_count, matchCount),
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.bodySmall
             )
         }

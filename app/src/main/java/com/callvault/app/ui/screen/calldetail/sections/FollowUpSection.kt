@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.components.neo.NeoButton
 import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.DateFormatter
 import kotlinx.datetime.Instant
 
@@ -37,14 +38,14 @@ fun FollowUpSection(
     ) {
         Text(
             "Follow-up",
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold
         )
         if (followUpAt != null) {
             Text(
                 text = DateFormatter.longDate(followUpAt),
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(top = 6.dp)
             )

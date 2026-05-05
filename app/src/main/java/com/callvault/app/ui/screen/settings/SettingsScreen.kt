@@ -43,6 +43,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import kotlinx.coroutines.launch
 
 /**
@@ -146,7 +147,7 @@ fun SettingsScreen(
                     ToggleRow(stringResource(R.string.settings_backup_master), state.autoBackupEnabled, vm::setAutoBackupEnabled)
                     Text(
                         text = stringResource(R.string.settings_backup_retention, state.autoBackupRetention),
-                        color = NeoColors.OnBaseMuted,
+                        color = SageColors.TextSecondary,
                         style = MaterialTheme.typography.bodySmall
                     )
                     NavRow("Open backup & restore…") {
@@ -223,7 +224,7 @@ fun SettingsScreen(
                     val build = com.callvault.app.BuildConfig.VERSION_CODE
                     Text(
                         stringResource(R.string.settings_about_version, pkg, build),
-                        color = NeoColors.OnBaseMuted,
+                        color = SageColors.TextSecondary,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -280,7 +281,7 @@ private fun SectionCard(title: String, content: @Composable () -> Unit) {
         Column {
             Text(
                 text = title,
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.height(10.dp))
@@ -299,7 +300,7 @@ private fun ToggleRow(label: String, checked: Boolean, onChange: (Boolean) -> Un
     ) {
         Text(
             text = label,
-            color = NeoColors.OnBase,
+            color = SageColors.TextPrimary,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
@@ -322,7 +323,7 @@ private fun NavRow(label: String, onClick: () -> Unit) {
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
-        Text("›", color = NeoColors.OnBaseMuted)
+        Text("›", color = SageColors.TextSecondary)
     }
 }
 

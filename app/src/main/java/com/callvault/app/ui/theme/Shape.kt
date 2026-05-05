@@ -5,15 +5,17 @@ import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
 /**
- * Shape scale for CallVault.
+ * Shape scale for CallVault — Phase II.
  *
- * Neumorphic surfaces lean on rounded corners (12 / 16 / 24 dp) so light/dark
- * shadow gradients wrap continuously without sharp seams.
+ * Aligned with UI-spec §8.3 corner-radius tokens.
  */
 val CallVaultShapes: Shapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(12.dp),
     medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(24.dp),
-    extraLarge = RoundedCornerShape(32.dp)
+    large = RoundedCornerShape(20.dp),
+    extraLarge = RoundedCornerShape(24.dp)
 )
+
+/** Pill — used for primary CTA, FAB, filter chips. */
+val PillShape = RoundedCornerShape(percent = 50)

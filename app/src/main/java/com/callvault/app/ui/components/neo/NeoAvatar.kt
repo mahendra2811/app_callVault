@@ -1,6 +1,7 @@
 package com.callvault.app.ui.components.neo
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -40,7 +41,9 @@ fun NeoAvatar(
         color = resolved
     ) {
         Box(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(

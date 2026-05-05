@@ -1,5 +1,8 @@
 package com.callvault.app.ui.screen.shared
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -11,18 +14,22 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.components.neo.NeoIconButton
 import com.callvault.app.ui.components.neo.NeoPageHeader
 import com.callvault.app.ui.components.neo.NeoTopBar
+import com.callvault.app.ui.components.neo.NeoTopLineLoader
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.Spacing
 
 /**
  * Reusable scaffold for content pages that share the standard CallVault chrome:
- * a [NeoTopBar], a [NeoPageHeader] and a vertically-stacked content column.
+ * a [NeoTopBar], an optional thin [NeoTopLineLoader], a [NeoPageHeader] and a
+ * vertically-stacked content column.
  *
  * @param title screen title shown in the top bar and page header.
  * @param description supporting copy rendered under the title in the page header.
@@ -31,6 +38,12 @@ import com.callvault.app.ui.theme.Spacing
  * @param actions trailing top-bar action slot.
  * @param showBrand renders the "C" brand chip next to the title (use only on
  *   the app's primary surface).
+ * @param onBackToHome when non-null, hardware back routes to home instead of popping.
+ * @param loading when true, shows a 3.dp top-line indeterminate loader between
+ *   the top bar and page header.
+ * @param backgroundColor outer container color; defaults to [NeoColors.Base].
+ * @param headerGradient optional vertical gradient (top → bottom) painted behind
+ *   the page header.
  * @param content section column body. Vertical spacing between children is
  *   [Spacing.SectionGap].
  */
@@ -42,8 +55,18 @@ fun StandardPage(
     onBack: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     showBrand: Boolean = false,
+    onBackToHome: (() -> Unit)? = null,
+    loading: Boolean = false,
+    backgroundColor: Color = NeoColors.Base,
+    headerGradient: Pair<Color, Color>? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    if (onBackToHome != null) {
+        BackHandler { onBackToHome() }
+    }
+    val headerBrush = headerGradient?.let {
+        Brush.verticalGradient(listOf(it.first, it.second))
+    }
     NeoScaffold(
         topBar = {
             NeoTopBar(
@@ -55,8 +78,21 @@ fun StandardPage(
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            NeoPageHeader(title = title, description = description, emoji = emoji)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor)
+                .padding(padding)
+        ) {
+            AnimatedVisibility(visible = loading) {
+                NeoTopLineLoader()
+            }
+            NeoPageHeader(
+                title = title,
+                description = description,
+                emoji = emoji,
+                backgroundBrush = headerBrush
+            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()

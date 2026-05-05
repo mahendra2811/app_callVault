@@ -18,6 +18,7 @@ import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.components.neo.NeoDialog
 import com.callvault.app.ui.components.neo.NeoTextField
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.Spacing
 
 /**
@@ -37,14 +38,14 @@ fun BookmarkReasonDialog(
             Text(
                 stringResource(R.string.bookmarks_reason_title),
                 style = MaterialTheme.typography.titleLarge,
-                color = NeoColors.OnBase
+                color = SageColors.TextPrimary
             )
         },
         body = {
             Spacer(Modifier.height(Spacing.Sm))
             Text(
                 stringResource(R.string.bookmarks_reason_body),
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(Modifier.height(Spacing.Md))

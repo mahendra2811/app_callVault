@@ -5,44 +5,42 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 /**
- * Single, locked Material 3 light color scheme keyed off the neumorphic base.
+ * Phase II — Sage/Earth color scheme wired into Material 3.
  *
- * The app intentionally does **not** track system dark mode — neumorphism's
- * depth illusion only works on a single tinted base. See spec §3.23.
+ * App is light-only (no system dark-mode tracking). NeoColors retained
+ * elsewhere for transition; new surfaces should resolve through MaterialTheme.
  */
 private val CallVaultColorScheme = lightColorScheme(
-    primary = NeoColors.AccentBlue,
-    onPrimary = NeoColors.Light,
-    primaryContainer = NeoColors.Raised,
-    onPrimaryContainer = NeoColors.OnBase,
+    primary = SageColors.Sage,
+    onPrimary = SageColors.TextOnAccent,
+    primaryContainer = SageColors.SurfaceElev,
+    onPrimaryContainer = SageColors.TextPrimary,
 
-    secondary = NeoColors.AccentTeal,
-    onSecondary = NeoColors.Light,
-    secondaryContainer = NeoColors.Raised,
-    onSecondaryContainer = NeoColors.OnBase,
+    secondary = SageColors.Orange,
+    onSecondary = SageColors.TextOnAccent,
+    secondaryContainer = SageColors.SurfaceAlt,
+    onSecondaryContainer = SageColors.TextPrimary,
 
-    tertiary = NeoColors.AccentViolet,
-    onTertiary = NeoColors.Light,
+    tertiary = SageColors.Gold,
+    onTertiary = SageColors.TextOnAccent,
 
-    background = NeoColors.Base,
-    onBackground = NeoColors.OnBase,
+    background = SageColors.Canvas,
+    onBackground = SageColors.TextPrimary,
 
-    surface = NeoColors.Base,
-    onSurface = NeoColors.OnBase,
-    surfaceVariant = NeoColors.Inset,
-    onSurfaceVariant = NeoColors.OnBaseMuted,
+    surface = SageColors.Surface,
+    onSurface = SageColors.TextPrimary,
+    surfaceVariant = SageColors.SurfaceAlt,
+    onSurfaceVariant = SageColors.TextSecondary,
 
-    outline = NeoColors.Dark,
-    outlineVariant = NeoColors.OnBaseSubtle,
+    outline = SageColors.BorderDefault,
+    outlineVariant = SageColors.BorderMuted,
 
-    error = NeoColors.AccentRose,
-    onError = NeoColors.Light
+    error = SageColors.StatusError,
+    onError = SageColors.TextOnAccent
 )
 
 /**
- * Root theme wrapper.
- *
- * Wrap the entire app (including previews) in [CallVaultTheme] so all
+ * Root theme wrapper. Wrap the entire app (including previews) so all
  * composables inherit the locked colors, typography, and shapes.
  */
 @Composable

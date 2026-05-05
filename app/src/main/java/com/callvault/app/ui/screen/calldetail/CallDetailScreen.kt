@@ -30,6 +30,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.callvault.app.R
 import com.callvault.app.domain.model.Note
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import com.callvault.app.ui.components.neo.NeoButton
+import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.components.neo.NeoIconButton
 import com.callvault.app.ui.screen.bookmarks.BookmarkReasonDialog
 import com.callvault.app.ui.screen.calldetail.sections.ActionBar
@@ -79,6 +85,8 @@ fun CallDetailScreen(
         description = stringResource(R.string.cv_calldetail_description),
         emoji = "👤",
         onBack = onBack,
+        backgroundColor = com.callvault.app.ui.theme.TabBgCalls,
+        headerGradient = com.callvault.app.ui.theme.HeaderGradCallsStart to com.callvault.app.ui.theme.HeaderGradCallsEnd,
         actions = {
             NeoIconButton(
                 icon = Icons.Filled.Share,
@@ -96,30 +104,6 @@ fun CallDetailScreen(
                 },
                 size = 40.dp
             )
-            NeoIconButton(
-                icon = Icons.Filled.MoreVert,
-                contentDescription = stringResource(R.string.calls_action_more),
-                onClick = { menuOpen = true },
-                size = 40.dp
-            )
-            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.detail_menu_edit_notes)) },
-                    onClick = {
-                        menuOpen = false
-                        noteEditorTarget = null
-                        noteEditorOpen = true
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.detail_menu_clear_all)) },
-                    onClick = { menuOpen = false; confirmClear = true }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.detail_menu_report_spam)) },
-                    onClick = { menuOpen = false }
-                )
-            }
         }
     ) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -174,6 +158,40 @@ fun CallDetailScreen(
                 )
             }
             item("history") { HistoryTimeline(history = state.history) }
+            item("manage") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.cv_calldetail_manage_section),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    NeoButton(
+                        text = stringResource(R.string.detail_menu_edit_notes),
+                        onClick = {
+                            noteEditorTarget = null
+                            noteEditorOpen = true
+                        },
+                        variant = NeoButtonVariant.Tertiary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    NeoButton(
+                        text = stringResource(R.string.detail_menu_clear_all),
+                        onClick = { confirmClear = true },
+                        variant = NeoButtonVariant.Tertiary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    NeoButton(
+                        text = stringResource(R.string.detail_menu_report_spam),
+                        onClick = { /* existing handler placeholder */ },
+                        variant = NeoButtonVariant.Tertiary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
             item { Spacer(modifier = Modifier.height(32.dp)) }
         }
     }

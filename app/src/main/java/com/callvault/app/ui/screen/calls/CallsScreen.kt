@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Inbox
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material.icons.automirrored.filled.ViewList
@@ -36,6 +35,7 @@ import com.callvault.app.ui.components.neo.NeoPageHeader
 import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.DateFormatter
 
 /**
@@ -73,7 +73,6 @@ fun CallsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
     var filterSheetOpen by remember { mutableStateOf(false) }
-    var overflowOpen by remember { mutableStateOf(false) }
     var bannerDismissed by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
@@ -102,103 +101,6 @@ fun CallsScreen(
                         contentDescription = "Toggle view mode",
                         size = 40.dp
                     )
-                    androidx.compose.foundation.layout.Box {
-                        NeoIconButton(
-                            icon = Icons.Filled.MoreVert,
-                            onClick = { overflowOpen = true },
-                            contentDescription = "More",
-                            size = 40.dp
-                        )
-                        androidx.compose.material3.DropdownMenu(
-                            expanded = overflowOpen,
-                            onDismissRequest = { overflowOpen = false }
-                        ) {
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = { androidx.compose.material3.Text("My filters") },
-                                onClick = { overflowOpen = false; onOpenFilterPresets() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = {
-                                    androidx.compose.material3.Text(
-                                        androidx.compose.ui.res.stringResource(
-                                            com.callvault.app.R.string.auto_save_open_my_contacts
-                                        )
-                                    )
-                                },
-                                onClick = { overflowOpen = false; onOpenMyContacts() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = {
-                                    androidx.compose.material3.Text(
-                                        androidx.compose.ui.res.stringResource(
-                                            com.callvault.app.R.string.auto_save_open_inquiries
-                                        )
-                                    )
-                                },
-                                onClick = { overflowOpen = false; onOpenInquiries() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = {
-                                    androidx.compose.material3.Text(
-                                        androidx.compose.ui.res.stringResource(
-                                            com.callvault.app.R.string.auto_save_open_settings
-                                        )
-                                    )
-                                },
-                                onClick = { overflowOpen = false; onOpenAutoSaveSettings() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = {
-                                    androidx.compose.material3.Text(
-                                        androidx.compose.ui.res.stringResource(
-                                            com.callvault.app.R.string.calls_overflow_auto_tag_rules
-                                        )
-                                    )
-                                },
-                                onClick = { overflowOpen = false; onOpenAutoTagRules() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = {
-                                    androidx.compose.material3.Text(
-                                        androidx.compose.ui.res.stringResource(
-                                            com.callvault.app.R.string.calls_overflow_lead_scoring
-                                        )
-                                    )
-                                },
-                                onClick = { overflowOpen = false; onOpenLeadScoringSettings() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = {
-                                    androidx.compose.material3.Text(
-                                        androidx.compose.ui.res.stringResource(
-                                            com.callvault.app.R.string.calls_overflow_realtime_settings
-                                        )
-                                    )
-                                },
-                                onClick = { overflowOpen = false; onOpenRealTimeSettings() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = { androidx.compose.material3.Text("Export") },
-                                onClick = { overflowOpen = false; onOpenExport() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = { androidx.compose.material3.Text("Backup & restore") },
-                                onClick = { overflowOpen = false; onOpenBackup() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = { androidx.compose.material3.Text("App updates") },
-                                onClick = { overflowOpen = false; onOpenUpdateSettings() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = { androidx.compose.material3.Text("Help & docs") },
-                                onClick = { overflowOpen = false; onOpenDocs() }
-                            )
-                            androidx.compose.material3.DropdownMenuItem(
-                                text = { androidx.compose.material3.Text("Settings") },
-                                onClick = { overflowOpen = false; onOpenSettings() }
-                            )
-                        }
-                    }
                 }
             )
         },
@@ -363,8 +265,8 @@ private fun androidx.compose.foundation.lazy.LazyListScope.renderGroupedByDate(
         item("hdr-$key") {
             Text(
                 text = DateFormatter.headerLabel(list.first().call.date),
-                style = MaterialTheme.typography.labelLarge,
-                color = NeoColors.OnBaseMuted,
+                style = MaterialTheme.typography.labelMedium,
+                color = SageColors.TextTertiary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 24.dp, top = 12.dp, bottom = 4.dp)

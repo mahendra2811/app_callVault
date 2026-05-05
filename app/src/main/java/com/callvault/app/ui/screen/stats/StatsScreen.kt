@@ -76,6 +76,7 @@ import com.callvault.app.ui.screen.stats.charts.TopNumbersList
 import com.callvault.app.ui.screen.stats.charts.TypeDonut
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.DurationFormatter
 import kotlin.math.roundToInt
 
@@ -106,6 +107,9 @@ fun StatsScreen(
         description = stringResource(R.string.cv_stats_description),
         emoji = "📊",
         onBack = onBack,
+        loading = state.loading,
+        backgroundColor = com.callvault.app.ui.theme.TabBgStats,
+        headerGradient = com.callvault.app.ui.theme.HeaderGradStatsStart to com.callvault.app.ui.theme.HeaderGradStatsEnd,
         actions = {
             NeoIconButton(
                 icon = Icons.Filled.FilterList,
@@ -241,7 +245,7 @@ private fun SectionTitle(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleSmall,
-        color = NeoColors.OnBaseMuted,
+        color = SageColors.TextSecondary,
         fontWeight = FontWeight.SemiBold,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
     )
@@ -283,13 +287,13 @@ private fun OverviewCard(label: String, value: String) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = NeoColors.OnBaseMuted
+                color = SageColors.TextSecondary
             )
             Spacer(Modifier.height(6.dp))
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleLarge,
-                color = NeoColors.OnBase
+                color = SageColors.TextPrimary
             )
         }
     }
@@ -305,7 +309,7 @@ private fun LeadDistributionBar(dist: Map<LeadBucket, Int>) {
         Text(
             text = stringResource(R.string.stats_section_leads),
             style = MaterialTheme.typography.titleSmall,
-            color = NeoColors.OnBaseMuted
+            color = SageColors.TextSecondary
         )
         Spacer(Modifier.height(6.dp))
         Row(
@@ -343,7 +347,7 @@ private fun LegendDot(color: Color, label: String) {
                 .background(color)
         )
         Spacer(Modifier.width(4.dp))
-        Text(label, style = MaterialTheme.typography.labelSmall, color = NeoColors.OnBaseMuted)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = SageColors.TextSecondary)
     }
 }
 
@@ -364,7 +368,7 @@ private fun InsightCard(insight: Insight) {
             )
             Text(
                 text = insight.text,
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(12.dp)
             )
@@ -397,7 +401,7 @@ private fun DateRangeSheet(
             Text(
                 stringResource(R.string.stats_change_range),
                 style = MaterialTheme.typography.titleMedium,
-                color = NeoColors.OnBase
+                color = SageColors.TextPrimary
             )
             Spacer(Modifier.height(12.dp))
             Row(

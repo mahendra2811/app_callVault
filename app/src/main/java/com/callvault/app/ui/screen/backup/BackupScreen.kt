@@ -45,6 +45,7 @@ import com.callvault.app.ui.screen.shared.StandardPage
 import androidx.compose.ui.res.stringResource
 import com.callvault.app.R
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /** Backup & restore landing screen. */
 @Composable
@@ -86,7 +87,7 @@ fun BackupScreen(
                     Spacer(Modifier.height(4.dp))
                     Text(
                         "Encrypt every call, tag, contact and rule into a single .cvb file in Downloads.",
-                        style = MaterialTheme.typography.bodySmall, color = NeoColors.OnBaseMuted
+                        style = MaterialTheme.typography.bodySmall, color = SageColors.TextSecondary
                     )
                     Spacer(Modifier.height(12.dp))
                     NeoButton(
@@ -107,7 +108,7 @@ fun BackupScreen(
                     Spacer(Modifier.height(4.dp))
                     Text(
                         "This will replace all your data. Pick a .cvb file and enter its passphrase.",
-                        style = MaterialTheme.typography.bodySmall, color = NeoColors.OnBaseMuted
+                        style = MaterialTheme.typography.bodySmall, color = SageColors.TextSecondary
                     )
                     Spacer(Modifier.height(12.dp))
                     NeoButton(
@@ -125,7 +126,7 @@ fun BackupScreen(
                     Spacer(Modifier.height(4.dp))
                     Text(
                         if (state.passphraseSet) "Status: set (•••••••)" else "Status: not set",
-                        style = MaterialTheme.typography.bodySmall, color = NeoColors.OnBaseMuted
+                        style = MaterialTheme.typography.bodySmall, color = SageColors.TextSecondary
                     )
                     Spacer(Modifier.height(12.dp))
                     NeoButton(
@@ -147,7 +148,7 @@ fun BackupScreen(
                             Text("Auto-backup daily at 2 AM", style = MaterialTheme.typography.titleMedium)
                             Text(
                                 "Runs in the background when your phone is idle.",
-                                style = MaterialTheme.typography.bodySmall, color = NeoColors.OnBaseMuted
+                                style = MaterialTheme.typography.bodySmall, color = SageColors.TextSecondary
                             )
                         }
                         NeoToggle(
@@ -272,7 +273,7 @@ private fun CloudBackupCard(
             Text(
                 stringResource(R.string.cv_backup_drive_toggle),
                 style = MaterialTheme.typography.bodySmall,
-                color = NeoColors.OnBaseMuted
+                color = SageColors.TextSecondary
             )
             val email = state.driveSignedInEmail
             if (email != null) {
@@ -329,7 +330,7 @@ private fun CloudBackupCard(
             Text(
                 stringResource(R.string.cv_backup_drive_explainer),
                 style = MaterialTheme.typography.bodySmall,
-                color = NeoColors.OnBaseMuted
+                color = SageColors.TextSecondary
             )
         }
     }

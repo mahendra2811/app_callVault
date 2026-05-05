@@ -33,6 +33,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Sprint 6 — Lead-scoring settings: master toggle plus six tunables that
@@ -63,7 +64,7 @@ fun LeadScoringSettingsScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(R.string.lead_scoring_master_toggle),
-                    color = NeoColors.OnBase,
+                    color = SageColors.TextPrimary,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f)
                 )
@@ -115,10 +116,10 @@ fun LeadScoringSettingsScreen(
 private fun WeightSlider(label: String, value: Float, onChange: (Float) -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = label, color = NeoColors.OnBase, modifier = Modifier.weight(1f))
+            Text(text = label, color = SageColors.TextPrimary, modifier = Modifier.weight(1f))
             Text(
                 text = "%.2f".format(value),
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.labelSmall
             )
         }
@@ -130,10 +131,10 @@ private fun WeightSlider(label: String, value: Float, onChange: (Float) -> Unit)
 private fun BonusSlider(label: String, value: Int, onChange: (Int) -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = label, color = NeoColors.OnBase, modifier = Modifier.weight(1f))
+            Text(text = label, color = SageColors.TextPrimary, modifier = Modifier.weight(1f))
             Text(
                 text = "+$value",
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.labelSmall
             )
         }

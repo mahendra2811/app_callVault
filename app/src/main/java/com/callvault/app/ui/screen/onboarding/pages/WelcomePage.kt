@@ -1,5 +1,7 @@
 package com.callvault.app.ui.screen.onboarding.pages
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +34,8 @@ import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
+import com.callvault.app.ui.theme.SplashGradEnd
+import com.callvault.app.ui.theme.SplashGradStart
 
 /**
  * Onboarding page 1 — friendly hero with the app's value proposition.
@@ -45,6 +53,7 @@ fun WelcomePage(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(brush = Brush.verticalGradient(listOf(SplashGradStart, SplashGradEnd)))
             .padding(horizontal = 32.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -54,27 +63,29 @@ fun WelcomePage(
             elevation = NeoElevation.ConcaveMedium,
             shape = CircleShape
         ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(R.string.onboarding_welcome_logo_letter),
-                    color = NeoColors.OnBase,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 84.sp
+            Box(
+                modifier = Modifier.fillMaxSize().padding(20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.cv_logo),
+                    contentDescription = stringResource(R.string.onboarding_welcome_headline),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
         Spacer(Modifier.height(40.dp))
         Text(
             text = stringResource(R.string.onboarding_welcome_headline),
-            color = NeoColors.OnBase,
+            color = Color.White,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.onboarding_welcome_subtext),
-            color = NeoColors.OnBaseMuted,
+            color = Color.White.copy(alpha = 0.85f),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )

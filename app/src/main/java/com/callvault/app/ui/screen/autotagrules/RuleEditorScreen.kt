@@ -44,6 +44,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 
 /**
@@ -86,7 +87,7 @@ fun RuleEditorScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(R.string.rule_editor_active),
-                    color = NeoColors.OnBase,
+                    color = SageColors.TextPrimary,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
@@ -147,7 +148,7 @@ fun RuleEditorScreen(
 private fun SectionHeader(title: String) {
     Text(
         text = title,
-        color = NeoColors.OnBase,
+        color = SageColors.TextPrimary,
         style = MaterialTheme.typography.titleSmall,
         modifier = Modifier.padding(top = 8.dp)
     )
@@ -164,7 +165,7 @@ private fun RuleEditorPreview() {
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Box(modifier = Modifier.padding(16.dp)) {
-                    Text("Rule editor preview", color = NeoColors.OnBase)
+                    Text("Rule editor preview", color = SageColors.TextPrimary)
                 }
             }
         }

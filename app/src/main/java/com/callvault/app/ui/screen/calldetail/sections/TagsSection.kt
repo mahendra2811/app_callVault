@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.domain.model.Tag
 import com.callvault.app.ui.components.neo.NeoChip
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Renders tags applied to this number plus an "Add tag" affordance that opens
@@ -35,7 +36,7 @@ fun TagsSection(
     ) {
         Text(
             "Tags",
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold
         )

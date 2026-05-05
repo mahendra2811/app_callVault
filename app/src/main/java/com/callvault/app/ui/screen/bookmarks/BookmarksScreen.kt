@@ -43,6 +43,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import com.callvault.app.ui.util.DateFormatter
 import com.callvault.app.ui.util.PhoneNumberFormatter
@@ -95,7 +96,7 @@ fun BookmarksScreen(
                         item("pinned-hdr") {
                             Text(
                                 stringResource(R.string.bookmarks_pinned_section),
-                                color = NeoColors.OnBaseMuted,
+                                color = SageColors.TextSecondary,
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -150,7 +151,7 @@ private fun BookmarkRowItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = row.displayName ?: PhoneNumberFormatter.pretty(row.call.normalizedNumber),
-                    color = NeoColors.OnBase,
+                    color = SageColors.TextPrimary,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -164,7 +165,7 @@ private fun BookmarkRowItem(
                 }
                 Text(
                     text = sub,
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.labelMedium
                 )
             }
@@ -218,7 +219,7 @@ private fun BookmarksPopulatedPreview() {
         ) {
             Text(
                 "Pinned",
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold
             )

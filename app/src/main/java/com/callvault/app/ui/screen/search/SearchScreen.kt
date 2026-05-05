@@ -34,6 +34,7 @@ import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.screen.calls.CallRowItem
 import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 
 /**
@@ -119,7 +120,7 @@ private fun RecentList(recent: List<String>, onSelect: (String) -> Unit, onClear
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 "Recent searches",
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.weight(1f)
             )
@@ -130,7 +131,7 @@ private fun RecentList(recent: List<String>, onSelect: (String) -> Unit, onClear
         if (recent.isEmpty()) {
             Text(
                 "Your recent searches will appear here.",
-                color = NeoColors.OnBaseSubtle,
+                color = SageColors.TextTertiary,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 8.dp)
             )
@@ -151,7 +152,7 @@ private fun RecentList(recent: List<String>, onSelect: (String) -> Unit, onClear
                             size = 32.dp
                         )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text(q, color = NeoColors.OnBase)
+                        Text(q, color = SageColors.TextPrimary)
                     }
                 }
             }

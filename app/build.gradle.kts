@@ -192,6 +192,8 @@ dependencies {
     implementation(libs.appauth)
     implementation(libs.okhttp)
 
+    implementation(libs.lottie.compose)
+
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)

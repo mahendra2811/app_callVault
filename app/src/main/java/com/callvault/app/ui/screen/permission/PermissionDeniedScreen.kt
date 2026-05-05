@@ -22,6 +22,7 @@ import com.callvault.app.ui.components.neo.NeoButton
 import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.util.PermissionManager
 
 /**
@@ -48,14 +49,14 @@ fun PermissionDeniedScreen(
     ) {
         Text(
             text = stringResource(R.string.permission_denied_title),
-            color = NeoColors.OnBase,
+            color = SageColors.TextPrimary,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.permission_denied_body),
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )

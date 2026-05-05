@@ -1,9 +1,18 @@
 package com.callvault.app.ui.navigation
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Home
@@ -14,7 +23,12 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +63,12 @@ import com.callvault.app.ui.theme.IconCallsTint
 import com.callvault.app.ui.theme.IconHomeTint
 import com.callvault.app.ui.theme.IconInquiriesTint
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
+import com.callvault.app.ui.theme.Spacing
+import com.callvault.app.ui.theme.TabBgCalls
+import com.callvault.app.ui.theme.TabBgHome
+import com.callvault.app.ui.theme.TabBgInquiries
+import com.callvault.app.ui.theme.TabBgMore
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -134,9 +154,35 @@ fun MainScaffold(
     var quickExportOpen by rememberSaveable { mutableStateOf(false) }
     val saveableHolder = rememberSaveableStateHolder()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    var lastBackPressMs by remember { androidx.compose.runtime.mutableLongStateOf(0L) }
+    val backExitMessage = stringResource(R.string.cv_back_press_exit)
+    val canPopInner = innerNav.previousBackStackEntry != null
+
+    BackHandler(enabled = !canPopInner) {
+        val now = System.currentTimeMillis()
+        if (now - lastBackPressMs < 2_000L) {
+            (ctx as? Activity)?.finish()
+        } else {
+            lastBackPressMs = now
+            coroutineScope.launch { snackbarHostState.showSnackbar(backExitMessage) }
+        }
+    }
+
+    val currentTabBg = when (tabs[selectedIndex]) {
+        MainTabRoute.Home -> TabBgHome
+        MainTabRoute.Calls -> TabBgCalls
+        MainTabRoute.Inquiries -> TabBgInquiries
+        MainTabRoute.More -> TabBgMore
+    }
+
     Scaffold(
-        modifier = modifier,
-        containerColor = NeoColors.Base,
+        modifier = modifier
+            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)),
+        containerColor = currentTabBg,
+        contentWindowInsets = WindowInsets.systemBars,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             NeoTopBar(
                 title = brand,
@@ -165,60 +211,12 @@ fun MainScaffold(
                                     rootNavController.navigate(Destinations.Settings.route)
                                 }
                             )
+                            // TODO Phase I.B: render only when DriveAuthManager reports signed-in.
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_settings)) },
-                                onClick = {
-                                    overflowOpen = false
-                                    rootNavController.navigate(Destinations.Settings.route)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_backup)) },
+                                text = { Text(stringResource(R.string.cv_overflow_signout)) },
                                 onClick = {
                                     overflowOpen = false
                                     rootNavController.navigate(Destinations.Backup.route)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_quick_export)) },
-                                onClick = {
-                                    overflowOpen = false
-                                    quickExportOpen = true
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_stats)) },
-                                onClick = {
-                                    overflowOpen = false
-                                    rootNavController.navigate(Destinations.Settings.route)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_tags)) },
-                                onClick = {
-                                    overflowOpen = false
-                                    rootNavController.navigate(Destinations.AutoTagRules.route)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_rules)) },
-                                onClick = {
-                                    overflowOpen = false
-                                    rootNavController.navigate(Destinations.AutoTagRules.route)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_updates)) },
-                                onClick = {
-                                    overflowOpen = false
-                                    rootNavController.navigate(Destinations.UpdateSettings.route)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.cv_overflow_help)) },
-                                onClick = {
-                                    overflowOpen = false
-                                    rootNavController.navigate(Destinations.DocsList.route)
                                 }
                             )
                         }
@@ -227,31 +225,36 @@ fun MainScaffold(
             )
         },
         bottomBar = {
-            NeoTabBar(
-                tabs = neoTabs,
-                selectedIndex = selectedIndex,
-                onSelect = { index ->
-                    val target = tabs[index].route
-                    if (target != currentRoute) {
-                        innerNav.navigate(target) {
-                            popUpTo(innerNav.graph.startDestinationId) {
-                                saveState = true
+            Box(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
+                NeoTabBar(
+                    tabs = neoTabs,
+                    selectedIndex = selectedIndex,
+                    onSelect = { index ->
+                        val target = tabs[index].route
+                        if (target != currentRoute) {
+                            innerNav.navigate(target) {
+                                popUpTo(innerNav.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-            )
+                    },
+                    modifier = Modifier
+                        .background(SageColors.Surface)
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                )
+            }
         }
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(NeoColors.Base)
+                .background(currentTabBg)
         ) {
+            CompositionLocalProvider(LocalMainTabNav provides innerNav) {
             NavHost(
                 navController = innerNav,
                 startDestination = MainTabRoute.Calls.route
@@ -351,9 +354,13 @@ fun MainScaffold(
                 }
                 composable(MainTabRoute.More.route) {
                     saveableHolder.SaveableStateProvider(MainTabRoute.More.route) {
-                        MoreScreen(navController = rootNavController)
+                        MoreScreen(
+                            navController = rootNavController,
+                            onOpenQuickExport = { quickExportOpen = true }
+                        )
                     }
                 }
+            }
             }
             if (quickExportOpen) {
                 QuickExportSheet(onDismiss = { quickExportOpen = false })

@@ -25,6 +25,7 @@ import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Full-screen guard shown post-onboarding when one or more critical
@@ -47,13 +48,13 @@ fun PermissionRationaleScreen(
     ) {
         Text(
             text = stringResource(R.string.permission_rationale_title),
-            color = NeoColors.OnBase,
+            color = SageColors.TextPrimary,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
         Text(
             text = stringResource(R.string.permission_rationale_body),
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
@@ -63,7 +64,7 @@ fun PermissionRationaleScreen(
                     missing.forEach { name ->
                         Text(
                             text = "• $name",
-                            color = NeoColors.OnBase,
+                            color = SageColors.TextPrimary,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(vertical = 4.dp)
                         )

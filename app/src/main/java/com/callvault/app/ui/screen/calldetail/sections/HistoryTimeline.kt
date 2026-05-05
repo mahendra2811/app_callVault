@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.callvault.app.domain.model.Call
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.DateFormatter
 import com.callvault.app.ui.util.DurationFormatter
 
@@ -26,7 +27,7 @@ fun HistoryTimeline(history: List<Call>, modifier: Modifier = Modifier) {
     ) {
         Text(
             "History",
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold
         )
@@ -38,18 +39,18 @@ fun HistoryTimeline(history: List<Call>, modifier: Modifier = Modifier) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         DateFormatter.rowTime(c.date),
-                        color = NeoColors.OnBase,
+                        color = SageColors.TextPrimary,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
                     )
                     Text(
                         c.type.name.lowercase().replaceFirstChar { it.uppercase() },
-                        color = NeoColors.OnBaseMuted,
+                        color = SageColors.TextSecondary,
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
                         "  ${DurationFormatter.short(c.durationSec)}",
-                        color = NeoColors.OnBaseMuted,
+                        color = SageColors.TextSecondary,
                         style = MaterialTheme.typography.bodySmall
                     )
                 }

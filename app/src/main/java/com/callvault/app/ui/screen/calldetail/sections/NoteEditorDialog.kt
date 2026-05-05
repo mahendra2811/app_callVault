@@ -42,6 +42,7 @@ import com.callvault.app.ui.components.neo.NeoChip
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import com.callvault.app.ui.util.MarkdownText
 
@@ -88,7 +89,7 @@ fun NoteEditorDialog(
                     if (initial == null) R.string.note_editor_new_title
                     else R.string.note_editor_edit_title
                 ),
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold
             )
         },
@@ -96,7 +97,7 @@ fun NoteEditorDialog(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     stringResource(R.string.note_editor_templates_label),
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.labelMedium
                 )
                 Spacer(Modifier.height(6.dp))
@@ -141,7 +142,7 @@ fun NoteEditorDialog(
                             if (fieldValue.text.isBlank()) {
                                 Text(
                                     stringResource(R.string.note_editor_placeholder),
-                                    color = NeoColors.OnBaseSubtle
+                                    color = SageColors.TextTertiary
                                 )
                             } else {
                                 MarkdownText(source = fieldValue.text)
@@ -151,13 +152,13 @@ fun NoteEditorDialog(
                                 value = fieldValue,
                                 onValueChange = { fieldValue = it },
                                 cursorBrush = SolidColor(NeoColors.AccentBlue),
-                                textStyle = LocalTextStyle.current.copy(color = NeoColors.OnBase),
+                                textStyle = LocalTextStyle.current.copy(color = SageColors.TextPrimary),
                                 modifier = Modifier.fillMaxWidth(),
                                 decorationBox = { inner ->
                                     if (fieldValue.text.isEmpty()) {
                                         Text(
                                             stringResource(R.string.note_editor_placeholder),
-                                            color = NeoColors.OnBaseSubtle
+                                            color = SageColors.TextTertiary
                                         )
                                     }
                                     inner()
@@ -208,7 +209,7 @@ private fun NoteEditorDialogPreview() {
         // AlertDialog can't render in preview; show a representative panel.
         NeoSurface(modifier = Modifier.padding(24.dp)) {
             Box(modifier = Modifier.padding(16.dp)) {
-                Text("Note editor preview", color = NeoColors.OnBase)
+                Text("Note editor preview", color = SageColors.TextPrimary)
             }
         }
     }

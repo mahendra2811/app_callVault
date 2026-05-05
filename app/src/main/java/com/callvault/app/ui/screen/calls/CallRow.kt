@@ -39,6 +39,7 @@ import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.DateFormatter
 import com.callvault.app.ui.util.DurationFormatter
 import com.callvault.app.ui.util.PhoneNumberFormatter
@@ -81,10 +82,10 @@ fun CallRowItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 12.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            NeoAvatar(name = title)
+            NeoAvatar(name = title, size = 36.dp)
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -97,8 +98,8 @@ fun CallRowItem(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = title,
-                        color = NeoColors.OnBase,
-                        style = MaterialTheme.typography.titleSmall,
+                        color = SageColors.TextPrimary,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1
                     )
@@ -107,7 +108,7 @@ fun CallRowItem(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = subtitleParts.joinToString(" · "),
-                        color = NeoColors.OnBaseMuted,
+                        color = SageColors.TextSecondary,
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 1
                     )
@@ -192,10 +193,10 @@ private fun typeIcon(type: CallType): ImageVector = when (type) {
 }
 
 private fun typeColor(type: CallType): Color = when (type) {
-    CallType.INCOMING -> NeoColors.AccentGreen
-    CallType.OUTGOING -> NeoColors.AccentBlue
-    CallType.MISSED, CallType.REJECTED -> NeoColors.AccentRose
-    else -> NeoColors.OnBaseMuted
+    CallType.INCOMING -> SageColors.Sage
+    CallType.OUTGOING -> SageColors.SageMuted
+    CallType.MISSED, CallType.REJECTED -> SageColors.StatusError
+    else -> SageColors.TextTertiary
 }
 
 // ---------- Previews ----------

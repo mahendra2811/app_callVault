@@ -38,6 +38,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.PhoneNumberFormatter
 import kotlinx.datetime.Instant
 
@@ -110,12 +111,12 @@ private fun MyContactRow(meta: ContactMeta, onClick: () -> Unit) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = meta.displayName ?: meta.normalizedNumber,
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.titleSmall
             )
             Text(
                 text = PhoneNumberFormatter.pretty(meta.normalizedNumber),
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.bodySmall
             )
         }

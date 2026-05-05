@@ -1,5 +1,6 @@
 package com.callvault.app.ui.components.neo
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,11 +39,13 @@ fun NeoPageHeader(
     description: String,
     emoji: String? = null,
     trailingChip: (@Composable () -> Unit)? = null,
+    backgroundBrush: Brush? = null,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .let { if (backgroundBrush != null) it.background(brush = backgroundBrush) else it }
             .padding(
                 horizontal = Spacing.PageHorizontal,
                 vertical = Spacing.PageTopHeader

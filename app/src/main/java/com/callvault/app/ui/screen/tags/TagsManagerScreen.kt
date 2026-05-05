@@ -55,6 +55,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import android.widget.Toast
 
@@ -164,7 +165,7 @@ fun TagsManagerScreen(
                         stringResource(R.string.tags_delete_confirm_with_uses, target.usageCount)
                     else
                         stringResource(R.string.tags_delete_confirm_no_uses),
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -236,7 +237,7 @@ private fun TagRowItem(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         row.tag.name,
-                        color = NeoColors.OnBase,
+                        color = SageColors.TextPrimary,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -244,7 +245,7 @@ private fun TagRowItem(
                         Spacer(Modifier.width(8.dp))
                         Text(
                             stringResource(R.string.tags_system_badge),
-                            color = NeoColors.OnBaseSubtle,
+                            color = SageColors.TextTertiary,
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -254,7 +255,7 @@ private fun TagRowItem(
                         stringResource(R.string.tags_usage_count, row.usageCount)
                     else
                         stringResource(R.string.tags_usage_count_plural, row.usageCount),
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.labelMedium
                 )
             }
@@ -262,30 +263,8 @@ private fun TagRowItem(
                 NeoBadge(count = row.usageCount)
                 Spacer(Modifier.width(8.dp))
             }
-            Box {
-                NeoIconButton(
-                    icon = Icons.Filled.MoreVert,
-                    onClick = { menuOpen = true },
-                    contentDescription = "More",
-                    size = 36.dp
-                )
-                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.tags_action_rename)) },
-                        onClick = { menuOpen = false; onClick() }
-                    )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.tags_action_merge)) },
-                        onClick = { menuOpen = false; onLongPress() }
-                    )
-                    if (!row.tag.isSystem) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.tags_action_delete)) },
-                            onClick = { menuOpen = false; onDelete() }
-                        )
-                    }
-                }
-            }
+            // Per-row overflow removed: rename = row tap, merge = long-press,
+            // delete = swipe gesture (handled by parent list).
         }
     }
 }
@@ -309,7 +288,7 @@ private fun MergeIntoDialog(
             Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Sm))
             Text(
                 stringResource(R.string.tags_merge_dialog_body, source.name),
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(Modifier.height(com.callvault.app.ui.theme.Spacing.Md))

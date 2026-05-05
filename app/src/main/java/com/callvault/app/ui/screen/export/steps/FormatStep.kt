@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.screen.export.ExportFormat
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /** Wizard step 0 — pick the output format. */
 @Composable
@@ -22,7 +23,7 @@ fun FormatStep(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        Text("Choose a format", style = MaterialTheme.typography.titleLarge, color = NeoColors.OnBase)
+        Text("Choose a format", style = MaterialTheme.typography.titleLarge, color = SageColors.TextPrimary)
         Spacer(Modifier.height(12.dp))
         ExportFormat.entries.forEach { fmt ->
             NeoCard(
@@ -35,7 +36,7 @@ fun FormatStep(
                     Text(
                         fmt.display,
                         style = MaterialTheme.typography.titleMedium,
-                        color = if (fmt == selected) NeoColors.AccentBlue else NeoColors.OnBase
+                        color = if (fmt == selected) NeoColors.AccentBlue else SageColors.TextPrimary
                     )
                     Text(
                         when (fmt) {
@@ -46,7 +47,7 @@ fun FormatStep(
                             ExportFormat.Vcard -> "Contacts in vCard 3.0 — ready for any address book."
                         },
                         style = MaterialTheme.typography.bodySmall,
-                        color = NeoColors.OnBaseMuted
+                        color = SageColors.TextSecondary
                     )
                 }
             }

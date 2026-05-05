@@ -500,6 +500,21 @@
     <string name="home_quick_links">Quick links</string>
 
     <string name="more_title">More</string>
+    <string name="cv_more_group_data">Data</string>
+    <string name="cv_more_group_automation">Automation</string>
+    <string name="cv_more_group_app">App</string>
+    <string name="cv_more_subtitle_export">Send your data out</string>
+    <string name="cv_more_subtitle_quick_export">One-tap CSV/Excel/JSON</string>
+    <string name="cv_more_subtitle_backup">Save and restore</string>
+    <string name="cv_more_subtitle_tags">Categories for calls</string>
+    <string name="cv_more_subtitle_rules">Automatic tagging</string>
+    <string name="cv_more_subtitle_lead_scoring">Tune lead score weights</string>
+    <string name="cv_more_subtitle_realtime">Floating bubble + popup</string>
+    <string name="cv_more_subtitle_autosave">Inquiry naming</string>
+    <string name="cv_more_subtitle_stats">Volume + lead quality</string>
+    <string name="cv_more_subtitle_updates">Channel + auto-check</string>
+    <string name="cv_more_subtitle_help">15 in-app guides</string>
+    <string name="cv_more_subtitle_settings">Sync, privacy, and more</string>
     <string name="nav_home">Home</string>
     <string name="nav_calls">Calls</string>
     <string name="nav_my_contacts">My Contacts</string>
@@ -604,8 +619,8 @@
     <string name="cv_quick_export_retry">Retry</string>
     <string name="cv_search_clear_cd">Clear search</string>
     <string name="cv_common_retry">Retry</string>
-    <string name="cv_common_loading">Loading&#8230;</string>
-    <string name="cv_common_error_title">Couldn&apos;t load</string>
+    <string name="cv_common_loading">Loading…</string>
+    <string name="cv_common_error_title">Couldn\'t load</string>
     <string name="cv_common_error_body">Something went wrong. Tap retry.</string>
     <string name="cv_common_cancel">Cancel</string>
     <string name="cv_common_ok">OK</string>
@@ -624,4 +639,8 @@
     <string name="cv_backup_drive_upload_failed">Couldn\'t upload to Drive. %1$s</string>
     <string name="cv_backup_drive_uploaded">Uploaded %1$s to Drive.</string>
     <string name="cv_backup_drive_oauth_unconfigured">Drive isn\'t configured. See docs/locale/06-google-cloud-setup.md.</string>
+    <string name="cv_back_to_home">Back to Home</string>
+    <string name="cv_back_press_exit">Press back again to exit</string>
+    <string name="cv_calldetail_manage_section">Manage</string>
+    <string name="cv_overflow_signout">Sign out of Drive</string>
 </resources>

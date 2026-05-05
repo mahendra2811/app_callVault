@@ -11,8 +11,8 @@
 
     <!-- Phase C — system splash theme; hands off to Theme.CallVault after 200ms. -->
     <style name="Theme.CallVault.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#FFE8E8EC</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_c</item>
+        <item name="windowSplashScreenBackground">#FF3D5A4A</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="windowSplashScreenAnimationDuration">200</item>
         <item name="postSplashScreenTheme">@style/Theme.CallVault</item>
     </style>

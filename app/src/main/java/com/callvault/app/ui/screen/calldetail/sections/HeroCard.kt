@@ -25,6 +25,7 @@ import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import com.callvault.app.ui.util.PhoneNumberFormatter
 
@@ -64,12 +65,12 @@ fun HeroCard(
                             ?: PhoneNumberFormatter.pretty(normalizedNumber),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold,
-                        color = NeoColors.OnBase
+                        color = SageColors.TextPrimary
                     )
                     if (displayName != null) {
                         Text(
                             text = PhoneNumberFormatter.pretty(normalizedNumber),
-                            color = NeoColors.OnBaseMuted,
+                            color = SageColors.TextSecondary,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -117,7 +118,7 @@ private fun StatusPill(status: SaveStatus) {
 @Composable
 private fun LeadScoreBadge(score: Int) {
     val color: Color = when {
-        score < 30 -> NeoColors.OnBaseMuted
+        score < 30 -> SageColors.TextSecondary
         score < 70 -> NeoColors.AccentAmber
         else -> NeoColors.AccentRose
     }

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.domain.model.TrendPoint
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Pure-Compose line chart for daily call volume.
@@ -37,8 +38,8 @@ fun DailyVolumeChart(
 ) {
     val volumeColor = NeoColors.AccentBlue
     val maColor = NeoColors.AccentTeal
-    val gridColor = NeoColors.OnBaseSubtle
-    val labelColor = NeoColors.OnBaseMuted
+    val gridColor = SageColors.TextTertiary
+    val labelColor = SageColors.TextSecondary
 
     Box(modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
         Canvas(modifier = Modifier.fillMaxWidth().height(height)) {

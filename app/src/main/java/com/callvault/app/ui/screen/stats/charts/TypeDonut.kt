@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.domain.model.CallTypeSlice
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Pure-Canvas donut chart for call-type distribution.
@@ -67,12 +68,12 @@ fun TypeDonut(
                 Text(
                     text = total.toString(),
                     style = MaterialTheme.typography.titleLarge,
-                    color = NeoColors.OnBase
+                    color = SageColors.TextPrimary
                 )
                 Text(
                     text = "calls",
                     style = MaterialTheme.typography.bodySmall,
-                    color = NeoColors.OnBaseMuted
+                    color = SageColors.TextSecondary
                 )
             }
         }
@@ -93,7 +94,7 @@ fun TypeDonut(
                     Text(
                         text = "${s.label} · ${s.count}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = NeoColors.OnBase
+                        color = SageColors.TextPrimary
                     )
                 }
             }

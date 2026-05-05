@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.domain.model.HourlyHeatmapCell
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * 24×7 day-of-week × hour heatmap.
@@ -31,7 +32,7 @@ fun HourlyHeatmap(
 ) {
     val accent = NeoColors.AccentBlue
     val base = NeoColors.BasePressed
-    val labelColor = NeoColors.OnBaseMuted
+    val labelColor = SageColors.TextSecondary
     val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
     Box(modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp)) {

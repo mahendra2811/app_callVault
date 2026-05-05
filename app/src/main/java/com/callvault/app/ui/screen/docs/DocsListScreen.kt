@@ -36,6 +36,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Sprint 11 — top-level Help & Docs screen listing every article bundled with
@@ -77,14 +78,14 @@ fun DocsListScreen(
                     Column(Modifier.padding(14.dp)) {
                         Text(
                             text = meta.title,
-                            color = NeoColors.OnBase,
+                            color = SageColors.TextPrimary,
                             style = MaterialTheme.typography.titleMedium
                         )
                         if (meta.excerpt.isNotBlank()) {
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 text = meta.excerpt,
-                                color = NeoColors.OnBaseMuted,
+                                color = SageColors.TextSecondary,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }

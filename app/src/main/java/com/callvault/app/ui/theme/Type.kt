@@ -3,96 +3,141 @@ package com.callvault.app.ui.theme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 /**
- * Type scale for CallVault.
+ * Type scale for CallVault — Phase II.
  *
- * Uses [FontFamily.Default] (system Roboto / Inter where available). Kept at
- * comfortable line heights for dense data tables (Calls list, Stats).
+ * Spec calls for Instrument Serif (display italic) + Geist (UI sans) + Geist Mono (numbers).
+ * Until those .ttf assets are bundled, we use system fallbacks:
+ *  - DisplayFamily → [FontFamily.Serif]
+ *  - UiFamily → [FontFamily.SansSerif]
+ *  - MonoFamily → [FontFamily.Monospace]
+ *
+ * When the font assets land, swap the family vals to [androidx.compose.ui.text.font.Font]
+ * resources without touching any call-site.
+ */
+private val DisplayFamily: FontFamily = FontFamily.Serif
+private val UiFamily: FontFamily = FontFamily.SansSerif
+private val MonoFamily: FontFamily = FontFamily.Monospace
+
+/** Hero numeric — Instrument Serif italic placeholder, used outside Material's Typography. */
+val NumberDisplay: TextStyle = TextStyle(
+    fontFamily = DisplayFamily,
+    fontStyle = FontStyle.Italic,
+    fontWeight = FontWeight.Normal,
+    fontSize = 32.sp,
+    lineHeight = 36.sp
+)
+
+/** Phone-number / id mono style. */
+val PhoneNumberStyle: TextStyle = TextStyle(
+    fontFamily = MonoFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 13.sp,
+    lineHeight = 18.sp
+)
+
+/**
+ * Material 3 Typography scale — Phase II.
+ * Display/headline use serif italic for editorial tone; titles/body/labels use UI sans.
  */
 val CallVaultTypography: Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 40.sp,
-        lineHeight = 48.sp
+        fontFamily = DisplayFamily,
+        fontStyle = FontStyle.Italic,
+        fontWeight = FontWeight.Normal,
+        fontSize = 56.sp,
+        lineHeight = 60.sp
     ),
     displayMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 32.sp,
-        lineHeight = 40.sp
+        fontFamily = DisplayFamily,
+        fontStyle = FontStyle.Italic,
+        fontWeight = FontWeight.Normal,
+        fontSize = 40.sp,
+        lineHeight = 46.sp
+    ),
+    displaySmall = TextStyle(
+        fontFamily = DisplayFamily,
+        fontStyle = FontStyle.Italic,
+        fontWeight = FontWeight.Normal,
+        fontSize = 28.sp,
+        lineHeight = 34.sp
     ),
     headlineLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 28.sp,
-        lineHeight = 36.sp
+        fontFamily = DisplayFamily,
+        fontStyle = FontStyle.Italic,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 28.sp
     ),
     headlineMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 22.sp,
-        lineHeight = 30.sp
+        fontFamily = DisplayFamily,
+        fontStyle = FontStyle.Italic,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 24.sp
     ),
     headlineSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = UiFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
-        lineHeight = 26.sp
+        fontSize = 17.sp,
+        lineHeight = 24.sp
     ),
     titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = UiFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
+        fontSize = 17.sp,
         lineHeight = 24.sp
     ),
     titleMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = UiFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
+        fontSize = 15.sp,
         lineHeight = 22.sp
     ),
     titleSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        lineHeight = 20.sp
+        fontFamily = UiFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 13.sp,
+        lineHeight = 18.sp
     ),
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = UiFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 17.sp,
         lineHeight = 24.sp
     ),
     bodyMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = UiFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 20.sp
+        fontSize = 15.sp,
+        lineHeight = 22.sp
     ),
     bodySmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = UiFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        lineHeight = 16.sp
+        fontSize = 13.sp,
+        lineHeight = 18.sp
     ),
     labelLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        lineHeight = 20.sp
+        fontFamily = UiFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
+        letterSpacing = 0.5.sp
     ),
     labelMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
-        lineHeight = 16.sp
+        fontFamily = UiFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 11.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 0.5.sp
     ),
     labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = UiFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 14.sp

@@ -34,9 +34,11 @@ import com.callvault.app.R
 import com.callvault.app.ui.components.neo.NeoBottomSheet
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.components.neo.NeoLoader
+import com.callvault.app.ui.theme.BorderSoft
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.IconBackupTint
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import kotlinx.coroutines.delay
 
 /**
@@ -67,12 +69,12 @@ fun QuickExportSheet(
             Text(
                 text = stringResource(R.string.cv_quick_export_title),
                 style = MaterialTheme.typography.titleLarge,
-                color = NeoColors.OnBase
+                color = SageColors.TextPrimary
             )
             Text(
                 text = stringResource(R.string.cv_quick_export_subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = NeoColors.OnBaseSubtle
+                color = SageColors.TextTertiary
             )
 
             ExportRow(
@@ -146,7 +148,7 @@ private fun ExportRow(
             Spacer(Modifier.size(16.dp))
             Text(
                 text = label,
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -171,7 +173,7 @@ private fun StatusRow(
                 Spacer(Modifier.size(12.dp))
                 Text(
                     text = stringResource(R.string.cv_quick_export_running),
-                    color = NeoColors.OnBaseMuted
+                    color = SageColors.TextSecondary
                 )
             }
         }
@@ -187,7 +189,7 @@ private fun StatusRow(
                             state.fileName,
                             (state.sizeBytes / 1024L).coerceAtLeast(0L)
                         ),
-                        color = NeoColors.OnBase,
+                        color = SageColors.TextPrimary,
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(Modifier.height(8.dp))
@@ -211,7 +213,7 @@ private fun StatusRow(
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(
                         text = stringResource(R.string.cv_quick_export_error, state.reason),
-                        color = NeoColors.OnBase,
+                        color = SageColors.TextPrimary,
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(Modifier.height(8.dp))
@@ -233,7 +235,7 @@ private fun QuickExportSheetIdlePreview() {
             Text(
                 "Saves to your Downloads folder.",
                 style = MaterialTheme.typography.bodySmall,
-                color = NeoColors.OnBaseSubtle
+                color = SageColors.TextTertiary
             )
         }
     }
@@ -249,7 +251,7 @@ private fun QuickExportSheetRunningPreview() {
         ) {
             NeoLoader(size = 36.dp)
             Spacer(Modifier.size(12.dp))
-            Text("Exporting…", color = NeoColors.OnBaseMuted)
+            Text("Exporting…", color = SageColors.TextSecondary)
         }
     }
 }

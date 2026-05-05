@@ -42,6 +42,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import com.callvault.app.ui.util.DateFormatter
 import com.callvault.app.ui.util.PhoneNumberFormatter
@@ -176,7 +177,7 @@ private fun FollowUpRowItem(
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
                 text = row.displayName ?: PhoneNumberFormatter.pretty(row.call.normalizedNumber),
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
             )
@@ -184,7 +185,7 @@ private fun FollowUpRowItem(
             val noteText = row.call.followUpNote
             Text(
                 text = if (!noteText.isNullOrBlank()) "$whenText · $noteText" else whenText,
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.labelMedium
             )
             if (!row.isDone) {

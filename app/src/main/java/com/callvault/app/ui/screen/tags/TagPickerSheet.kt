@@ -32,6 +32,7 @@ import com.callvault.app.ui.components.neo.NeoButtonVariant
 import com.callvault.app.ui.components.neo.NeoChip
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Modal bottom sheet that lets the user toggle which tags are applied to a
@@ -64,7 +65,7 @@ fun TagPickerSheet(
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(R.string.tag_picker_title),
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -72,7 +73,7 @@ fun TagPickerSheet(
             if (allTags.isEmpty()) {
                 Text(
                     text = stringResource(R.string.tag_picker_empty),
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.bodyMedium
                 )
             } else {
@@ -136,7 +137,7 @@ private fun TagPickerSheetPreview() {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 "Apply tags",
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.height(12.dp))

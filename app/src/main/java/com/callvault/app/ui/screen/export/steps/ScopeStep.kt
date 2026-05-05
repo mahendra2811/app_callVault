@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.screen.export.ExportScope
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /** Wizard step 2 — pick scope: current filter vs all data. */
 @Composable
@@ -22,7 +23,7 @@ fun ScopeStep(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        Text("What to export", style = MaterialTheme.typography.titleLarge, color = NeoColors.OnBase)
+        Text("What to export", style = MaterialTheme.typography.titleLarge, color = SageColors.TextPrimary)
         Spacer(Modifier.height(12.dp))
         ExportScope.entries.forEach { s ->
             NeoCard(
@@ -36,7 +37,7 @@ fun ScopeStep(
                             ExportScope.AllData -> "All data"
                         },
                         style = MaterialTheme.typography.titleMedium,
-                        color = if (s == selected) NeoColors.AccentBlue else NeoColors.OnBase
+                        color = if (s == selected) NeoColors.AccentBlue else SageColors.TextPrimary
                     )
                     Text(
                         when (s) {
@@ -44,7 +45,7 @@ fun ScopeStep(
                             ExportScope.AllData -> "Every call in your vault."
                         },
                         style = MaterialTheme.typography.bodySmall,
-                        color = NeoColors.OnBaseMuted
+                        color = SageColors.TextSecondary
                     )
                 }
             }

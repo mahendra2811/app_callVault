@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -107,6 +109,9 @@ fun CallVaultNavHost(
         }
     }
 
+    val toHome: () -> Unit = { popToHome(navController, null) }
+
+    CompositionLocalProvider(LocalRootNav provides navController) {
     NavHost(
         navController = navController,
         startDestination = Destinations.Splash.route,
@@ -179,14 +184,17 @@ fun CallVaultNavHost(
             MainScaffold(rootNavController = navController)
         }
         composable(Destinations.Export.route) {
-            ExportScreen(onBack = { navController.popBackStack() })
+            BackHandler { toHome() }
+            ExportScreen(onBack = toHome)
         }
         composable(Destinations.Backup.route) {
-            BackupScreen(onBack = { navController.popBackStack() })
+            BackHandler { toHome() }
+            BackupScreen(onBack = toHome)
         }
         composable(Destinations.AutoTagRules.route) {
+            BackHandler { toHome() }
             AutoTagRulesScreen(
-                onBack = { navController.popBackStack() },
+                onBack = toHome,
                 onOpenEditor = { ruleId ->
                     navController.navigate(Destinations.RuleEditor.routeFor(ruleId))
                 }
@@ -201,32 +209,38 @@ fun CallVaultNavHost(
                 }
             )
         ) {
-            RuleEditorScreen(onBack = { navController.popBackStack() })
+            BackHandler { toHome() }
+            RuleEditorScreen(onBack = toHome)
         }
         composable(Destinations.LeadScoringSettings.route) {
-            LeadScoringSettingsScreen(onBack = { navController.popBackStack() })
+            BackHandler { toHome() }
+            LeadScoringSettingsScreen(onBack = toHome)
         }
         composable(Destinations.RealTimeSettings.route) {
-            RealTimeSettingsScreen(onBack = { navController.popBackStack() })
+            BackHandler { toHome() }
+            RealTimeSettingsScreen(onBack = toHome)
         }
         composable(Destinations.MyContacts.route) {
+            BackHandler { toHome() }
             MyContactsScreen(
-                onBack = { navController.popBackStack() },
+                onBack = toHome,
                 onOpenDetail = { number ->
                     navController.navigate(Destinations.CallDetail.routeFor(number))
                 }
             )
         }
         composable(Destinations.Inquiries.route) {
+            BackHandler { toHome() }
             InquiriesScreen(
-                onBack = { navController.popBackStack() },
+                onBack = toHome,
                 onOpenDetail = { number ->
                     navController.navigate(Destinations.CallDetail.routeFor(number))
                 }
             )
         }
         composable(Destinations.AutoSaveSettings.route) {
-            AutoSaveSettingsScreen(onBack = { navController.popBackStack() })
+            BackHandler { toHome() }
+            AutoSaveSettingsScreen(onBack = toHome)
         }
         composable(
             route = Destinations.CallDetail.route,
@@ -234,29 +248,36 @@ fun CallVaultNavHost(
                 navArgument(Destinations.CallDetail.ARG_NUMBER) { type = NavType.StringType }
             )
         ) {
-            CallDetailScreen(onBack = { navController.popBackStack() })
+            BackHandler { toHome() }
+            CallDetailScreen(onBack = toHome)
         }
         composable(Destinations.Search.route) {
+            BackHandler { toHome() }
             SearchScreen(
-                onBack = { navController.popBackStack() },
+                onBack = toHome,
                 onOpenDetail = { number ->
                     navController.navigate(Destinations.CallDetail.routeFor(number))
                 }
             )
         }
         composable(Destinations.FilterPresets.route) {
+            BackHandler { toHome() }
             CallsPlaceholderScreen()
         }
         composable(Destinations.UpdateAvailable.route) {
-            UpdateAvailableScreen(onClose = { navController.popBackStack() })
+            BackHandler { toHome() }
+            UpdateAvailableScreen(onClose = toHome)
         }
         composable(Destinations.UpdateSettings.route) {
+            BackHandler { toHome() }
             UpdateSettingsScreen()
         }
         composable(Destinations.Settings.route) {
+            BackHandler { toHome() }
             SettingsScreen(navController = navController)
         }
         composable(Destinations.DocsList.route) {
+            BackHandler { toHome() }
             DocsListScreen(navController = navController)
         }
         composable(
@@ -265,8 +286,10 @@ fun CallVaultNavHost(
                 navArgument(Destinations.DocsArticle.ARG_ARTICLE_ID) { type = NavType.StringType }
             )
         ) {
+            BackHandler { toHome() }
             DocsArticleScreen(navController = navController)
         }
+    }
     }
 
     LaunchedEffect(initialDeepLink) {

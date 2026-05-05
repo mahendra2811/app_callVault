@@ -31,6 +31,7 @@ import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.components.neo.NeoTextField
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 import com.callvault.app.ui.util.DateFormatter
 import com.callvault.app.ui.util.MarkdownText
@@ -60,7 +61,7 @@ fun NotesJournal(
     ) {
         Text(
             "Notes",
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold
         )
@@ -97,7 +98,7 @@ fun NotesJournal(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 DateFormatter.rowTime(note.createdAt),
-                                color = NeoColors.OnBaseMuted,
+                                color = SageColors.TextSecondary,
                                 style = MaterialTheme.typography.labelSmall,
                                 modifier = Modifier.weight(1f)
                             )

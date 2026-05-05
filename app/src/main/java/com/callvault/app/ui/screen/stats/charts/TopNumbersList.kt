@@ -20,6 +20,7 @@ import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.components.neo.NeoChip
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.DurationFormatter
 
 /**
@@ -54,7 +55,7 @@ fun TopNumbersList(
         if (sorted.isEmpty()) {
             Text(
                 text = "No numbers in this range yet.",
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(8.dp)
             )
@@ -67,13 +68,13 @@ fun TopNumbersList(
                     ) {
                         Text(
                             text = "#${i + 1}",
-                            color = NeoColors.OnBaseMuted,
+                            color = SageColors.TextSecondary,
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.width(28.dp)
                         )
                         Text(
                             text = e.displayName ?: e.normalizedNumber,
-                            color = NeoColors.OnBase,
+                            color = SageColors.TextPrimary,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )

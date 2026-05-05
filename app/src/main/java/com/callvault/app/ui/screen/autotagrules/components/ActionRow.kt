@@ -19,6 +19,7 @@ import com.callvault.app.domain.model.RuleAction
 import com.callvault.app.ui.components.neo.NeoIconButton
 import com.callvault.app.ui.components.neo.NeoSurface
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 
 /**
@@ -46,7 +47,7 @@ fun ActionRow(
         ) {
             Text(
                 text = describe(action),
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f)
             )

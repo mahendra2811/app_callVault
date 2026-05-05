@@ -1,5 +1,7 @@
 package com.callvault.app.ui.screen.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,13 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +41,7 @@ import com.callvault.app.ui.theme.BorderAccent
 import com.callvault.app.ui.theme.BorderSoft
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.Spacing
 
 /**
@@ -83,6 +91,9 @@ private fun HomeContent(
         title = stringResource(R.string.cv_home_title),
         description = stringResource(R.string.cv_home_description),
         emoji = "🏠",
+        loading = state.loading,
+        backgroundColor = com.callvault.app.ui.theme.TabBgHome,
+        headerGradient = com.callvault.app.ui.theme.HeaderGradHomeStart to com.callvault.app.ui.theme.HeaderGradHomeEnd,
     ) {
         TodayCard(
             state = state,
@@ -113,7 +124,7 @@ private fun TodayCard(
             Text(
                 text = stringResource(R.string.cv_home_card_today),
                 style = MaterialTheme.typography.titleMedium,
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
             )
             Spacer(Modifier.height(Spacing.Md))
             Row(
@@ -175,7 +186,7 @@ private fun StatTile(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
             textAlign = TextAlign.Center,
         )
     }
@@ -197,7 +208,7 @@ private fun RecentUnsavedCard(
                 Text(
                     text = stringResource(R.string.cv_home_card_recent_unsaved),
                     style = MaterialTheme.typography.titleMedium,
-                    color = NeoColors.OnBase,
+                    color = SageColors.TextPrimary,
                     modifier = Modifier.weight(1f),
                 )
                 if (total > 0) NeoBadge(count = total)
@@ -213,7 +224,7 @@ private fun RecentUnsavedCard(
                     Text(
                         text = stringResource(R.string.cv_home_unsaved_empty) + " ✨",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = NeoColors.OnBaseMuted,
+                        color = SageColors.TextSecondary,
                     )
                 }
             } else {
@@ -245,13 +256,13 @@ private fun UnsavedRow(item: RecentUnsavedItem, onClick: () -> Unit) {
         Text(
             text = item.normalizedNumber,
             style = MaterialTheme.typography.bodyLarge,
-            color = NeoColors.OnBase,
+            color = SageColors.TextPrimary,
             modifier = Modifier.weight(1f),
         )
         Text(
             text = relativeTime(item.lastCallEpochMs),
             style = MaterialTheme.typography.labelSmall,
-            color = NeoColors.OnBaseMuted,
+            color = SageColors.TextSecondary,
         )
         Spacer(Modifier.width(Spacing.Sm))
         NeoButton(
@@ -284,7 +295,7 @@ private fun QuickActionsCard(
             Text(
                 text = stringResource(R.string.cv_home_card_quick_actions),
                 style = MaterialTheme.typography.titleMedium,
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
             )
             Spacer(Modifier.height(Spacing.Md))
             Row(

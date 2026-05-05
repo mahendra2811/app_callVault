@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.screen.export.DestinationChoice
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /** Wizard step 4 — choose Downloads or a SAF-picked URI. */
 @Composable
@@ -31,7 +32,7 @@ fun DestinationStep(
         if (uri != null) onSelect(DestinationChoice.PickedUri(uri))
     }
     Column(modifier = modifier.padding(16.dp)) {
-        Text("Where to save", style = MaterialTheme.typography.titleLarge, color = NeoColors.OnBase)
+        Text("Where to save", style = MaterialTheme.typography.titleLarge, color = SageColors.TextPrimary)
         Spacer(Modifier.height(12.dp))
         NeoCard(
             modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
@@ -41,12 +42,12 @@ fun DestinationStep(
                 Text(
                     "Downloads folder",
                     style = MaterialTheme.typography.titleMedium,
-                    color = if (selected is DestinationChoice.Downloads) NeoColors.AccentBlue else NeoColors.OnBase
+                    color = if (selected is DestinationChoice.Downloads) NeoColors.AccentBlue else SageColors.TextPrimary
                 )
                 Text(
                     "Saved as $suggestedFileName",
                     style = MaterialTheme.typography.bodySmall,
-                    color = NeoColors.OnBaseMuted
+                    color = SageColors.TextSecondary
                 )
             }
         }
@@ -58,13 +59,13 @@ fun DestinationStep(
                 Text(
                     "Pick a location…",
                     style = MaterialTheme.typography.titleMedium,
-                    color = if (selected is DestinationChoice.PickedUri) NeoColors.AccentBlue else NeoColors.OnBase
+                    color = if (selected is DestinationChoice.PickedUri) NeoColors.AccentBlue else SageColors.TextPrimary
                 )
                 Text(
                     if (selected is DestinationChoice.PickedUri) "Selected: ${selected.uri.lastPathSegment ?: "ready"}"
                     else "Choose any folder via the system picker.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = NeoColors.OnBaseMuted
+                    color = SageColors.TextSecondary
                 )
             }
         }

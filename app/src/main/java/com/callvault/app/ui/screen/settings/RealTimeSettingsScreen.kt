@@ -36,6 +36,7 @@ import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.util.PermissionManager
 import com.callvault.app.util.PermissionStatus
 import dagger.hilt.EntryPoint
@@ -97,7 +98,7 @@ fun RealTimeSettingsScreen(
             if (state.postCallPopup) {
                 Text(
                     text = stringResource(R.string.realtime_timeout_label, localTimeout.toInt()),
-                    color = NeoColors.OnBaseMuted
+                    color = SageColors.TextSecondary
                 )
                 Slider(
                     value = localTimeout,
@@ -118,7 +119,7 @@ fun RealTimeSettingsScreen(
                     text = if (overlayGranted)
                         stringResource(R.string.realtime_overlay_granted)
                     else stringResource(R.string.realtime_overlay_denied),
-                    color = NeoColors.OnBase,
+                    color = SageColors.TextPrimary,
                     modifier = Modifier.weight(1f)
                 )
                 NeoButton(
@@ -142,8 +143,8 @@ private fun ToggleRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(label, color = NeoColors.OnBase)
-            Text(description, color = NeoColors.OnBaseMuted)
+            Text(label, color = SageColors.TextPrimary)
+            Text(description, color = SageColors.TextSecondary)
         }
         NeoToggle(checked = value, onChange = onChange)
     }
@@ -155,8 +156,8 @@ private fun RealTimeSettingsPreview() {
     CallVaultTheme {
         // Render a static, non-VM-backed preview body.
         Column(Modifier.padding(20.dp)) {
-            Text("Floating bubble", color = NeoColors.OnBase)
-            Text("Post-call popup", color = NeoColors.OnBase)
+            Text("Floating bubble", color = SageColors.TextPrimary)
+            Text("Post-call popup", color = SageColors.TextPrimary)
         }
     }
 }

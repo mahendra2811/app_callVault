@@ -38,6 +38,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 
 /**
@@ -108,13 +109,13 @@ private fun AutoSaveSettingsContent(
                     Text(
                         text = stringResource(R.string.auto_save_master_toggle),
                         style = MaterialTheme.typography.titleSmall,
-                        color = NeoColors.OnBase,
+                        color = SageColors.TextPrimary,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = stringResource(R.string.auto_save_master_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = NeoColors.OnBaseMuted
+                        color = SageColors.TextSecondary
                     )
                 }
                 NeoToggle(checked = state.enabled, onChange = onToggleEnabled)
@@ -136,7 +137,7 @@ private fun AutoSaveSettingsContent(
                 Text(
                     text = stringResource(R.string.auto_save_sim_tag_label),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = NeoColors.OnBase,
+                    color = SageColors.TextPrimary,
                     modifier = Modifier.weight(1f)
                 )
                 NeoToggle(checked = state.includeSimTag, onChange = onIncludeSimTag)
@@ -160,7 +161,7 @@ private fun AutoSaveSettingsContent(
                     Text(
                         text = stringResource(R.string.auto_save_preview_label),
                         style = MaterialTheme.typography.labelMedium,
-                        color = NeoColors.OnBaseMuted
+                        color = SageColors.TextSecondary
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
@@ -195,7 +196,7 @@ private fun AutoSaveSettingsContent(
                 Text(
                     text = stringResource(R.string.auto_save_phone_label_section),
                     style = MaterialTheme.typography.labelLarge,
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     modifier = Modifier.padding(bottom = 6.dp)
                 )
                 LabelRadioRow("Mobile", stringResource(R.string.auto_save_phone_label_mobile), state.phoneLabel, onPhoneLabel)
@@ -240,7 +241,7 @@ private fun LabelRadioRow(
     ) {
         RadioButton(selected = selected == value, onClick = { onSelect(value) })
         Spacer(Modifier.width(4.dp))
-        Text(text = text, color = NeoColors.OnBase, style = MaterialTheme.typography.bodyMedium)
+        Text(text = text, color = SageColors.TextPrimary, style = MaterialTheme.typography.bodyMedium)
     }
 }
 

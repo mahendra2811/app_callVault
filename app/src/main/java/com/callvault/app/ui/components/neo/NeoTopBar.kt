@@ -1,7 +1,9 @@
 package com.callvault.app.ui.components.neo
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -20,9 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.callvault.app.R
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
@@ -76,14 +81,14 @@ fun NeoTopBar(
                             shape = CircleShape
                         ) {
                             Box(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxSize().padding(4.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "C",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = NeoColors.AccentBlue,
-                                    fontFamily = FontFamily.Monospace
+                                Image(
+                                    painter = painterResource(R.drawable.cv_logo),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier.fillMaxSize()
                                 )
                             }
                         }

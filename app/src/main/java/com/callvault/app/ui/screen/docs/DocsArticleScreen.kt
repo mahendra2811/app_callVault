@@ -36,6 +36,7 @@ import com.callvault.app.ui.screen.shared.NeoScaffold
 import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.util.MarkdownText
 import androidx.navigation.compose.currentBackStackEntryAsState
 
@@ -68,7 +69,7 @@ fun DocsArticleScreen(
         if (a == null) {
             Text(
                 text = "Loading…",
-                color = NeoColors.OnBaseMuted,
+                color = SageColors.TextSecondary,
                 modifier = Modifier.padding(24.dp)
             )
             return@StandardPage
@@ -84,7 +85,7 @@ fun DocsArticleScreen(
                 Column {
                     Text(
                         text = stringResource(R.string.docs_helpful_q),
-                        color = NeoColors.OnBase,
+                        color = SageColors.TextPrimary,
                         style = MaterialTheme.typography.titleSmall
                     )
                     Spacer(Modifier.height(8.dp))
@@ -110,7 +111,7 @@ fun DocsArticleScreen(
                         Spacer(Modifier.height(6.dp))
                         Text(
                             text = "Thanks for the feedback.",
-                            color = NeoColors.OnBaseMuted,
+                            color = SageColors.TextSecondary,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }

@@ -38,6 +38,7 @@ import com.callvault.app.ui.components.neo.NeoChip
 import com.callvault.app.ui.components.neo.NeoTextField
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /** Maximum length of a tag name (spec §3.6). */
 private const val MAX_TAG_NAME = 24
@@ -88,7 +89,7 @@ fun TagEditorDialog(
                     if (initial == null) R.string.tag_editor_new_title
                     else R.string.tag_editor_edit_title
                 ),
-                color = NeoColors.OnBase,
+                color = SageColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold
             )
         },
@@ -111,7 +112,7 @@ fun TagEditorDialog(
                 Spacer(Modifier.height(16.dp))
                 Text(
                     stringResource(R.string.tag_editor_color_label),
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.labelMedium
                 )
                 Spacer(Modifier.height(8.dp))
@@ -127,7 +128,7 @@ fun TagEditorDialog(
                 Spacer(Modifier.height(16.dp))
                 Text(
                     stringResource(R.string.tag_editor_emoji_label),
-                    color = NeoColors.OnBaseMuted,
+                    color = SageColors.TextSecondary,
                     style = MaterialTheme.typography.labelMedium
                 )
                 Spacer(Modifier.height(8.dp))
@@ -170,7 +171,7 @@ private fun ColorSwatch(hex: String, selected: Boolean, onClick: () -> Unit) {
             .background(color, CircleShape)
             .border(
                 width = if (selected) 3.dp else 1.dp,
-                color = if (selected) NeoColors.OnBase else NeoColors.OnBaseSubtle,
+                color = if (selected) SageColors.TextPrimary else SageColors.TextTertiary,
                 shape = CircleShape
             )
             .clickable(onClick = onClick)
