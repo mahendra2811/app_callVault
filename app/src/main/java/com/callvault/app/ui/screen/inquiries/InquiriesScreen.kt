@@ -74,6 +74,9 @@ fun InquiriesScreen(
 
     NeoScaffold(
         modifier = modifier,
+        // Phase III — page top bar (title + back arrow) hidden on this main tab.
+        // Restore by uncommenting the topBar block below.
+        /*
         topBar = {
             NeoTopBar(
                 title = stringResource(R.string.cv_inquiries_title),
@@ -81,6 +84,7 @@ fun InquiriesScreen(
                 onNavClick = onBack
             )
         },
+        */
         bottomBar = if (state.bulkMode) {
             {
                 Row(
@@ -105,11 +109,14 @@ fun InquiriesScreen(
         } else null
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // Phase III — page header (emoji + title + description) hidden. Restore by uncommenting.
+            /*
             NeoPageHeader(
                 title = stringResource(R.string.cv_inquiries_title),
                 description = stringResource(R.string.cv_inquiries_description),
                 emoji = "📥"
             )
+            */
             Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
             Spacer(Modifier.height(8.dp))
             NeoSearchBar(

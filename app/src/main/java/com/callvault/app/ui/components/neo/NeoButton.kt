@@ -53,36 +53,21 @@ fun NeoButton(
     variant: NeoButtonVariant = NeoButtonVariant.Secondary,
     enabled: Boolean = true
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.97f else 1f,
-        animationSpec = spring(stiffness = 700f, dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "neo-button-scale"
-    )
-    val elevation: NeoElevation = when {
-        !enabled -> NeoElevation.Flat
-        variant == NeoButtonVariant.Tertiary -> NeoElevation.Flat
-        pressed -> NeoElevation.ConcaveSmall
-        else -> NeoElevation.ConvexMedium
-    }
     val labelColor: Color = when (variant) {
-        NeoButtonVariant.Primary -> NeoColors.AccentBlue
-        NeoButtonVariant.Secondary -> NeoColors.OnBase
-        NeoButtonVariant.Tertiary -> NeoColors.OnBaseMuted
+        NeoButtonVariant.Primary -> com.callvault.app.ui.theme.SageColors.Sage
+        NeoButtonVariant.Secondary -> com.callvault.app.ui.theme.SageColors.TextPrimary
+        NeoButtonVariant.Tertiary -> com.callvault.app.ui.theme.SageColors.TextSecondary
+    }
+    val fillColor: Color = when (variant) {
+        NeoButtonVariant.Tertiary -> com.callvault.app.ui.theme.SageColors.Canvas
+        else -> com.callvault.app.ui.theme.SageColors.Surface
     }
 
     NeoSurface(
         modifier = modifier
-            .scale(scale)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled,
-                onClick = onClick
-            ),
-        elevation = elevation,
-        shape = RoundedCornerShape(16.dp)
+            .clickable(enabled = enabled, onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        color = fillColor
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
@@ -95,7 +80,7 @@ fun NeoButton(
             }
             Text(
                 text = text,
-                color = if (enabled) labelColor else NeoColors.OnBaseSubtle,
+                color = if (enabled) labelColor else com.callvault.app.ui.theme.SageColors.TextTertiary,
                 style = MaterialTheme.typography.labelLarge
             )
         }

@@ -1,28 +1,21 @@
 package com.callvault.app.ui.components.neo
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.theme.BorderSoft
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
-import com.callvault.app.ui.theme.NeoElevation
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * A tappable raised card.
@@ -42,35 +35,20 @@ fun NeoCard(
     border: Color? = null,
     content: @Composable () -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.97f else 1f,
-        animationSpec = spring(stiffness = 700f, dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "neo-card-scale"
-    )
-    val elevation: NeoElevation =
-        if (pressed) NeoElevation.ConcaveSmall else NeoElevation.ConvexMedium
-    val shape = RoundedCornerShape(16.dp)
-
+    val shape = RoundedCornerShape(12.dp)
     val clickableModifier = if (onClick != null) {
-        Modifier.clickable(
-            interactionSource = interactionSource,
-            indication = null,
-            onClick = onClick
-        )
+        Modifier.clickable(onClick = onClick)
     } else Modifier
-
     val borderModifier =
         if (border != null) Modifier.border(1.dp, border, shape) else Modifier
 
     NeoSurface(
         modifier = modifier
-            .scale(scale)
+            .clip(shape)
             .then(clickableModifier)
             .then(borderModifier),
-        elevation = elevation,
-        shape = shape
+        shape = shape,
+        color = SageColors.Surface
     ) {
         Box(modifier = Modifier.padding(16.dp)) { content() }
     }

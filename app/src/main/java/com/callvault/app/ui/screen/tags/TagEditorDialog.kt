@@ -82,7 +82,7 @@ fun TagEditorDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = NeoColors.Base,
+        containerColor = SageColors.Canvas,
         title = {
             Text(
                 text = stringResource(

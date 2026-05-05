@@ -52,10 +52,10 @@ val IconHomeTint: Color get() = NeoColors.AccentGreen
 
 // Phase II — Sage/Earth tab background tints
 val TabBgHome      = Color(0xFFF5F1EA)
-val TabBgCalls     = Color(0xFFEFEAE0)
-val TabBgInquiries = Color(0xFFFAF6EE)
-val TabBgMore      = Color(0xFFEFEAE0)
-val TabBgStats     = Color(0xFFEFEAE0)
+val TabBgCalls     = Color(0xFFF5F1EA)
+val TabBgInquiries = Color(0xFFF5F1EA)
+val TabBgMore      = Color(0xFFF5F1EA)
+val TabBgStats     = Color(0xFFF5F1EA)
 
 // Header gradient pairs (top → bottom) — Sage/Earth variants
 val HeaderGradHomeStart      = Color(0xFFB6C5BB)   // Sage at ~30%

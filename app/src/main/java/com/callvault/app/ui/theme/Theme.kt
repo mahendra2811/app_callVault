@@ -27,7 +27,7 @@ private val CallVaultColorScheme = lightColorScheme(
     background = SageColors.Canvas,
     onBackground = SageColors.TextPrimary,
 
-    surface = SageColors.Surface,
+    surface = SageColors.Canvas,
     onSurface = SageColors.TextPrimary,
     surfaceVariant = SageColors.SurfaceAlt,
     onSurfaceVariant = SageColors.TextSecondary,

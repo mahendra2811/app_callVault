@@ -31,6 +31,7 @@ import com.callvault.app.R
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Top app bar for CallVault screens.
@@ -57,7 +58,8 @@ fun NeoTopBar(
     NeoSurface(
         modifier = modifier.fillMaxWidth(),
         elevation = NeoElevation.Flat,
-        shape = RoundedCornerShape(0.dp)
+        shape = RoundedCornerShape(0.dp),
+        color = SageColors.Canvas
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
@@ -125,7 +127,7 @@ fun NeoTopBar(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC, name = "brand + actions")
+@Preview(showBackground = true, backgroundColor = 0xFFF5F1EA, name = "brand + actions")
 @Composable
 private fun NeoTopBarBrandPreview() {
     CallVaultTheme {
@@ -144,7 +146,7 @@ private fun NeoTopBarBrandPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC, name = "with subtitle")
+@Preview(showBackground = true, backgroundColor = 0xFFF5F1EA, name = "with subtitle")
 @Composable
 private fun NeoTopBarSubtitlePreview() {
     CallVaultTheme {

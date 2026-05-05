@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.NeoElevation
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Single tab spec passed to [NeoTabBar].
@@ -60,7 +61,8 @@ fun NeoTabBar(
     NeoSurface(
         modifier = modifier.fillMaxWidth(),
         elevation = NeoElevation.ConvexMedium,
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(24.dp),
+        color = SageColors.Surface
     ) {
         Row(
             modifier = Modifier
@@ -78,28 +80,12 @@ fun NeoTabBar(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        if (active) {
-                            NeoSurface(
-                                modifier = Modifier.padding(2.dp),
-                                elevation = NeoElevation.ConcaveSmall,
-                                shape = CircleShape
-                            ) {
-                                Box(modifier = Modifier.padding(10.dp)) {
-                                    Icon(
-                                        imageVector = tab.icon,
-                                        contentDescription = tab.label,
-                                        tint = tab.activeTint ?: NeoColors.AccentBlue
-                                    )
-                                }
-                            }
-                        } else {
-                            Box(modifier = Modifier.padding(12.dp)) {
-                                Icon(
-                                    imageVector = tab.icon,
-                                    contentDescription = tab.label,
-                                    tint = NeoColors.OnBaseSubtle
-                                )
-                            }
+                        Box(modifier = Modifier.padding(8.dp)) {
+                            Icon(
+                                imageVector = tab.icon,
+                                contentDescription = tab.label,
+                                tint = if (active) (tab.activeTint ?: SageColors.Sage) else SageColors.TextTertiary
+                            )
                         }
                         if (tab.badge != null && tab.badge > 0) {
                             Box(modifier = Modifier.align(Alignment.TopEnd)) {
@@ -109,7 +95,7 @@ fun NeoTabBar(
                     }
                     Text(
                         text = tab.label,
-                        color = if (active) (tab.activeTint ?: NeoColors.AccentBlue) else NeoColors.OnBaseSubtle,
+                        color = if (active) (tab.activeTint ?: SageColors.Sage) else SageColors.TextTertiary,
                         style = MaterialTheme.typography.labelSmall
                     )
                 }

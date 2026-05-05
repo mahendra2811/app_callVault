@@ -109,7 +109,9 @@ fun CallVaultNavHost(
         }
     }
 
-    val toHome: () -> Unit = { popToHome(navController, null) }
+    val toHome: () -> Unit = {
+        if (!navController.popBackStack()) popToHome(navController, null)
+    }
 
     CompositionLocalProvider(LocalRootNav provides navController) {
     NavHost(

@@ -94,6 +94,7 @@ private fun HomeContent(
         loading = state.loading,
         backgroundColor = com.callvault.app.ui.theme.TabBgHome,
         headerGradient = com.callvault.app.ui.theme.HeaderGradHomeStart to com.callvault.app.ui.theme.HeaderGradHomeEnd,
+        chromeless = true, // Phase III — hide page top bar + header on main tabs
     ) {
         TodayCard(
             state = state,

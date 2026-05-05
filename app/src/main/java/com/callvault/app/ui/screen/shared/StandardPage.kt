@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.components.neo.NeoTopLineLoader
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.Spacing
 
 /**
@@ -41,9 +44,14 @@ import com.callvault.app.ui.theme.Spacing
  * @param onBackToHome when non-null, hardware back routes to home instead of popping.
  * @param loading when true, shows a 3.dp top-line indeterminate loader between
  *   the top bar and page header.
- * @param backgroundColor outer container color; defaults to [NeoColors.Base].
+ * @param backgroundColor outer container color, painted full-bleed (insets
+ *   included) by the underlying [NeoScaffold]. Defaults to [SageColors.Canvas].
  * @param headerGradient optional vertical gradient (top → bottom) painted behind
  *   the page header.
+ * @param chromeless when true, suppresses both the [NeoTopBar] and [NeoPageHeader].
+ *   Used by the 4 main tabs (Home/Calls/Inquiries/More) where the user has chosen
+ *   to hide page chrome — see Phase III in the plan. Default false preserves all
+ *   deep-page chrome.
  * @param content section column body. Vertical spacing between children is
  *   [Spacing.SectionGap].
  */
@@ -57,10 +65,13 @@ fun StandardPage(
     showBrand: Boolean = false,
     onBackToHome: (() -> Unit)? = null,
     loading: Boolean = false,
-    backgroundColor: Color = NeoColors.Base,
+    backgroundColor: Color = SageColors.Canvas,
     headerGradient: Pair<Color, Color>? = null,
+    chromeless: Boolean = false,
+    scrollable: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val scrollState = rememberScrollState()
     if (onBackToHome != null) {
         BackHandler { onBackToHome() }
     }
@@ -68,34 +79,39 @@ fun StandardPage(
         Brush.verticalGradient(listOf(it.first, it.second))
     }
     NeoScaffold(
+        containerColor = backgroundColor,
         topBar = {
-            NeoTopBar(
-                title = title,
-                showBrand = showBrand,
-                navIcon = if (onBack != null) Icons.AutoMirrored.Filled.ArrowBack else null,
-                onNavClick = { onBack?.invoke() },
-                actions = actions
-            )
+            if (!chromeless) {
+                NeoTopBar(
+                    title = title,
+                    showBrand = showBrand,
+                    navIcon = if (onBack != null) Icons.AutoMirrored.Filled.ArrowBack else null,
+                    onNavClick = { onBack?.invoke() },
+                    actions = actions
+                )
+            }
         }
-    ) { padding ->
+    ) { _ ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(backgroundColor)
-                .padding(padding)
         ) {
             AnimatedVisibility(visible = loading) {
                 NeoTopLineLoader()
             }
-            NeoPageHeader(
-                title = title,
-                description = description,
-                emoji = emoji,
-                backgroundBrush = headerBrush
-            )
+            if (!chromeless) {
+                NeoPageHeader(
+                    title = title,
+                    description = description,
+                    emoji = emoji,
+                    backgroundBrush = headerBrush
+                )
+            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .then(if (scrollable) Modifier.verticalScroll(scrollState) else Modifier)
                     .padding(
                         horizontal = Spacing.PageHorizontal,
                         vertical = Spacing.SectionGap
@@ -107,7 +123,7 @@ fun StandardPage(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC, widthDp = 360, heightDp = 720)
+@Preview(showBackground = true, backgroundColor = 0xFFF5F1EA, widthDp = 360, heightDp = 720)
 @Composable
 private fun StandardPageWithBackAndActionsPreview() {
     CallVaultTheme {
@@ -134,7 +150,7 @@ private fun StandardPageWithBackAndActionsPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC, widthDp = 360, heightDp = 720)
+@Preview(showBackground = true, backgroundColor = 0xFFF5F1EA, widthDp = 360, heightDp = 720)
 @Composable
 private fun StandardPagePlainPreview() {
     CallVaultTheme {

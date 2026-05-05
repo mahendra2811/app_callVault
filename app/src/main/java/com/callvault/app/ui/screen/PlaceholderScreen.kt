@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.ui.components.neo.NeoCard
 import com.callvault.app.ui.theme.CallVaultTheme
 import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 
 /**
  * Sprint 0 landing screen.
@@ -30,7 +31,7 @@ fun PlaceholderScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(NeoColors.Base)
+            .background(SageColors.Canvas)
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -55,7 +56,7 @@ fun PlaceholderScreen(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC)
+@Preview(showBackground = true, backgroundColor = 0xFFF5F1EA)
 @Composable
 private fun PlaceholderScreenPreview() {
     CallVaultTheme { PlaceholderScreen() }

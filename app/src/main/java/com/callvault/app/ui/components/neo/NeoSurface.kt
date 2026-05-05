@@ -36,7 +36,6 @@ fun NeoSurface(
 ) {
     Box(
         modifier = modifier
-            .neoShadow(elevation = elevation, shape = shape)
             .clip(shape)
             .background(color)
     ) {

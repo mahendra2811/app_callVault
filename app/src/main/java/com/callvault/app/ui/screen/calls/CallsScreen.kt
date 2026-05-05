@@ -1,10 +1,13 @@
 package com.callvault.app.ui.screen.calls
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -78,6 +82,9 @@ fun CallsScreen(
 
     NeoScaffold(
         modifier = modifier,
+        // Phase III — page top bar (title + Search/Filter/View-mode actions) hidden.
+        // Restore by uncommenting the topBar block below.
+        /*
         topBar = {
             NeoTopBar(
                 title = androidx.compose.ui.res.stringResource(com.callvault.app.R.string.cv_calls_title),
@@ -104,6 +111,7 @@ fun CallsScreen(
                 }
             )
         },
+        */
         bottomBar = if (state.bulkMode) {
             {
                 BulkActionBar(
@@ -128,11 +136,45 @@ fun CallsScreen(
         } else null
     ) {
         androidx.compose.foundation.layout.Column(modifier = Modifier.fillMaxSize()) {
+        // Phase III — page header (emoji + title + description) hidden. Restore by uncommenting.
+        /*
         NeoPageHeader(
             title = androidx.compose.ui.res.stringResource(com.callvault.app.R.string.cv_calls_title),
             description = androidx.compose.ui.res.stringResource(com.callvault.app.R.string.cv_calls_description),
             emoji = "📞"
         )
+        */
+        // Phase III — inline action subsection: Search · Filter · View-mode toggle.
+        // These three actions are Calls-specific so they live on this page (not in More).
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            NeoIconButton(
+                icon = Icons.Filled.Search,
+                onClick = onOpenSearch,
+                contentDescription = "Search calls",
+                size = 36.dp,
+            )
+            Spacer(Modifier.width(8.dp))
+            NeoIconButton(
+                icon = Icons.Filled.FilterList,
+                onClick = { filterSheetOpen = true },
+                contentDescription = "Filter calls",
+                size = 36.dp,
+            )
+            Spacer(Modifier.width(8.dp))
+            NeoIconButton(
+                icon = if (state.viewMode == CallsViewMode.Grouped)
+                    Icons.Filled.ViewAgenda else Icons.AutoMirrored.Filled.ViewList,
+                onClick = viewModel::toggleViewMode,
+                contentDescription = "Toggle view mode",
+                size = 36.dp,
+            )
+        }
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = viewModel::refresh,

@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.callvault.app.data.backup.DriveAuthManager
 import com.callvault.app.ui.navigation.CallVaultNavHost
 import com.callvault.app.ui.theme.CallVaultTheme
-import com.callvault.app.ui.theme.NeoColors
+import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.util.PermissionManager
 import com.callvault.app.util.SplashGate
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
             CallVaultTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = NeoColors.Base
+                    color = SageColors.Canvas
                 ) {
                     CallVaultNavHost(initialDeepLink = deepLink)
                 }

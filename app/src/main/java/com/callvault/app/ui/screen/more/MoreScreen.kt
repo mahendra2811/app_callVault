@@ -1,9 +1,11 @@
 package com.callvault.app.ui.screen.more
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,7 +50,6 @@ import com.callvault.app.ui.theme.TabBgMore
 private data class MoreRow(
     val emoji: String,
     val title: String,
-    val subtitle: String,
     val tint: Color,
     val onClick: () -> Unit
 )
@@ -67,46 +68,22 @@ fun MoreScreen(
     onOpenQuickExport: () -> Unit = {}
 ) {
     val data = listOf(
-        MoreRow("📤", "Export", stringResource(R.string.cv_more_subtitle_export), IconBackupTint) {
-            navController.navigate(Destinations.Export.route)
-        },
-        MoreRow("⚡", "Quick Export", stringResource(R.string.cv_more_subtitle_quick_export), IconBackupTint) {
-            onOpenQuickExport()
-        },
-        MoreRow("💾", "Backup & restore", stringResource(R.string.cv_more_subtitle_backup), IconBackupTint) {
-            navController.navigate(Destinations.Backup.route)
-        },
-        MoreRow("🏷️", "Tags", stringResource(R.string.cv_more_subtitle_tags), IconTagsTint) {
-            navController.navigate(Destinations.Settings.route)
-        }
+        MoreRow("📤", "Export", IconBackupTint) { navController.navigate(Destinations.Export.route) },
+        MoreRow("⚡", "Quick Export", IconBackupTint) { onOpenQuickExport() },
+        MoreRow("💾", "Backup & restore", IconBackupTint) { navController.navigate(Destinations.Backup.route) },
+        MoreRow("🏷️", "Tags", IconTagsTint) { navController.navigate(Destinations.Settings.route) }
     )
     val automation = listOf(
-        MoreRow("🪄", "Auto-tag rules", stringResource(R.string.cv_more_subtitle_rules), IconTagsTint) {
-            navController.navigate(Destinations.AutoTagRules.route)
-        },
-        MoreRow("🎯", "Lead scoring", stringResource(R.string.cv_more_subtitle_lead_scoring), IconStatsTint) {
-            navController.navigate(Destinations.LeadScoringSettings.route)
-        },
-        MoreRow("✨", "Real-time features", stringResource(R.string.cv_more_subtitle_realtime), IconCallsTint) {
-            navController.navigate(Destinations.RealTimeSettings.route)
-        },
-        MoreRow("💡", "Auto-save", stringResource(R.string.cv_more_subtitle_autosave), IconInquiriesTint) {
-            navController.navigate(Destinations.AutoSaveSettings.route)
-        }
+        MoreRow("🪄", "Auto-tag rules", IconTagsTint) { navController.navigate(Destinations.AutoTagRules.route) },
+        MoreRow("🎯", "Lead scoring", IconStatsTint) { navController.navigate(Destinations.LeadScoringSettings.route) },
+        MoreRow("✨", "Real-time features", IconCallsTint) { navController.navigate(Destinations.RealTimeSettings.route) },
+        MoreRow("💡", "Auto-save", IconInquiriesTint) { navController.navigate(Destinations.AutoSaveSettings.route) }
     )
     val app = listOf(
-        MoreRow("📊", "Stats", stringResource(R.string.cv_more_subtitle_stats), IconStatsTint) {
-            navController.navigate(Destinations.Settings.route)
-        },
-        MoreRow("🆙", "App updates", stringResource(R.string.cv_more_subtitle_updates), IconCallsTint) {
-            navController.navigate(Destinations.UpdateSettings.route)
-        },
-        MoreRow("📚", "Help & docs", stringResource(R.string.cv_more_subtitle_help), IconHomeTint) {
-            navController.navigate(Destinations.DocsList.route)
-        },
-        MoreRow("⚙️", "Settings", stringResource(R.string.cv_more_subtitle_settings), NeoColors.OnBaseMuted) {
-            navController.navigate(Destinations.Settings.route)
-        }
+        MoreRow("📊", "Stats", IconStatsTint) { navController.navigate(Destinations.Settings.route) },
+        MoreRow("🆙", "App updates", IconCallsTint) { navController.navigate(Destinations.UpdateSettings.route) },
+        MoreRow("📚", "Help & docs", IconHomeTint) { navController.navigate(Destinations.DocsList.route) },
+        MoreRow("⚙️", "Settings", NeoColors.OnBaseMuted) { navController.navigate(Destinations.Settings.route) }
     )
 
     StandardPage(
@@ -115,6 +92,8 @@ fun MoreScreen(
         emoji = "⚙️",
         backgroundColor = TabBgMore,
         headerGradient = HeaderGradMoreStart to HeaderGradMoreEnd,
+        chromeless = true, // Phase III — hide page top bar + header on main tabs
+        scrollable = true,
     ) {
         MoreGroup(stringResource(R.string.cv_more_group_data), data)
         MoreGroup(stringResource(R.string.cv_more_group_automation), automation)
@@ -124,13 +103,14 @@ fun MoreScreen(
 
 @Composable
 private fun MoreGroup(title: String, rows: List<MoreRow>) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.Sm), modifier = Modifier.fillMaxWidth()) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            color = SageColors.TextPrimary,
+            style = MaterialTheme.typography.labelLarge,
+            color = SageColors.TextSecondary,
+            fontWeight = FontWeight.SemiBold,
         )
-        Column(verticalArrangement = Arrangement.spacedBy(Spacing.Sm), modifier = Modifier.fillMaxWidth()) {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
             rows.forEach { row -> MoreRowView(row) }
         }
     }
@@ -143,36 +123,29 @@ private fun MoreRowView(row: MoreRow) {
         onClick = row.onClick
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             NeoSurface(
                 elevation = NeoElevation.ConcaveSmall,
                 shape = CircleShape,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(32.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(text = row.emoji, style = MaterialTheme.typography.titleMedium)
+                    Text(text = row.emoji, style = MaterialTheme.typography.bodyLarge)
                 }
             }
             Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = row.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = SageColors.TextPrimary,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = row.subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SageColors.TextTertiary
-                )
-            }
+            Text(
+                text = row.title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = SageColors.TextPrimary,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,

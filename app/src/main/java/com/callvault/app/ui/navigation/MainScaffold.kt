@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Home
@@ -27,6 +30,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.Composable
@@ -154,6 +158,20 @@ fun MainScaffold(
     var quickExportOpen by rememberSaveable { mutableStateOf(false) }
     val saveableHolder = rememberSaveableStateHolder()
 
+    // Consume HomeNavRequest signal from popToHome calls in deep screens.
+    LaunchedEffect(Unit) {
+        HomeNavRequest.pending.collect { wantsHome ->
+            if (wantsHome) {
+                innerNav.navigate(MainTabRoute.Home.route) {
+                    popUpTo(innerNav.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                HomeNavRequest.pending.value = false
+            }
+        }
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     var lastBackPressMs by remember { androidx.compose.runtime.mutableLongStateOf(0L) }
@@ -183,6 +201,13 @@ fun MainScaffold(
         containerColor = currentTabBg,
         contentWindowInsets = WindowInsets.systemBars,
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        // Phase III — brand top bar hidden; restore by uncommenting the topBar block below.
+        // The page-header strip inside each StandardPage already shows the page title +
+        // description, so the persistent "callVault [logo] 🔍 ⋮" bar duplicates branding.
+        // Search route stays registered in CallVaultNavHost; re-add an entry point when needed.
+        // Sign out of Drive remains reachable from Backup → Cloud section.
+        // Profile (placeholder) remains reachable from More → Settings.
+        /*
         topBar = {
             NeoTopBar(
                 title = brand,
@@ -224,8 +249,15 @@ fun MainScaffold(
                 }
             )
         },
+        */
         bottomBar = {
-            Box(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(SageColors.Canvas)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+            ) {
                 NeoTabBar(
                     tabs = neoTabs,
                     selectedIndex = selectedIndex,
@@ -242,8 +274,7 @@ fun MainScaffold(
                         }
                     },
                     modifier = Modifier
-                        .background(SageColors.Surface)
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .fillMaxWidth()
                 )
             }
         }
