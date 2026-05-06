@@ -36,7 +36,6 @@ import com.callvault.app.ui.components.neo.NeoTopBar
 import com.callvault.app.ui.screen.export.steps.ColumnsStep
 import com.callvault.app.ui.screen.export.steps.DateRangeStep
 import com.callvault.app.ui.screen.export.steps.DestinationStep
-import com.callvault.app.ui.screen.export.steps.FormatStep
 import com.callvault.app.ui.screen.export.steps.ScopeStep
 import com.callvault.app.ui.screen.shared.NeoScaffold
 
@@ -53,8 +52,7 @@ fun ExportScreen(
     val snackbar = remember { SnackbarHostState() }
     val ctx = LocalContext.current
 
-    val showColumns = state.format == ExportFormat.Csv || state.format == ExportFormat.Excel
-    val maxStep = if (showColumns) 4 else 3 // columns step skipped for non-table formats
+    val maxStep = 3 // date → scope → columns → destination (Excel-only)
 
     NeoScaffold(
         topBar = {
@@ -86,12 +84,7 @@ fun ExportScreen(
                 } else {
                     NeoButton(
                         text = "Next",
-                        onClick = {
-                            // Skip the columns step for non-table formats.
-                            if (state.step == 2 && !showColumns) {
-                                viewModel.next(); viewModel.next()
-                            } else viewModel.next()
-                        },
+                        onClick = viewModel::next,
                         variant = NeoButtonVariant.Primary
                     )
                 }
@@ -106,17 +99,10 @@ fun ExportScreen(
         )
         Box(Modifier.fillMaxSize()) {
             when (state.step) {
-                0 -> FormatStep(state.format, viewModel::setFormat)
-                1 -> DateRangeStep(state.dateRange, viewModel::setDateRange)
-                2 -> ScopeStep(state.scope, viewModel::setScope)
-                3 -> if (showColumns) ColumnsStep(state.columns, viewModel::setColumns)
-                    else DestinationStep(
-                        selected = state.destination,
-                        onSelect = viewModel::setDestination,
-                        suggestedFileName = "callvault.${state.format.ext}",
-                        suggestedMime = mimeFor(state.format)
-                    )
-                4 -> DestinationStep(
+                0 -> DateRangeStep(state.dateRange, viewModel::setDateRange)
+                1 -> ScopeStep(state.scope, viewModel::setScope)
+                2 -> ColumnsStep(state.columns, viewModel::setColumns)
+                3 -> DestinationStep(
                     selected = state.destination,
                     onSelect = viewModel::setDestination,
                     suggestedFileName = "callvault.${state.format.ext}",

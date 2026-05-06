@@ -52,6 +52,8 @@ import com.callvault.app.ui.screen.permission.PermissionDeniedScreen
 import com.callvault.app.ui.screen.permission.PermissionRationaleScreen
 import com.callvault.app.ui.screen.search.SearchScreen
 import com.callvault.app.ui.screen.splash.SplashScreen
+import com.callvault.app.ui.screen.stats.StatsScreen
+import com.callvault.app.ui.screen.tags.TagsManagerScreen
 import com.callvault.app.ui.screen.settings.AutoSaveSettingsScreen
 import com.callvault.app.ui.screen.settings.LeadScoringSettingsScreen
 import com.callvault.app.ui.screen.settings.RealTimeSettingsScreen
@@ -288,10 +290,6 @@ fun CallVaultNavHost(
                 }
             )
         }
-        composable(Destinations.FilterPresets.route) {
-            BackHandler { toHome() }
-            CallsPlaceholderScreen()
-        }
         composable(Destinations.UpdateAvailable.route) {
             BackHandler { toHome() }
             UpdateAvailableScreen(onClose = toHome)
@@ -303,6 +301,14 @@ fun CallVaultNavHost(
         composable(Destinations.Settings.route) {
             BackHandler { toHome() }
             SettingsScreen(navController = navController)
+        }
+        composable(Destinations.Tags.route) {
+            BackHandler { toHome() }
+            TagsManagerScreen(onBack = toHome)
+        }
+        composable(Destinations.Stats.route) {
+            BackHandler { toHome() }
+            StatsScreen(onBack = toHome)
         }
         composable(Destinations.DocsList.route) {
             BackHandler { toHome() }
@@ -351,38 +357,3 @@ private fun friendlyMissing(state: com.callvault.app.util.PermissionState): List
     return list
 }
 
-/**
- * Placeholder destination used by routes that haven't been built yet.
- */
-@Composable
-private fun CallsPlaceholderScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(NeoColors.Base)
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = stringResource(R.string.calls_placeholder_title),
-                color = NeoColors.OnBase,
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.calls_placeholder_body),
-                color = NeoColors.OnBaseMuted,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFE8E8EC, widthDp = 360, heightDp = 720)
-@Composable
-private fun CallsPlaceholderPreview() {
-    CallVaultTheme { CallsPlaceholderScreen() }
-}

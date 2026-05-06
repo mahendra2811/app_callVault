@@ -78,6 +78,10 @@
             android:exported="false" />
 
         <receiver
+            android:name=".data.work.StaleLeadActionReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name=".data.work.BootCompletedReceiver"
             android:exported="true">
             <intent-filter>

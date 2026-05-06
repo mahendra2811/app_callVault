@@ -43,6 +43,24 @@ class CallContextResolver @Inject constructor(
         return all.sortedByDescending { usage[it.id] ?: 0 }.take(n)
     }
 
+    /**
+     * Tags this number was previously tagged with (across all prior calls).
+     * Returns at most [n] entries, ordered by frequency.
+     */
+    suspend fun suggestedTagsForNumber(normalizedNumber: String, n: Int = 3): List<Tag> {
+        val historyTags = tagRepository.observeForNumber(normalizedNumber).first()
+        if (historyTags.isEmpty()) return topTags(n)
+        return historyTags
+            .groupingBy { it.id }
+            .eachCount()
+            .entries
+            .sortedByDescending { it.value }
+            .mapNotNull { e -> historyTags.firstOrNull { it.id == e.key } }
+            .distinctBy { it.id }
+            .take(n)
+            .ifEmpty { topTags(n) }
+    }
+
     /** True if the number is not in the system contacts and not auto-saved. */
     suspend fun isUnsaved(normalizedNumber: String): Boolean {
         val meta = contactRepository.getByNumber(normalizedNumber)

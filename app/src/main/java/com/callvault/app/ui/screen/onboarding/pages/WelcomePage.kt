@@ -79,10 +79,10 @@ fun WelcomePage(
         Text(
             text = stringResource(R.string.onboarding_welcome_headline),
             color = Color.White,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.displayMedium,
             textAlign = TextAlign.Center
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.onboarding_welcome_subtext),
             color = Color.White.copy(alpha = 0.85f),

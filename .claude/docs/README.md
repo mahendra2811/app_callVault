@@ -1,41 +1,42 @@
-# CallVault AI Docs
+# CallVault — AI handoff docs
 
-These docs are written for future AI agents working inside this project. Start here, then open only the specific document needed for the task.
+Read these in order. The first three give a future cold-start session everything it needs to be productive without exploring the source.
 
-## Reading Order
+## Cold-start reading order (read these 3 first)
 
-1. `01-project-brief.md` - what CallVault is, who it serves, status, tech stack, constraints.
-2. `02-architecture-and-flows.md` - layers, app startup, navigation, sync, auto-save, rules, real-time, export, backup, updates.
-3. `03-file-map.md` - where each project file or file group lives and what it owns.
-4. `04-future-plan-and-backlog.md` - pending work, future plans, risk list, release path.
-5. `05-ai-working-guide.md` - how future agents should answer, edit, test, and avoid mistakes in this repo.
-6. `06-glossary.md` - domain terms (inquiry, lead, lenient bucketing, orphan note, etc.).
-7. `07-mcp-guide.md` - Context7 + Playwright MCP servers wired via `.mcp.json`.
-8. `08-agent-spawn-templates.md` - copy-paste templates for spawning each subagent.
+1. **`PROJECT_MAP.md`** — one-page tree of `app/src/main/`, layering rules, where each kind of new thing goes. Replaces aimless `find`/`tree` calls.
+2. **`UI_GUIDE.md`** — `Neo*` component inventory, layout primitives (`StandardPage`, `NeoScaffold`), color tokens, and a screen-by-screen layout sketch. Read this before building any Compose surface.
+3. **`AUDIT_2026-05-06.md`** — current open bugs, dead code, broken nav, and the UI-direction recommendation. The single source of truth for "what's actually wrong right now". Always reconcile against `git log` since 2026-05-06 — entries may be already fixed.
 
-## Project Summary
+## When you need depth
 
-CallVault is a local-first Android call-log CRM for Indian small-business owners. It reads the device call log, enriches calls with contact and SIM data, auto-saves inquiry numbers into a dedicated contact group, supports tags, notes, bookmarks, follow-ups, lead scoring, exports, encrypted backups, real-time overlays, and self-update by sideloaded APK.
+4. `01-project-brief.md` → product, personas, status, tech stack.
+5. `02-architecture-and-flows.md` → app startup, sync pipeline, real-time hooks, export, backup, updates.
+6. `03-file-map.md` → file-by-file index (longer than `PROJECT_MAP.md`).
+7. `FEATURE_BACKLOG.md` → ranked, checkbox-edit-able feature backlog from architect review.
+8. `04-future-plan-and-backlog.md` → older sprint-era backlog (kept for history; `FEATURE_BACKLOG.md` supersedes it).
+9. `05-ai-working-guide.md` → behavioural rules for agents (string-resource-only, Timber-only, no `TODO(`, etc.).
+10. `06-glossary.md` → domain vocabulary (inquiry, lenient bucket, orphan note, lead score buckets).
+11. `07-mcp-guide.md` → Context7 + Playwright MCP usage.
+12. `08-agent-spawn-templates.md` → copy-paste sub-agent prompts (`callvault-android-engineer`, `callvault-ui-builder`, etc.).
 
-The app is intentionally sideloaded only:
+## Spec & out-of-tree references
 
-- No Play Store dependency.
-- No Google Play Services.
-- No Firebase, analytics, telemetry, or crash reporting.
-- Network use is limited to update manifest checks.
-- User data stays on device unless the user exports or backs it up.
+- **Spec (locked)**: `/home/primathon/Downloads/callvault_mega_prompt.md` (1533 lines). Use Read with offset/limit; CLAUDE.md lists section ranges.
+- **`CLAUDE.md`** (repo root) → session rules. Note: §"Don'ts" was reversed 2026-05-05 — Supabase Auth, PostHog, FCM are **now in scope**. See `DECISIONS.md` "Cloud pivot".
+- **`DECISIONS.md`** → every fallback, deferral, trade-off (read before re-litigating any architectural choice).
+- **`docs/architecture.md`**, **`docs/cloud-integration.md`**, **`docs/env-setup.md`** → human-facing engineering docs (not AI-tuned).
+- **`TODO.md`** → P0–P3 punch list, hand-edited.
+- **`CHANGELOG.md`** → what each version added.
 
-## Important Local References
+## Important snapshot (2026-05-06)
 
-- `CLAUDE.md` - repo rules loaded into Claude sessions.
-- `README.md` - high-level product/build summary.
-- `DEVELOPING.md` - local build, install, debug, verification guide.
-- `docs/architecture.md` - existing architecture overview.
-- `CHANGELOG.md` - shipped v1.0.0 features and known limitations.
-- `DECISIONS.md` - trade-offs and deferred work.
-- `app/src/main/assets/docs/` - 15 user-facing in-app help articles.
+- **245 Kotlin files** in `app/src/main/`, 13 sprints shipped.
+- **3 unit tests, 0 instrumentation tests** — testing is a known debt.
+- **Active development phase**: `./gradlew` builds + `adb install` are pre-authorized for every code change. Don't ask.
+- **Auth is now app-wide gate**: `Destinations.Login` is reached before onboarding/permissions if `AuthState.SignedOut`. A whole secondary auth graph (`AuthNavGraph.kt`) exists but is **not wired** — see `AUDIT_2026-05-06.md`.
+- **UI design system**: custom neumorphic ("Neo*") in `ui/components/neo/` + `ui/theme/Neo*`. Recommendation in `AUDIT_2026-05-06.md` § "UI direction".
 
-## Current Documentation Snapshot
+## Documentation hygiene rule
 
-Created from the project files on 2026-05-01. No `TODO.md` exists in this workspace at the time of writing, so pending work is derived from `CHANGELOG.md`, `DEVELOPING.md`, `DECISIONS.md`, and the code map.
-
+When you fix something listed in `AUDIT_2026-05-06.md`, strike it through (`~~text~~`) rather than deleting. When you add a new finding, append a dated note. When the audit is older than 30 days, schedule a re-audit before starting a feature push.

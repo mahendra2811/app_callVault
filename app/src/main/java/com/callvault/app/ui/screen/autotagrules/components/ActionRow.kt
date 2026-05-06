@@ -1,9 +1,11 @@
 package com.callvault.app.ui.screen.autotagrules.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,24 +16,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.callvault.app.domain.model.RuleAction
+import com.callvault.app.domain.model.Tag
 import com.callvault.app.ui.components.neo.NeoIconButton
 import com.callvault.app.ui.components.neo.NeoSurface
-import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.ui.theme.NeoElevation
 
-/**
- * Summary row for one [RuleAction]. Mirrors [ConditionRow] visually so the
- * "When all of these are true… / Then…" sections feel symmetrical.
- *
- * @param action the action to render
- * @param onRemove fires when the trailing X is tapped
- */
+/** Inline-editable card for one [RuleAction]. */
 @Composable
 fun ActionRow(
     action: RuleAction,
+    tags: List<Tag>,
+    onUpdate: (RuleAction) -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -40,32 +39,57 @@ fun ActionRow(
         elevation = NeoElevation.ConcaveSmall,
         shape = RoundedCornerShape(12.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = describe(action),
-                color = SageColors.TextPrimary,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(Modifier.width(8.dp))
-            NeoIconButton(
-                icon = Icons.Filled.Close,
-                onClick = onRemove,
-                contentDescription = "Remove action",
-                size = 32.dp
-            )
+        Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = label(action),
+                    color = SageColors.TextPrimary,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                NeoIconButton(
+                    icon = Icons.Filled.Close,
+                    onClick = onRemove,
+                    contentDescription = "Remove action",
+                    size = 32.dp
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            ActionEditor(action, tags, onUpdate)
         }
     }
 }
 
-private fun describe(a: RuleAction): String = when (a) {
-    is RuleAction.ApplyTag -> "Apply tag #${a.tagId}"
-    is RuleAction.LeadScoreBoost ->
-        if (a.delta >= 0) "Boost lead score +${a.delta}" else "Reduce lead score ${a.delta}"
-    is RuleAction.AutoBookmark -> "Auto-bookmark${a.reason?.let { ": $it" } ?: ""}"
-    is RuleAction.MarkFollowUp -> "Schedule follow-up in ${a.hoursFromNow}h"
+private fun label(a: RuleAction): String = when (a) {
+    is RuleAction.ApplyTag -> "Apply tag"
+    is RuleAction.LeadScoreBoost -> "Adjust lead score"
+    is RuleAction.AutoBookmark -> "Auto-bookmark"
+    is RuleAction.MarkFollowUp -> "Schedule follow-up"
+}
+
+@Composable
+private fun ActionEditor(a: RuleAction, tags: List<Tag>, onUpdate: (RuleAction) -> Unit) {
+    when (a) {
+        is RuleAction.ApplyTag -> TagDropdown(tags, a.tagId) { onUpdate(RuleAction.ApplyTag(it)) }
+        is RuleAction.LeadScoreBoost -> InlineTextField(
+            value = a.delta.toString(),
+            onChange = { onUpdate(RuleAction.LeadScoreBoost(it.toIntOrNull() ?: 0)) },
+            placeholder = "+10 / -5",
+            keyboardType = KeyboardType.Number,
+        )
+        is RuleAction.AutoBookmark -> InlineTextField(
+            value = a.reason.orEmpty(),
+            onChange = { onUpdate(RuleAction.AutoBookmark(it.ifBlank { null })) },
+            placeholder = "Reason (optional)",
+        )
+        is RuleAction.MarkFollowUp -> InlineTextField(
+            value = a.hoursFromNow.toString(),
+            onChange = { onUpdate(RuleAction.MarkFollowUp(it.toIntOrNull() ?: 0)) },
+            placeholder = "hours from now",
+            keyboardType = KeyboardType.Number,
+        )
+    }
 }

@@ -154,7 +154,9 @@ class PostCallPopupView private constructor(context: Context) : FrameLayout(cont
         // Quick-tag chips populated async.
         val deps = EntryPointAccessors.fromApplication(context.applicationContext, Deps::class.java)
         scope.launch {
-            val top = runCatching { deps.callContextResolver().topTags(3) }.getOrNull().orEmpty()
+            val top = runCatching {
+                deps.callContextResolver().suggestedTagsForNumber(payload.normalizedNumber, 3)
+            }.getOrNull().orEmpty()
             for (tag in top) {
                 val chip = TextView(context).apply {
                     text = tag.name

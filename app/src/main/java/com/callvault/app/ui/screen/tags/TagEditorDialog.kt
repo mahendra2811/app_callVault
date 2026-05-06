@@ -75,6 +75,9 @@ fun TagEditorDialog(
         mutableStateOf(initial?.colorHex ?: DefaultTagsSeeder.Palette.first())
     }
     var emoji by rememberSaveable { mutableStateOf(initial?.emoji.orEmpty()) }
+    var waTemplate by rememberSaveable {
+        mutableStateOf(initial?.whatsappTemplate.orEmpty())
+    }
 
     val trimmed = name.trim()
     val tooLong = name.length > MAX_TAG_NAME
@@ -133,6 +136,19 @@ fun TagEditorDialog(
                 )
                 Spacer(Modifier.height(8.dp))
                 EmojiGrid(selected = emoji, onSelect = { emoji = if (emoji == it) "" else it })
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    "WhatsApp message (optional)",
+                    color = SageColors.TextSecondary,
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Spacer(Modifier.height(6.dp))
+                NeoTextField(
+                    value = waTemplate,
+                    onChange = { waTemplate = it },
+                    label = "",
+                    placeholder = "Hi! Following up on your inquiry…"
+                )
             }
         },
         confirmButton = {
@@ -144,7 +160,8 @@ fun TagEditorDialog(
                         .copy(
                             name = trimmed,
                             colorHex = color,
-                            emoji = emoji.takeIf { it.isNotBlank() }
+                            emoji = emoji.takeIf { it.isNotBlank() },
+                            whatsappTemplate = waTemplate.trim().takeIf { it.isNotBlank() }
                         )
                     onSave(out)
                 },

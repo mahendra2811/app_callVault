@@ -12,6 +12,7 @@ import com.callvault.app.data.prefs.SettingsDataStore
 import com.callvault.app.data.push.PushTokenSync
 import com.callvault.app.data.work.UpdateCheckWorker
 import com.callvault.app.data.work.DailySummaryWorker
+import com.callvault.app.data.work.StaleLeadNudgeWorker
 import com.callvault.app.util.RealTimeServiceController
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -65,6 +66,10 @@ class CallVaultApp : Application(), Configuration.Provider {
                     if (settingsDataStore.dailySummaryEnabled.first()) {
                         runCatching { DailySummaryWorker.schedule(this@CallVaultApp) }
                             .onFailure { Timber.w(it, "DailySummaryWorker.schedule failed") }
+                    }
+                    if (settingsDataStore.followUpRemindersEnabled.first()) {
+                        runCatching { StaleLeadNudgeWorker.schedule(this@CallVaultApp) }
+                            .onFailure { Timber.w(it, "StaleLeadNudgeWorker.schedule failed") }
                     }
                 }
             } catch (t: Throwable) {

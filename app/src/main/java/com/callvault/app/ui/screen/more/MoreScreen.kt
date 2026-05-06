@@ -71,16 +71,13 @@ private data class MoreRow(
 fun MoreScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    onOpenQuickExport: () -> Unit = {},
     onSignOut: () -> Unit = {},
 ) {
     var confirmLogout by remember { mutableStateOf(false) }
 
     val data = listOf(
         MoreRow("📤", "Export", IconBackupTint) { navController.navigate(Destinations.Export.route) },
-        MoreRow("⚡", "Quick Export", IconBackupTint) { onOpenQuickExport() },
-        MoreRow("💾", "Backup & restore", IconBackupTint) { navController.navigate(Destinations.Backup.route) },
-        MoreRow("🏷️", "Tags", IconTagsTint) { navController.navigate(Destinations.Settings.route) }
+        MoreRow("🏷️", "Tags", IconTagsTint) { navController.navigate(Destinations.Tags.route) }
     )
     val automation = listOf(
         MoreRow("🪄", "Auto-tag rules", IconTagsTint) { navController.navigate(Destinations.AutoTagRules.route) },
@@ -92,7 +89,7 @@ fun MoreScreen(
         MoreRow("🚪", stringResource(R.string.more_logout), NeoColors.OnBaseMuted) { confirmLogout = true }
     )
     val app = listOf(
-        MoreRow("📊", "Stats", IconStatsTint) { navController.navigate(Destinations.Settings.route) },
+        MoreRow("📊", "Stats", IconStatsTint) { navController.navigate(Destinations.Stats.route) },
         MoreRow("🆙", "App updates", IconCallsTint) { navController.navigate(Destinations.UpdateSettings.route) },
         MoreRow("📚", "Help & docs", IconHomeTint) { navController.navigate(Destinations.DocsList.route) },
         MoreRow("⚙️", "Settings", NeoColors.OnBaseMuted) { navController.navigate(Destinations.Settings.route) }
@@ -111,6 +108,9 @@ fun MoreScreen(
         MoreGroup(stringResource(R.string.cv_more_group_automation), automation)
         MoreGroup(stringResource(R.string.cv_more_group_app), app)
         MoreGroup(stringResource(R.string.cv_more_group_account), account)
+        Spacer(Modifier.height(16.dp))
+        MadeWithLoveFooter()
+        Spacer(Modifier.height(24.dp))
     }
 
     if (confirmLogout) {
@@ -131,6 +131,17 @@ fun MoreScreen(
             },
         )
     }
+}
+
+@Composable
+private fun MadeWithLoveFooter() {
+    Text(
+        text = "Made with ❤️ by Mahendra 🇮🇳",
+        style = MaterialTheme.typography.bodyMedium,
+        color = SageColors.TextTertiary,
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @Composable

@@ -234,8 +234,6 @@ private fun StatsBody(
     }
 }
 
-private fun LazyColumnItemsScopeShim() = Unit
-
 private fun androidx.compose.foundation.lazy.LazyListScope.items(insights: List<Insight>) {
     items(insights.size) { i -> InsightCard(insights[i]) }
 }

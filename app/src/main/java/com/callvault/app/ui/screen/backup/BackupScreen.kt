@@ -59,6 +59,7 @@ fun BackupScreen(
 
     var passDialog by remember { mutableStateOf<PassphraseDialogReason?>(null) }
     var pendingRestoreUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var pendingVerifyUri by remember { mutableStateOf<android.net.Uri?>(null) }
     var confirmRestore by remember { mutableStateOf<Pair<android.net.Uri, String>?>(null) }
 
     val openDocLauncher = rememberLauncherForActivityResult(
@@ -67,6 +68,14 @@ fun BackupScreen(
         if (uri != null) {
             pendingRestoreUri = uri
             passDialog = PassphraseDialogReason.Restore
+        }
+    }
+    val verifyDocLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            pendingVerifyUri = uri
+            passDialog = PassphraseDialogReason.Verify
         }
     }
 
@@ -116,6 +125,24 @@ fun BackupScreen(
                         onClick = { openDocLauncher.launch(arrayOf("*/*")) },
                         enabled = !state.isWorking,
                         variant = NeoButtonVariant.Secondary
+                    )
+                }
+            }
+            // Verify (smoke-test) card
+            NeoCard(modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp)) {
+                    Text("Verify a backup file", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "Confirms a .cvb file decrypts and parses cleanly. Nothing in your live data is touched.",
+                        style = MaterialTheme.typography.bodySmall, color = SageColors.TextSecondary
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    NeoButton(
+                        text = "Verify…",
+                        onClick = { verifyDocLauncher.launch(arrayOf("*/*")) },
+                        enabled = !state.isWorking,
+                        variant = NeoButtonVariant.Tertiary
                     )
                 }
             }
@@ -186,6 +213,7 @@ fun BackupScreen(
                 PassphraseDialogReason.SetOnly -> "Set passphrase"
                 PassphraseDialogReason.SetForBackup -> "Set passphrase to back up"
                 PassphraseDialogReason.Restore -> "Enter passphrase to restore"
+                PassphraseDialogReason.Verify -> "Enter passphrase to verify"
             },
             onConfirm = { value ->
                 when (reason) {
@@ -197,10 +225,19 @@ fun BackupScreen(
                         val uri = pendingRestoreUri
                         if (uri != null) confirmRestore = uri to value
                     }
+                    PassphraseDialogReason.Verify -> {
+                        val uri = pendingVerifyUri
+                        if (uri != null) viewModel.runVerify(uri, value)
+                        pendingVerifyUri = null
+                    }
                 }
                 passDialog = null
             },
-            onDismiss = { passDialog = null; pendingRestoreUri = null }
+            onDismiss = {
+                passDialog = null
+                pendingRestoreUri = null
+                pendingVerifyUri = null
+            }
         )
     }
 
@@ -390,7 +427,7 @@ private fun PreviewCloudError() {
     }
 }
 
-private enum class PassphraseDialogReason { SetOnly, SetForBackup, Restore }
+private enum class PassphraseDialogReason { SetOnly, SetForBackup, Restore, Verify }
 
 @Composable
 private fun PassphraseDialog(

@@ -31,6 +31,16 @@ data class RestoreResult(
     val schemaVersion: Int
 )
 
+/** Outcome of a non-destructive [BackupManager.verify] call. */
+data class VerifyResult(
+    val ok: Boolean,
+    val message: String,
+    val callCount: Int = 0,
+    val tagCount: Int = 0,
+    val noteCount: Int = 0,
+    val schemaVersion: Int = 0
+)
+
 /**
  * Orchestrates encrypted backup writes and verified restores.
  *
@@ -97,6 +107,44 @@ class BackupManager @Inject constructor(
             notesRestored = dump.notes.size,
             schemaVersion = dump.version
         )
+    }
+
+    /**
+     * Smoke-test a backup file without touching the live database.
+     *
+     * Reads bytes → decrypts with [passphrase] → parses JSON → returns counts.
+     * Use this to confirm a freshly-written `.cvb` is restoreable BEFORE the
+     * user trusts it. Never wipes or inserts.
+     */
+    suspend fun verify(uri: Uri, passphrase: String): VerifyResult {
+        return try {
+            encryption.init(passphrase)
+            val cipherBytes = context.contentResolver.openInputStream(uri)
+                ?.use { it.readBytes() }
+                ?: return VerifyResult(false, "Couldn't open the backup file.")
+            val plain = try {
+                encryption.decrypt(cipherBytes)
+            } catch (_: Throwable) {
+                return VerifyResult(false, "Couldn't decrypt — wrong passphrase or corrupted file.")
+            }
+            val dump = jsonExporter.decode(plain)
+            if (dump.version > JsonExporter.SCHEMA_VERSION) {
+                return VerifyResult(
+                    ok = false,
+                    message = "Backup is from a newer app version (${dump.version}). Update CallVault to restore."
+                )
+            }
+            VerifyResult(
+                ok = true,
+                message = "Backup is restoreable.",
+                callCount = dump.calls.size,
+                tagCount = dump.tags.size,
+                noteCount = dump.notes.size,
+                schemaVersion = dump.version
+            )
+        } catch (t: Throwable) {
+            VerifyResult(false, "Couldn't verify the backup: ${t.message ?: "unknown error"}.")
+        }
     }
 
     /** Truncate every user-data table — runs inside the restore transaction. */

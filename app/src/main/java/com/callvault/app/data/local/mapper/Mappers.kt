@@ -88,8 +88,11 @@ fun Call.toEntity(): CallEntity = CallEntity(
 
 // ---------- Tags ----------
 
-fun TagEntity.toDomain(): Tag = Tag(id, name, colorHex, emoji, isSystem, sortOrder)
-fun Tag.toEntity(): TagEntity = TagEntity(id, name, colorHex, emoji, isSystem, sortOrder)
+fun TagEntity.toDomain(): Tag = Tag(id, name, colorHex, emoji, isSystem, sortOrder, whatsappTemplate)
+fun Tag.toEntity(): TagEntity = TagEntity(
+    id = id, name = name, colorHex = colorHex, emoji = emoji,
+    isSystem = isSystem, sortOrder = sortOrder, whatsappTemplate = whatsappTemplate
+)
 
 // ---------- Notes ----------
 

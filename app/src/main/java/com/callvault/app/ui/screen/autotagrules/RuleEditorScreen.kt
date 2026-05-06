@@ -21,6 +21,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import com.callvault.app.domain.model.RuleCondition.CompareOp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -60,6 +66,9 @@ fun RuleEditorScreen(
     viewModel: RuleEditorViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val tags by viewModel.tags.collectAsStateWithLifecycle()
+    var showConditionPicker by remember { mutableStateOf(false) }
+    var showActionPicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.saved) {
         if (state.saved) onBack()
@@ -101,16 +110,15 @@ fun RuleEditorScreen(
             state.draft.conditions.forEachIndexed { idx, c ->
                 ConditionRow(
                     condition = c,
+                    tags = tags,
+                    onUpdate = { viewModel.updateCondition(idx, it) },
                     onRemove = { viewModel.removeCondition(idx) }
                 )
             }
             NeoButton(
                 text = stringResource(R.string.rule_editor_add_condition),
                 icon = Icons.Filled.Add,
-                onClick = {
-                    // Default new condition — a prefix match the user can refine.
-                    viewModel.addCondition(RuleCondition.PrefixMatches(""))
-                },
+                onClick = { showConditionPicker = true },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -119,13 +127,15 @@ fun RuleEditorScreen(
             state.draft.actions.forEachIndexed { idx, a ->
                 ActionRow(
                     action = a,
+                    tags = tags,
+                    onUpdate = { viewModel.updateAction(idx, it) },
                     onRemove = { viewModel.removeAction(idx) }
                 )
             }
             NeoButton(
                 text = stringResource(R.string.rule_editor_add_action),
                 icon = Icons.Filled.Add,
-                onClick = { viewModel.addAction(RuleAction.LeadScoreBoost(10)) },
+                onClick = { showActionPicker = true },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -142,6 +152,78 @@ fun RuleEditorScreen(
             )
         }
     }
+
+    if (showConditionPicker) {
+        TypePickerDialog(
+            title = "Add condition",
+            options = conditionTypes(),
+            onDismiss = { showConditionPicker = false },
+            onPick = { make ->
+                viewModel.addCondition(make())
+                showConditionPicker = false
+            }
+        )
+    }
+    if (showActionPicker) {
+        TypePickerDialog(
+            title = "Add action",
+            options = actionTypes(),
+            onDismiss = { showActionPicker = false },
+            onPick = { make ->
+                viewModel.addAction(make())
+                showActionPicker = false
+            }
+        )
+    }
+}
+
+private fun conditionTypes(): List<Pair<String, () -> RuleCondition>> = listOf(
+    "Number starts with" to { RuleCondition.PrefixMatches("") },
+    "Number matches regex" to { RuleCondition.RegexMatches("") },
+    "Country code" to { RuleCondition.CountryEquals("IN") },
+    "In contacts" to { RuleCondition.IsInContacts(true) },
+    "Call type" to { RuleCondition.CallTypeIn(emptySet()) },
+    "Duration" to { RuleCondition.DurationCompare(CompareOp.GT, 60) },
+    "Time of day" to { RuleCondition.TimeOfDayBetween(9 * 60, 18 * 60) },
+    "Day of week" to { RuleCondition.DayOfWeekIn(emptySet()) },
+    "SIM slot" to { RuleCondition.SimSlotEquals(0) },
+    "Has tag" to { RuleCondition.TagApplied(0L) },
+    "Missing tag" to { RuleCondition.TagNotApplied(0L) },
+    "Location contains" to { RuleCondition.GeoContains("") },
+    "Total calls greater than" to { RuleCondition.CallCountGreaterThan(5) },
+)
+
+private fun actionTypes(): List<Pair<String, () -> RuleAction>> = listOf(
+    "Apply tag" to { RuleAction.ApplyTag(0L) },
+    "Boost lead score" to { RuleAction.LeadScoreBoost(10) },
+    "Auto-bookmark" to { RuleAction.AutoBookmark(null) },
+    "Schedule follow-up" to { RuleAction.MarkFollowUp(24) },
+)
+
+@Composable
+private fun <T> TypePickerDialog(
+    title: String,
+    options: List<Pair<String, () -> T>>,
+    onDismiss: () -> Unit,
+    onPick: (() -> T) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                options.forEach { (label, factory) ->
+                    TextButton(
+                        onClick = { onPick(factory) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text(label, modifier = Modifier.fillMaxWidth()) }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        },
+    )
 }
 
 @Composable

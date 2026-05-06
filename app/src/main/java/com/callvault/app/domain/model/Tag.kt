@@ -7,5 +7,6 @@ data class Tag(
     val colorHex: String,
     val emoji: String?,
     val isSystem: Boolean,
-    val sortOrder: Int
+    val sortOrder: Int,
+    val whatsappTemplate: String? = null
 )

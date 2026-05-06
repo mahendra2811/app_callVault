@@ -30,4 +30,14 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
     }
 }
 
-val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2)
+/**
+ * v2 → v3: adds `whatsappTemplate` to `tags` so each tag can carry an
+ * optional pre-filled WhatsApp Business message.
+ */
+val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `tags` ADD COLUMN `whatsappTemplate` TEXT DEFAULT NULL")
+    }
+}
+
+val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)

@@ -134,22 +134,33 @@ fun InquiriesScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
+                val nowMs = remember(state.inquiries) { System.currentTimeMillis() }
+                val grouped = remember(state.inquiries, nowMs) {
+                    state.inquiries
+                        .groupBy { ageBucket(nowMs, it.lastCallDate.toEpochMilliseconds()) }
+                        .toSortedMap(compareBy { it.order })
+                }
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 88.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(state.inquiries, key = { it.normalizedNumber }) { row ->
-                        InquiryRow(
-                            meta = row,
-                            selected = row.normalizedNumber in state.selected,
-                            onClick = {
-                                if (state.bulkMode) viewModel.toggleSelect(row.normalizedNumber)
-                                else onOpenDetail(row.normalizedNumber)
-                            },
-                            onLongPress = { viewModel.enterBulkMode(row.normalizedNumber) },
-                            onConvert = { convertTarget = row }
-                        )
+                    grouped.forEach { (bucket, rows) ->
+                        item(key = "header-${bucket.name}") {
+                            BucketHeader(label = bucket.label, count = rows.size)
+                        }
+                        items(rows, key = { it.normalizedNumber }) { row ->
+                            InquiryRow(
+                                meta = row,
+                                selected = row.normalizedNumber in state.selected,
+                                onClick = {
+                                    if (state.bulkMode) viewModel.toggleSelect(row.normalizedNumber)
+                                    else onOpenDetail(row.normalizedNumber)
+                                },
+                                onLongPress = { viewModel.enterBulkMode(row.normalizedNumber) },
+                                onConvert = { convertTarget = row }
+                            )
+                        }
                     }
                 }
             }
@@ -172,6 +183,44 @@ fun InquiriesScreen(
         BulkSaveProgressDialog(
             progress = bulkProgress,
             onDismiss = { showBulkDialog = false }
+        )
+    }
+}
+
+private enum class AgeBucket(val order: Int, val label: String) {
+    Today(0, "Today"),
+    ThisWeek(1, "This week"),
+    ThisMonth(2, "This month"),
+    Stale(3, "Stale (30 days+)")
+}
+
+private fun ageBucket(nowMs: Long, lastCallMs: Long): AgeBucket {
+    val ageDays = ((nowMs - lastCallMs).coerceAtLeast(0L)) / 86_400_000L
+    return when {
+        ageDays <= 0 -> AgeBucket.Today
+        ageDays <= 7 -> AgeBucket.ThisWeek
+        ageDays <= 30 -> AgeBucket.ThisMonth
+        else -> AgeBucket.Stale
+    }
+}
+
+@Composable
+private fun BucketHeader(label: String, count: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            color = SageColors.TextSecondary,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = count.toString(),
+            color = SageColors.TextTertiary,
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }

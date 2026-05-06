@@ -105,6 +105,20 @@ fun FirstSyncPage(
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(20.dp))
+                com.callvault.app.ui.components.neo.NeoSurface(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = com.callvault.app.ui.theme.NeoElevation.ConcaveSmall,
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(14.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.onboarding_first_sync_v2_banner),
+                        color = NeoColors.OnBaseMuted,
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp).fillMaxWidth()
+                    )
+                }
+                Spacer(Modifier.height(20.dp))
                 val fraction = if (total > 0) progress.toFloat() / total.toFloat() else 1f
                 NeoProgressBar(
                     progress = if (total > 0) fraction else 0.85f,

@@ -18,6 +18,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -97,30 +102,42 @@ fun OnboardingScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) { page ->
-                when (page) {
-                    0 -> WelcomePage(onContinue = viewModel::next)
-                    1 -> FeaturesPage(onContinue = viewModel::next)
-                    2 -> PermissionsPage(
-                        onContinue = viewModel::next,
-                        launcher = launcher
-                    )
-                    3 -> OemBatteryPage(onContinue = viewModel::next)
-                    4 -> FirstSyncPage(
-                        progress = state.firstSyncProgress,
-                        total = state.firstSyncTotal,
-                        done = state.firstSyncDone,
-                        error = state.firstSyncError,
-                        onStart = viewModel::startFirstSync,
-                        onRetry = viewModel::startFirstSync,
-                        onSkip = {
-                            viewModel.complete()
-                            onFinished()
-                        },
-                        onCompleted = {
-                            viewModel.complete()
-                            onFinished()
+                val pageOffset = (pagerState.currentPage - page) +
+                    pagerState.currentPageOffsetFraction
+                val alpha = (1f - kotlin.math.abs(pageOffset).coerceIn(0f, 1f))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            this.alpha = alpha
+                            translationX = pageOffset * 80f
                         }
-                    )
+                ) {
+                    when (page) {
+                        0 -> WelcomePage(onContinue = viewModel::next)
+                        1 -> FeaturesPage(onContinue = viewModel::next)
+                        2 -> PermissionsPage(
+                            onContinue = viewModel::next,
+                            launcher = launcher
+                        )
+                        3 -> OemBatteryPage(onContinue = viewModel::next)
+                        4 -> FirstSyncPage(
+                            progress = state.firstSyncProgress,
+                            total = state.firstSyncTotal,
+                            done = state.firstSyncDone,
+                            error = state.firstSyncError,
+                            onStart = viewModel::startFirstSync,
+                            onRetry = viewModel::startFirstSync,
+                            onSkip = {
+                                viewModel.complete()
+                                onFinished()
+                            },
+                            onCompleted = {
+                                viewModel.complete()
+                                onFinished()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -136,11 +153,21 @@ private fun ProgressDots(pagerState: PagerState, modifier: Modifier = Modifier) 
     ) {
         repeat(pagerState.pageCount) { idx ->
             val active = idx == pagerState.currentPage
+            val size by animateDpAsState(
+                targetValue = if (active) 12.dp else 8.dp,
+                animationSpec = tween(durationMillis = 200),
+                label = "dotSize"
+            )
+            val color by animateColorAsState(
+                targetValue = if (active) NeoColors.AccentBlue else NeoColors.Inset,
+                animationSpec = tween(durationMillis = 200),
+                label = "dotColor"
+            )
             Box(
                 modifier = Modifier
-                    .size(if (active) 10.dp else 8.dp)
+                    .size(size)
                     .clip(CircleShape)
-                    .background(if (active) NeoColors.AccentBlue else NeoColors.Inset)
+                    .background(color)
             )
             if (idx != pagerState.pageCount - 1) Spacer(Modifier.size(8.dp))
         }

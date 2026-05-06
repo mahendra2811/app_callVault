@@ -34,7 +34,7 @@ import com.callvault.app.data.local.entity.TagEntity
  * changes.
  */
 @Database(
-    version = 2,
+    version = 3,
     exportSchema = true,
     entities = [
         CallEntity::class,

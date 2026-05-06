@@ -43,6 +43,7 @@ fun HeroCard(
     saveStatus: SaveStatus,
     leadScore: Int,
     onSaveContact: () -> Unit,
+    summary: String? = null,
     modifier: Modifier = Modifier
 ) {
     NeoSurface(
@@ -76,6 +77,14 @@ fun HeroCard(
                     }
                 }
                 LeadScoreBadge(leadScore)
+            }
+            if (!summary.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = summary,
+                    color = SageColors.TextSecondary,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {

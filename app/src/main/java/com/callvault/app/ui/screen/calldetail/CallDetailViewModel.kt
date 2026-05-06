@@ -49,6 +49,7 @@ data class CallDetailUiState(
     val allTags: List<Tag> = emptyList(),
     val notes: List<Note> = emptyList(),
     val followUpAt: Instant? = null,
+    val summary: String? = null,
     val errorMessage: String? = null
 )
 
@@ -121,6 +122,7 @@ class CallDetailViewModel @Inject constructor(
             notes = notes,
             followUpAt = calls.firstOrNull { it.followUpAt != null && it.followUpDoneAt == null }
                 ?.followUpAt,
+            summary = buildSummary(total, tagsForNumber, notes),
             errorMessage = err
         )
     }.stateIn(
@@ -250,4 +252,22 @@ class CallDetailViewModel @Inject constructor(
     }
 
     fun consumeError() { _error.value = null }
+}
+
+private fun buildSummary(total: Int, tagsForNumber: List<Tag>, notes: List<Note>): String? {
+    if (total == 0) return null
+    val parts = mutableListOf<String>()
+    parts += if (total == 1) "1 call" else "$total calls"
+    val topTag = tagsForNumber
+        .groupingBy { it.name }
+        .eachCount()
+        .entries
+        .maxByOrNull { it.value }
+    if (topTag != null) parts += "mostly ${topTag.key}"
+    val latestNote = notes.maxByOrNull { it.updatedAt.toEpochMilliseconds() }?.content?.trim()
+    if (!latestNote.isNullOrBlank()) {
+        val snippet = latestNote.lineSequence().firstOrNull().orEmpty().take(60)
+        parts += "last note: “$snippet”"
+    }
+    return parts.joinToString(" · ")
 }

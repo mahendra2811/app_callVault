@@ -118,7 +118,8 @@ fun CallDetailScreen(
                     normalizedNumber = state.normalizedNumber,
                     saveStatus = status,
                     leadScore = state.contact?.computedLeadScore ?: 0,
-                    onSaveContact = { /* triggers ContactsContract intent in ActionBar */ }
+                    onSaveContact = { /* triggers ContactsContract intent in ActionBar */ },
+                    summary = state.summary
                 )
             }
             item("actions") {

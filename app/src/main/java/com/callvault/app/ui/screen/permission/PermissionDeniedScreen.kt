@@ -1,10 +1,10 @@
 package com.callvault.app.ui.screen.permission
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.callvault.app.R
 import com.callvault.app.ui.components.neo.NeoButton
 import com.callvault.app.ui.components.neo.NeoButtonVariant
+import com.callvault.app.ui.screen.shared.StandardPage
 import com.callvault.app.ui.theme.CallVaultTheme
-import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.SageColors
 import com.callvault.app.util.PermissionManager
 
@@ -37,35 +37,41 @@ import com.callvault.app.util.PermissionManager
 @Composable
 fun PermissionDeniedScreen(
     onOpenSettings: () -> Unit,
+    onAskAgain: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(NeoColors.Base)
-            .padding(horizontal = 24.dp, vertical = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    StandardPage(
+        title = stringResource(R.string.permission_denied_v2_title),
+        description = stringResource(R.string.permission_denied_v2_body_1),
+        emoji = "🔒"
     ) {
-        Text(
-            text = stringResource(R.string.permission_denied_title),
-            color = SageColors.TextPrimary,
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = stringResource(R.string.permission_denied_body),
-            color = SageColors.TextSecondary,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(28.dp))
-        NeoButton(
-            text = stringResource(R.string.permission_denied_cta),
-            onClick = onOpenSettings,
-            variant = NeoButtonVariant.Primary
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Text(
+                text = stringResource(R.string.permission_denied_v2_body_2),
+                color = SageColors.TextSecondary,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+            )
+            Spacer(Modifier.height(28.dp))
+            NeoButton(
+                text = stringResource(R.string.permission_denied_cta),
+                onClick = onOpenSettings,
+                variant = NeoButtonVariant.Primary
+            )
+            Spacer(Modifier.height(8.dp))
+            NeoButton(
+                text = stringResource(R.string.permission_denied_v2_retry),
+                onClick = onAskAgain,
+                variant = NeoButtonVariant.Tertiary
+            )
+        }
     }
 }
 
@@ -78,6 +84,7 @@ fun PermissionDeniedScreen(
     val ctx = LocalContext.current
     PermissionDeniedScreen(
         onOpenSettings = { permissionManager.openAppSettings(ctx) },
+        onAskAgain = { permissionManager.openAppSettings(ctx) },
         modifier = modifier
     )
 }

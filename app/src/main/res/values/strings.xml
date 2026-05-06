@@ -41,8 +41,13 @@
 
     <!-- Welcome page -->
     <string name="onboarding_welcome_logo_letter">C</string>
-    <string name="onboarding_welcome_headline">Never lose an inquiry call again.</string>
-    <string name="onboarding_welcome_subtext">CallVault turns your call log into an organised inquiry pipeline — entirely on your phone.</string>
+    <string name="onboarding_welcome_headline">Every inquiry, captured.</string>
+    <string name="onboarding_welcome_subtext">Calls land in your call log. CallVault catches them, saves them, and turns them into leads — automatically.</string>
+    <string name="onboarding_first_sync_v2_banner">Keep using your phone — we\'ll finish in the background.</string>
+    <string name="permission_denied_v2_title">Settings needed</string>
+    <string name="permission_denied_v2_body_1">You said no, and we respect that. But CallVault can\'t read your calls without permission.</string>
+    <string name="permission_denied_v2_body_2">Open Settings → Permissions → Allow Call log, Contacts, and Phone state. We\'ll pick up where you left off.</string>
+    <string name="permission_denied_v2_retry">Ask me again</string>
 
     <!-- Features page -->
     <string name="onboarding_features_title">Built for busy founders.</string>
@@ -74,7 +79,7 @@
 
     <!-- First sync page -->
     <string name="onboarding_first_sync_title">Importing your inquiries…</string>
-    <string name="onboarding_first_sync_indeterminate">Reading your call log — this only takes a moment.</string>
+    <string name="onboarding_first_sync_indeterminate">Reading your call log — large histories (10 000+) may take a minute. You can keep using your phone; we\'ll keep working in the background.</string>
     <string name="onboarding_first_sync_progress">Found %1$d of %2$d calls so far…</string>
     <string name="onboarding_first_sync_done">All caught up. Welcome to CallVault.</string>
     <string name="onboarding_first_sync_error_title">We couldn\'t finish the first import.</string>

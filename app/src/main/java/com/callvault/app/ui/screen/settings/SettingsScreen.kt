@@ -89,70 +89,12 @@ fun SettingsScreen(
                 }
             }
 
-            // ---- Auto-save ----
-            item("auto_save") {
-                SectionCard(stringResource(R.string.settings_section_auto_save)) {
-                    ToggleRow(
-                        stringResource(R.string.settings_auto_save_master),
-                        state.autoSaveEnabled, vm::setAutoSaveEnabled
-                    )
-                    NavRow("Configure auto-save…") {
-                        navController.navigate(Destinations.AutoSaveSettings.route)
-                    }
-                }
-            }
-
-            // ---- Real-time ----
-            item("realtime") {
-                SectionCard(stringResource(R.string.settings_section_realtime)) {
-                    ToggleRow(stringResource(R.string.settings_realtime_bubble), state.bubbleEnabled, vm::setBubbleEnabled)
-                    ToggleRow(stringResource(R.string.settings_realtime_popup), state.popupEnabled, vm::setPopupEnabled)
-                    NavRow("Configure real-time…") {
-                        navController.navigate(Destinations.RealTimeSettings.route)
-                    }
-                }
-            }
-
             // ---- Notifications ----
             item("notifications") {
                 SectionCard(stringResource(R.string.settings_section_notifications)) {
                     ToggleRow(stringResource(R.string.settings_notif_follow_ups), state.followUpReminders, vm::setFollowUpReminders)
                     ToggleRow(stringResource(R.string.settings_notif_daily_summary), state.dailySummary, vm::setDailySummary)
                     ToggleRow(stringResource(R.string.settings_notif_update_alerts), state.updateAlerts, vm::setUpdateAlerts)
-                }
-            }
-
-            // ---- Lead scoring ----
-            item("lead_scoring") {
-                SectionCard(stringResource(R.string.settings_section_lead_scoring)) {
-                    ToggleRow(stringResource(R.string.settings_lead_master), state.leadScoringEnabled, vm::setLeadScoringEnabled)
-                    NavRow("Configure scoring weights…") {
-                        navController.navigate(Destinations.LeadScoringSettings.route)
-                    }
-                }
-            }
-
-            // ---- Auto-tag rules ----
-            item("auto_tag") {
-                SectionCard(stringResource(R.string.settings_section_auto_tag)) {
-                    NavRow("Manage auto-tag rules…") {
-                        navController.navigate(Destinations.AutoTagRules.route)
-                    }
-                }
-            }
-
-            // ---- Backup ----
-            item("backup") {
-                SectionCard(stringResource(R.string.settings_section_backup)) {
-                    ToggleRow(stringResource(R.string.settings_backup_master), state.autoBackupEnabled, vm::setAutoBackupEnabled)
-                    Text(
-                        text = stringResource(R.string.settings_backup_retention, state.autoBackupRetention),
-                        color = SageColors.TextSecondary,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    NavRow("Open backup & restore…") {
-                        navController.navigate(Destinations.Backup.route)
-                    }
                 }
             }
 
@@ -184,15 +126,6 @@ fun SettingsScreen(
                         text = stringResource(R.string.settings_privacy_reset_all),
                         onClick = { resetOpen = true; resetText = "" }
                     )
-                }
-            }
-
-            // ---- App updates ----
-            item("updates") {
-                SectionCard(stringResource(R.string.settings_section_updates)) {
-                    NavRow("App update settings…") {
-                        navController.navigate(Destinations.UpdateSettings.route)
-                    }
                 }
             }
 

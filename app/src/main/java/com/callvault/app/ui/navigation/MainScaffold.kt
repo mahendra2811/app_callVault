@@ -330,9 +330,7 @@ fun MainScaffold(
                             onOpenSearch = {
                                 rootNavController.navigate(Destinations.Search.route)
                             },
-                            onOpenFilterPresets = {
-                                rootNavController.navigate(Destinations.FilterPresets.route)
-                            },
+                            onOpenFilterPresets = { /* removed: filter presets not implemented */ },
                             onPermissionMissing = {
                                 rootNavController.navigate(Destinations.PermissionRationale.route)
                             },
@@ -390,7 +388,6 @@ fun MainScaffold(
                         val authViewModel: AuthViewModel = hiltViewModel()
                         MoreScreen(
                             navController = rootNavController,
-                            onOpenQuickExport = { quickExportOpen = true },
                             onSignOut = { authViewModel.signOut() }
                         )
                     }

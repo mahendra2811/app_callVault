@@ -20,9 +20,6 @@ sealed class Destinations(val route: String) {
     /** First-launch tour — 5 pages including permissions + first sync. */
     data object Onboarding : Destinations("onboarding")
 
-    /** Calls tab home (Sprint 3). */
-    data object Calls : Destinations("calls")
-
     /** Shown when a critical permission is missing post-onboarding. */
     data object PermissionRationale : Destinations("permission_rationale")
 
@@ -38,9 +35,6 @@ sealed class Destinations(val route: String) {
 
     /** Full-screen Search overlay (Sprint 3). */
     data object Search : Destinations("search")
-
-    /** Filter presets manager (Sprint 3). */
-    data object FilterPresets : Destinations("filter_presets")
 
     /** Sprint 5 — saved system contacts (excluding auto-saved inquiries). */
     data object MyContacts : Destinations("my_contacts")
@@ -93,11 +87,11 @@ sealed class Destinations(val route: String) {
         fun routeFor(articleId: String): String = "docs/${Uri.encode(articleId)}"
     }
 
-    /** Sprint 11 — Home tab. */
-    data object Home : Destinations("home")
+    /** Tag library manager. */
+    data object Tags : Destinations("tags")
 
-    /** Sprint 11 — More tab. */
-    data object More : Destinations("more")
+    /** Stats dashboard. */
+    data object Stats : Destinations("stats")
 }
 
 /**

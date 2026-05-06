@@ -16,5 +16,7 @@ data class TagEntity(
     val emoji: String? = null,
     val isSystem: Boolean = false,
     val sortOrder: Int = 0,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    /** Optional WhatsApp Business message template surfaced when this tag is applied. */
+    val whatsappTemplate: String? = null
 )

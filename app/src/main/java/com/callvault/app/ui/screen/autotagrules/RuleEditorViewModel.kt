@@ -6,8 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.callvault.app.domain.model.AutoTagRule
 import com.callvault.app.domain.model.RuleAction
 import com.callvault.app.domain.model.RuleCondition
+import com.callvault.app.domain.model.Tag
 import com.callvault.app.domain.repository.AutoTagRuleRepository
+import com.callvault.app.domain.repository.TagRepository
 import com.callvault.app.domain.usecase.ApplyAutoTagRulesUseCase
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import com.callvault.app.ui.navigation.Destinations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -59,13 +63,17 @@ data class RuleEditorUiState(
 class RuleEditorViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val repo: AutoTagRuleRepository,
-    private val applyUseCase: ApplyAutoTagRulesUseCase
+    private val applyUseCase: ApplyAutoTagRulesUseCase,
+    tagRepository: TagRepository
 ) : ViewModel() {
 
     private val ruleId: Long = savedState[Destinations.RuleEditor.ARG_RULE_ID] ?: -1L
 
     private val _state = MutableStateFlow(RuleEditorUiState())
     val state: StateFlow<RuleEditorUiState> = _state.asStateFlow()
+
+    val tags: StateFlow<List<Tag>> = tagRepository.observeAll()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private var previewJob: Job? = null
 
@@ -101,9 +109,15 @@ class RuleEditorViewModel @Inject constructor(
     fun removeCondition(index: Int) = update {
         it.copy(conditions = it.conditions.toMutableList().apply { removeAt(index) })
     }
+    fun updateCondition(index: Int, c: RuleCondition) = update {
+        it.copy(conditions = it.conditions.toMutableList().apply { set(index, c) })
+    }
     fun addAction(a: RuleAction) = update { it.copy(actions = it.actions + a) }
     fun removeAction(index: Int) = update {
         it.copy(actions = it.actions.toMutableList().apply { removeAt(index) })
+    }
+    fun updateAction(index: Int, a: RuleAction) = update {
+        it.copy(actions = it.actions.toMutableList().apply { set(index, a) })
     }
 
     private fun update(transform: (RuleDraft) -> RuleDraft) {

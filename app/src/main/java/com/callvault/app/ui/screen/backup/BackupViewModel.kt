@@ -5,6 +5,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.callvault.app.data.backup.BackupManager
 import com.callvault.app.data.backup.DriveAuthManager
 import com.callvault.app.data.export.ExportDestination
 import com.callvault.app.data.prefs.SecurePrefs
@@ -46,7 +47,8 @@ class BackupViewModel @Inject constructor(
     private val backup: BackupDatabaseUseCase,
     private val restore: RestoreDatabaseUseCase,
     private val driveAuth: DriveAuthManager,
-    private val uploadToDrive: UploadBackupToDriveUseCase
+    private val uploadToDrive: UploadBackupToDriveUseCase,
+    private val backupManager: BackupManager
 ) : AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(BackupUiState())
@@ -166,6 +168,21 @@ class BackupViewModel @Inject constructor(
                 _state.update {
                     it.copy(isWorking = false, error = "Couldn't back up. ${t.message ?: "Unknown error"}")
                 }
+            }
+        }
+    }
+
+    /** Smoke-test a backup file without touching the live DB. */
+    fun runVerify(uri: Uri, passphrase: String) {
+        _state.update { it.copy(isWorking = true, error = null) }
+        viewModelScope.launch {
+            val r = backupManager.verify(uri, passphrase)
+            _state.update {
+                it.copy(
+                    isWorking = false,
+                    message = if (r.ok) "✓ ${r.message} (${r.callCount} calls, ${r.tagCount} tags, ${r.noteCount} notes)" else null,
+                    error = if (!r.ok) r.message else null
+                )
             }
         }
     }
