@@ -62,7 +62,9 @@ import com.callvault.app.ui.screen.calls.CallsScreen
 import com.callvault.app.ui.screen.export.QuickExportSheet
 import com.callvault.app.ui.screen.home.HomeScreen
 import com.callvault.app.ui.screen.inquiries.InquiriesScreen
+import com.callvault.app.ui.screen.auth.AuthViewModel
 import com.callvault.app.ui.screen.more.MoreScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.callvault.app.ui.theme.IconCallsTint
 import com.callvault.app.ui.theme.IconHomeTint
 import com.callvault.app.ui.theme.IconInquiriesTint
@@ -385,9 +387,11 @@ fun MainScaffold(
                 }
                 composable(MainTabRoute.More.route) {
                     saveableHolder.SaveableStateProvider(MainTabRoute.More.route) {
+                        val authViewModel: AuthViewModel = hiltViewModel()
                         MoreScreen(
                             navController = rootNavController,
-                            onOpenQuickExport = { quickExportOpen = true }
+                            onOpenQuickExport = { quickExportOpen = true },
+                            onSignOut = { authViewModel.signOut() }
                         )
                     }
                 }

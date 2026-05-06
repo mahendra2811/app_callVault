@@ -7,7 +7,9 @@ import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.callvault.app.data.analytics.AnalyticsTracker
 import com.callvault.app.data.prefs.SettingsDataStore
+import com.callvault.app.data.push.PushTokenSync
 import com.callvault.app.data.work.UpdateCheckWorker
 import com.callvault.app.data.work.DailySummaryWorker
 import com.callvault.app.util.RealTimeServiceController
@@ -35,6 +37,8 @@ class CallVaultApp : Application(), Configuration.Provider {
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var realTimeServiceController: RealTimeServiceController
     @Inject lateinit var settingsDataStore: SettingsDataStore
+    @Inject lateinit var analytics: AnalyticsTracker
+    @Inject lateinit var pushTokenSync: PushTokenSync
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -48,6 +52,8 @@ class CallVaultApp : Application(), Configuration.Provider {
             Timber.plant(Timber.DebugTree())
         }
         registerNotificationChannels(this)
+        analytics.init(this)
+        pushTokenSync.registerCurrentToken()
         // Sprint 7 — start real-time service if user has finished onboarding & enabled toggles.
         MainScope().launch {
             try {

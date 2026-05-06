@@ -65,6 +65,14 @@
             android:foregroundServiceType="specialUse"
             android:exported="false" />
 
+        <service
+            android:name=".data.push.CallVaultMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".data.service.alarm.FollowUpAlarmReceiver"
             android:exported="false" />

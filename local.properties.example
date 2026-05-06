@@ -1,0 +1,23 @@
+# Copy to local.properties (already gitignored by Android tooling) and fill in.
+# These keys are read by app/build.gradle.kts and exposed via BuildConfig.
+# .env-style: never commit local.properties.
+
+# Standard Android SDK location (already required by AGP)
+# sdk.dir=/home/you/Android/Sdk
+
+# --- Supabase (https://supabase.com → Project settings → API) ---
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+SUPABASE_ANON_KEY=YOUR_PUBLIC_ANON_KEY
+
+# --- PostHog (https://posthog.com → Project settings) ---
+# Use https://eu.i.posthog.com if your project is in EU.
+POSTHOG_API_KEY=phc_YOUR_PROJECT_API_KEY
+POSTHOG_HOST=https://us.i.posthog.com
+
+# --- Google OAuth (for Supabase Google sign-in; currently scaffolded but disabled) ---
+# Web Client ID from Google Cloud Console → Credentials → OAuth 2.0 Client IDs (Web type).
+GOOGLE_OAUTH_WEB_CLIENT_ID=YOUR_WEB_CLIENT_ID.apps.googleusercontent.com
+
+# --- FCM ---
+# No key here — drop the google-services.json file into app/google-services.json.
+# Download from Firebase Console → Project settings → Your apps → Android.

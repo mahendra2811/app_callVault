@@ -1,5 +1,6 @@
 package com.callvault.app.di
 
+import com.callvault.app.data.repository.AuthRepositoryImpl
 import com.callvault.app.data.repository.AutoTagRuleRepositoryImpl
 import com.callvault.app.data.repository.CallRepositoryImpl
 import com.callvault.app.data.repository.ContactRepositoryImpl
@@ -7,6 +8,7 @@ import com.callvault.app.data.repository.NoteRepositoryImpl
 import com.callvault.app.data.repository.SettingsRepositoryImpl
 import com.callvault.app.data.repository.TagRepositoryImpl
 import com.callvault.app.data.repository.UpdateRepositoryImpl
+import com.callvault.app.domain.repository.AuthRepository
 import com.callvault.app.domain.repository.AutoTagRuleRepository
 import com.callvault.app.domain.repository.CallRepository
 import com.callvault.app.domain.repository.ContactRepository
@@ -46,4 +48,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindUpdateRepository(impl: UpdateRepositoryImpl): UpdateRepository
+
+    @Binds @Singleton
+    abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 }

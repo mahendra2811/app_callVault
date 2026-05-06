@@ -376,3 +376,21 @@ setting (default OFF). Uses AppAuth (NOT play-services-auth) to remain GMS-free
 per spec §1. Encrypted local backup runs first; the encrypted .cvb is uploaded
 unchanged. Documented in-app at assets/docs/16-google-drive-backup.md and in
 docs/locale/06-google-cloud-setup.md.
+
+## Cloud pivot — 2026-05-05
+
+User explicitly reversed three locked Don'ts and Spec §13 ("Nothing leaves the device").
+The app now collects user accounts, analytics, and supports server-initiated push.
+
+**Added stack:**
+- **Supabase Auth** — email/password (active), Google OAuth (scaffolded, commented out for later activation).
+- **PostHog Android** — autocapture + custom events for traffic, funnels, retention.
+- **Firebase Cloud Messaging (FCM)** — server-initiated push notifications. Requires Google Play Services on device; users without GMS keep core functionality but lose push.
+
+**Configuration:** All keys read from `local.properties` at build time and exposed via `BuildConfig` (`.env`-style). See `local.properties.example`. Keys are NOT checked in.
+
+**Implications still to address:**
+- Privacy policy must be updated; the app now transmits user data.
+- A `google-services.json` must be placed in `app/` before FCM works.
+- Sideloaded distribution still works, but Play Store distribution is now feasible.
+- Spec §13 should be considered amended; do not block future work that needs the network on §13 grounds.

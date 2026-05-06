@@ -503,6 +503,12 @@
     <string name="cv_more_group_data">Data</string>
     <string name="cv_more_group_automation">Automation</string>
     <string name="cv_more_group_app">App</string>
+    <string name="cv_more_group_account">Account</string>
+    <string name="more_logout">Log out</string>
+    <string name="more_logout_confirm_title">Log out?</string>
+    <string name="more_logout_confirm_message">You\'ll need to sign in again to access your CallVault data.</string>
+    <string name="more_logout_confirm_action">Log out</string>
+    <string name="more_cancel">Cancel</string>
     <string name="cv_more_subtitle_export">Send your data out</string>
     <string name="cv_more_subtitle_quick_export">One-tap CSV/Excel/JSON</string>
     <string name="cv_more_subtitle_backup">Save and restore</string>

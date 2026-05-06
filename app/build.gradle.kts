@@ -11,11 +11,25 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+val googleServicesJson = file("google-services.json")
+if (googleServicesJson.exists()) {
+    apply(plugin = libs.plugins.google.services.get().pluginId)
+} else {
+    logger.warn("google-services.json missing — skipping FCM. Drop it into app/ to enable push.")
+}
+
 val keystorePropertiesFile = rootProject.file("keystore.properties")
 val hasKeystore = keystorePropertiesFile.exists()
 val keystoreProperties = Properties().apply {
     if (hasKeystore) load(FileInputStream(keystorePropertiesFile))
 }
+
+val localPropsFile = rootProject.file("local.properties")
+val localProps = Properties().apply {
+    if (localPropsFile.exists()) load(FileInputStream(localPropsFile))
+}
+fun envOrLocal(key: String, fallback: String = ""): String =
+    localProps.getProperty(key) ?: System.getenv(key) ?: fallback
 
 android {
     namespace = "com.callvault.app"
@@ -45,6 +59,12 @@ android {
             "UPDATE_MANIFEST_BETA_URL",
             "\"https://callvault.app/dl/versions-beta.json\""
         )
+
+        buildConfigField("String", "SUPABASE_URL", "\"${envOrLocal("SUPABASE_URL")}\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"${envOrLocal("SUPABASE_ANON_KEY")}\"")
+        buildConfigField("String", "POSTHOG_API_KEY", "\"${envOrLocal("POSTHOG_API_KEY")}\"")
+        buildConfigField("String", "POSTHOG_HOST", "\"${envOrLocal("POSTHOG_HOST", "https://us.i.posthog.com")}\"")
+        buildConfigField("String", "GOOGLE_OAUTH_WEB_CLIENT_ID", "\"${envOrLocal("GOOGLE_OAUTH_WEB_CLIENT_ID")}\"")
     }
 
     signingConfigs {
@@ -193,6 +213,16 @@ dependencies {
     implementation(libs.okhttp)
 
     implementation(libs.lottie.compose)
+
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.auth)
+    implementation(libs.supabase.postgrest)
+    implementation(libs.ktor.client.okhttp)
+
+    implementation(libs.posthog.android)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)

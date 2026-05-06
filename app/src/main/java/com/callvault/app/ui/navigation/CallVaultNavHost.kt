@@ -15,7 +15,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +34,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.callvault.app.R
 import com.callvault.app.data.prefs.SettingsDataStore
+import com.callvault.app.domain.model.AuthState
+import com.callvault.app.domain.repository.AuthRepository
+import com.callvault.app.ui.screen.auth.LoginScreen
 import com.callvault.app.ui.screen.autotagrules.AutoTagRulesScreen
 import com.callvault.app.ui.screen.autotagrules.RuleEditorScreen
 import com.callvault.app.ui.screen.backup.BackupScreen
@@ -71,6 +77,7 @@ import dagger.hilt.components.SingletonComponent
 interface NavHostEntryPoint {
     fun settings(): SettingsDataStore
     fun permissionManager(): PermissionManager
+    fun authRepository(): AuthRepository
 }
 
 /**
@@ -94,19 +101,20 @@ fun CallVaultNavHost(
     }
     val settings = entry.settings()
     val permissionManager = entry.permissionManager()
+    val authRepository = entry.authRepository()
 
     val onboardingComplete by settings.onboardingComplete
         .collectAsStateWithLifecycle(initialValue = false)
     val permState by permissionManager.state.collectAsState()
+    val authState by authRepository.state
+        .collectAsStateWithLifecycle(initialValue = AuthState.Loading)
 
     val navController = rememberNavController()
 
-    val initialPostSplashRoute = remember(onboardingComplete, permState) {
-        when {
-            !onboardingComplete -> Destinations.Onboarding.route
-            !permissionManager.isCriticalGranted() -> Destinations.PermissionRationale.route
-            else -> Destinations.Main.route
-        }
+    fun postLoginRoute(): String = when {
+        !onboardingComplete -> Destinations.Onboarding.route
+        !permissionManager.isCriticalGranted() -> Destinations.PermissionRationale.route
+        else -> Destinations.Main.route
     }
 
     val toHome: () -> Unit = {
@@ -120,12 +128,30 @@ fun CallVaultNavHost(
         modifier = modifier
     ) {
         composable(Destinations.Splash.route) {
-            SplashScreen(
-                onFinished = {
-                    navController.navigate(initialPostSplashRoute) {
+            var splashFinished by rememberSaveable { mutableStateOf(false) }
+            SplashScreen(onFinished = { splashFinished = true })
+            LaunchedEffect(splashFinished, authState) {
+                if (splashFinished && authState !is AuthState.Loading) {
+                    val target = if (authState is AuthState.SignedIn) {
+                        postLoginRoute()
+                    } else {
+                        Destinations.Login.route
+                    }
+                    navController.navigate(target) {
                         popUpTo(Destinations.Splash.route) { inclusive = true }
                     }
                 }
+            }
+        }
+        composable(Destinations.Login.route) {
+            LoginScreen(
+                onAuthenticated = {
+                    navController.navigate(postLoginRoute()) {
+                        popUpTo(Destinations.Login.route) { inclusive = true }
+                    }
+                },
+                onForgotPassword = {},
+                onCreateAccount = {},
             )
         }
         composable(Destinations.Onboarding.route) {
@@ -292,6 +318,20 @@ fun CallVaultNavHost(
             DocsArticleScreen(navController = navController)
         }
     }
+    }
+
+    LaunchedEffect(authState) {
+        if (authState is AuthState.SignedOut) {
+            val current = navController.currentBackStackEntry?.destination?.route
+            if (current != null &&
+                current != Destinations.Login.route &&
+                current != Destinations.Splash.route
+            ) {
+                navController.navigate(Destinations.Login.route) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
     }
 
     LaunchedEffect(initialDeepLink) {

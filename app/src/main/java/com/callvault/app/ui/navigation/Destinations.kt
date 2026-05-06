@@ -14,6 +14,9 @@ sealed class Destinations(val route: String) {
     /** Splash route — populated in Phase C. */
     data object Splash : Destinations("splash")
 
+    /** Email/password login — gates the entire app when there is no Supabase session. */
+    data object Login : Destinations("login")
+
     /** First-launch tour — 5 pages including permissions + first sync. */
     data object Onboarding : Destinations("onboarding")
 

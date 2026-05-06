@@ -14,10 +14,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,8 +71,11 @@ private data class MoreRow(
 fun MoreScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    onOpenQuickExport: () -> Unit = {}
+    onOpenQuickExport: () -> Unit = {},
+    onSignOut: () -> Unit = {},
 ) {
+    var confirmLogout by remember { mutableStateOf(false) }
+
     val data = listOf(
         MoreRow("📤", "Export", IconBackupTint) { navController.navigate(Destinations.Export.route) },
         MoreRow("⚡", "Quick Export", IconBackupTint) { onOpenQuickExport() },
@@ -78,6 +87,9 @@ fun MoreScreen(
         MoreRow("🎯", "Lead scoring", IconStatsTint) { navController.navigate(Destinations.LeadScoringSettings.route) },
         MoreRow("✨", "Real-time features", IconCallsTint) { navController.navigate(Destinations.RealTimeSettings.route) },
         MoreRow("💡", "Auto-save", IconInquiriesTint) { navController.navigate(Destinations.AutoSaveSettings.route) }
+    )
+    val account = listOf(
+        MoreRow("🚪", stringResource(R.string.more_logout), NeoColors.OnBaseMuted) { confirmLogout = true }
     )
     val app = listOf(
         MoreRow("📊", "Stats", IconStatsTint) { navController.navigate(Destinations.Settings.route) },
@@ -98,6 +110,26 @@ fun MoreScreen(
         MoreGroup(stringResource(R.string.cv_more_group_data), data)
         MoreGroup(stringResource(R.string.cv_more_group_automation), automation)
         MoreGroup(stringResource(R.string.cv_more_group_app), app)
+        MoreGroup(stringResource(R.string.cv_more_group_account), account)
+    }
+
+    if (confirmLogout) {
+        AlertDialog(
+            onDismissRequest = { confirmLogout = false },
+            title = { Text(stringResource(R.string.more_logout_confirm_title)) },
+            text = { Text(stringResource(R.string.more_logout_confirm_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmLogout = false
+                    onSignOut()
+                }) { Text(stringResource(R.string.more_logout_confirm_action)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmLogout = false }) {
+                    Text(stringResource(R.string.more_cancel))
+                }
+            },
+        )
     }
 }
 

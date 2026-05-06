@@ -106,8 +106,8 @@ When the user invokes a slash command (e.g. `/build`, `/smoke`, `/next`), follow
 
 - Don't add new Gradle modules.
 - Don't introduce new state-management libraries (no Mavericks, no MVI frameworks). StateFlow is the answer.
-- Don't add Firebase, Crashlytics, GA, or any analytics SDK. Spec §13: "Nothing leaves the device except update version checks."
-- Don't add Google Play Services. App is sideloaded.
+- ~~Don't add Firebase, Crashlytics, GA, or any analytics SDK.~~ **REVERSED 2026-05-05** — see `DECISIONS.md` "Cloud pivot". Supabase Auth, PostHog analytics, and FCM push are now in scope.
+- ~~Don't add Google Play Services.~~ **REVERSED 2026-05-05** — FCM requires GMS. App still distributed sideloaded; users without GMS will lose push but core app still works.
 - Don't add mock/fake data to production code. Fix the real flow instead.
 - Don't write multi-paragraph comment blocks or multi-line docstrings explaining what code does. One short KDoc line max.
 - Don't create planning/decision documents speculatively. Update `DECISIONS.md` only when a deferral or trade-off is genuinely taken.
