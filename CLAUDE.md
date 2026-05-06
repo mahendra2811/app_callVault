@@ -59,10 +59,9 @@ Cross-layer rules:
 
 ## Hard constraints for Claude
 
-1. **Do NOT run `./gradlew` or any network-bound command without explicit user approval.** First builds download ~500 MB and have caused stream timeouts repeatedly. Ask first.
-2. **Do NOT run `gradle wrapper`, `./gradlew assembleDebug`, `lint`, or anything that opens sockets** unless the user said "build it" or invoked the `/build` command.
-3. **Spec is locked.** Do not relitigate decisions in §3.x. If something seems wrong, flag it — don't quietly redesign.
-4. **Spec sections to consult by offset/limit** (do NOT read the whole 1533-line file):
+1. **Active development phase (2026-05-06 → until further notice): you ARE expected to build, install, and reload the app on the connected device after every code change so the user can see the latest behavior.** Run `./gradlew` (assembleDebug / installDebug), `adb install`, `adb shell pm clear`, `adb shell am start`, and similar commands without asking — the user has pre-authorized this. First-build network downloads are accepted. This will be revoked when the project moves to a testing phase; until then, default to "build & reinstall after edits".
+2. **Spec is locked.** Do not relitigate decisions in §3.x. If something seems wrong, flag it — don't quietly redesign.
+3. **Spec sections to consult by offset/limit** (do NOT read the whole 1533-line file):
    - §3.x feature specs → ~lines 100–600
    - §4 data model → ~lines 686–900
    - §5 domain layer → ~lines 900–950
