@@ -18,7 +18,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.callvault.app.R
 
 /** Sends a password-reset email via Supabase. */
 @Composable
@@ -27,15 +30,15 @@ fun ForgotPasswordScreen(
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     var email by rememberSaveable { mutableStateOf("") }
-    var submitting by rememberSaveable { mutableStateOf(false) }
     var sent by rememberSaveable { mutableStateOf(false) }
+    val busy by viewModel.busy.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { evt ->
             when (evt) {
-                AuthEvent.PasswordResetSent -> { submitting = false; sent = true }
-                is AuthEvent.Error -> { submitting = false; snackbar.showSnackbar(evt.message) }
+                AuthEvent.PasswordResetSent -> sent = true
+                is AuthEvent.Error -> snackbar.showSnackbar(evt.message)
                 else -> Unit
             }
         }
@@ -43,31 +46,31 @@ fun ForgotPasswordScreen(
 
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         AuthFormScaffold(
-            title = if (sent) "Check your email" else "Forgot password",
+            title = stringResource(
+                if (sent) R.string.auth_forgot_sent_title else R.string.auth_forgot_title
+            ),
             subtitle = if (sent)
-                "We sent a reset link to $email. Tap the link to set a new password."
+                stringResource(R.string.auth_forgot_sent_subtitle, email)
             else
-                "Enter the email you signed up with — we'll send a reset link.",
+                stringResource(R.string.auth_forgot_subtitle),
             modifier = Modifier.padding(padding),
         ) {
             if (!sent) {
                 EmailField(value = email, onValueChange = { email = it })
-                Button(
-                    onClick = { submitting = true; viewModel.sendPasswordReset(email) },
-                    enabled = isValidEmail(email.trim()) && !submitting,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    if (submitting) CircularProgressIndicator(strokeWidth = 2.dp)
-                    else Text("Send reset link")
-                }
+                PrimaryAuthButton(
+                    text = stringResource(R.string.auth_forgot_submit),
+                    onClick = { viewModel.sendPasswordReset(email) },
+                    enabled = isValidEmail(email.trim()),
+                    busy = busy,
+                )
             } else {
                 Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-                    Text("Back to sign in")
+                    Text(stringResource(R.string.auth_forgot_back_to_signin))
                 }
                 TextButton(
-                    onClick = { sent = false; submitting = true; viewModel.sendPasswordReset(email) },
+                    onClick = { sent = false; viewModel.sendPasswordReset(email) },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Resend link") }
+                ) { Text(stringResource(R.string.auth_forgot_resend)) }
             }
         }
     }

@@ -36,7 +36,8 @@ import com.callvault.app.R
 import com.callvault.app.data.prefs.SettingsDataStore
 import com.callvault.app.domain.model.AuthState
 import com.callvault.app.domain.repository.AuthRepository
-import com.callvault.app.ui.screen.auth.LoginScreen
+import com.callvault.app.ui.screen.auth.AuthDestinations
+import com.callvault.app.ui.screen.auth.authGraph
 import com.callvault.app.ui.screen.autotagrules.AutoTagRulesScreen
 import com.callvault.app.ui.screen.autotagrules.RuleEditorScreen
 import com.callvault.app.ui.screen.backup.BackupScreen
@@ -137,7 +138,7 @@ fun CallVaultNavHost(
                     val target = if (authState is AuthState.SignedIn) {
                         postLoginRoute()
                     } else {
-                        Destinations.Login.route
+                        AuthDestinations.GRAPH
                     }
                     navController.navigate(target) {
                         popUpTo(Destinations.Splash.route) { inclusive = true }
@@ -145,17 +146,14 @@ fun CallVaultNavHost(
                 }
             }
         }
-        composable(Destinations.Login.route) {
-            LoginScreen(
-                onAuthenticated = {
-                    navController.navigate(postLoginRoute()) {
-                        popUpTo(Destinations.Login.route) { inclusive = true }
-                    }
-                },
-                onForgotPassword = {},
-                onCreateAccount = {},
-            )
-        }
+        authGraph(
+            navController = navController,
+            onAuthenticated = {
+                navController.navigate(postLoginRoute()) {
+                    popUpTo(0) { inclusive = true }
+                }
+            },
+        )
         composable(Destinations.Onboarding.route) {
             OnboardingScreen(
                 onFinished = {
@@ -302,6 +300,27 @@ fun CallVaultNavHost(
             BackHandler { toHome() }
             SettingsScreen(navController = navController)
         }
+        composable(Destinations.Templates.route) {
+            com.callvault.app.ui.screen.templates.TemplatesScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Destinations.Pipeline.route) {
+            com.callvault.app.ui.screen.pipeline.PipelineScreen(
+                onBack = { navController.popBackStack() },
+                onCardOpenCallDetail = { number ->
+                    navController.navigate(Destinations.CallDetail.routeFor(number))
+                },
+            )
+        }
+        composable(Destinations.CsvImport.route) {
+            com.callvault.app.ui.screen.csvimport.CsvImportScreen(
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Destinations.WeeklyDigest.route) {
+            com.callvault.app.ui.screen.digest.WeeklyDigestScreen(
+                onBack = { navController.popBackStack() },
+            )
+        }
         composable(Destinations.Tags.route) {
             BackHandler { toHome() }
             TagsManagerScreen(onBack = toHome)
@@ -344,6 +363,10 @@ fun CallVaultNavHost(
         when (initialDeepLink) {
             "update_available" -> navController.navigate(Destinations.UpdateAvailable.route)
             "daily_summary" -> navController.navigate(Destinations.Main.route)
+            "weekly_digest" -> navController.navigate(Destinations.WeeklyDigest.route)
+            AuthDestinations.RESET -> navController.navigate(AuthDestinations.RESET) {
+                popUpTo(0) { inclusive = true }
+            }
             else -> Unit
         }
     }

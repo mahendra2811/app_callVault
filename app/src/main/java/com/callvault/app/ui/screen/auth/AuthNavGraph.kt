@@ -15,6 +15,7 @@ import androidx.navigation.navigation
  *     // ... your existing main_graph
  * }
  */
+/** Installs the auth nav graph; call from a top-level [androidx.navigation.compose.NavHost]. */
 fun NavGraphBuilder.authGraph(
     navController: NavHostController,
     onAuthenticated: () -> Unit,
@@ -44,6 +45,7 @@ fun NavGraphBuilder.authGraph(
                         popUpTo(AuthDestinations.WELCOME)
                     }
                 },
+                onAuthenticated = onAuthenticated,
                 onSignInInstead = {
                     navController.navigate(AuthDestinations.LOGIN) {
                         popUpTo(AuthDestinations.WELCOME)
@@ -61,6 +63,7 @@ fun NavGraphBuilder.authGraph(
             val email = backStackEntry.arguments?.getString("email").orEmpty()
             VerifyEmailScreen(
                 email = email,
+                onAuthenticated = onAuthenticated,
                 onBackToSignIn = {
                     navController.navigate(AuthDestinations.LOGIN) {
                         popUpTo(AuthDestinations.WELCOME)

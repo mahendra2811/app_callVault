@@ -38,21 +38,21 @@ Firebase Console → Project settings → *Your apps* → Add Android app with p
 `google-services.json` and place it at `app/google-services.json`. Gradle will
 fail without it because the `google-services` plugin is now applied.
 
+### 2b. Add the password-reset redirect URL to Supabase
+
+Supabase → Authentication → URL Configuration → **Redirect URLs** → add:
+```
+callvault://auth/recovery
+```
+Without this, password-reset emails will land on a generic Supabase web page that can't return users to the app.
+
+### 2c. Analytics consent (PostHog)
+
+`PostHogTracker` no longer initializes automatically. The flag `SettingsDataStore.analyticsConsent` (default `false`) gates initialization. Toggle it via your settings UI when you ship the consent UI; until then, no events leave the device. Email/name are never sent — only the Supabase userId.
+
 ### 3. Create the `device_tokens` table in Supabase
 
-```sql
-create table public.device_tokens (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users on delete cascade,
-  fcm_token text not null unique,
-  updated_at timestamptz default now()
-);
-
-alter table public.device_tokens enable row level security;
-
-create policy "users manage own tokens" on public.device_tokens
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-```
+See `app/src/main/assets/db/device_tokens.sql` for the canonical schema (run that in Supabase → SQL Editor).
 
 ### 4. Wire the auth gate into navigation
 

@@ -78,6 +78,18 @@ sealed class Destinations(val route: String) {
     /** Sprint 11 — Master Settings screen (progressive disclosure). */
     data object Settings : Destinations("settings")
 
+    /** Quick-reply templates manager (built-ins + user-added). */
+    data object Templates : Destinations("settings/templates")
+
+    /** Lead pipeline Kanban (5-column funnel). */
+    data object Pipeline : Destinations("pipeline")
+
+    /** CSV contact import. */
+    data object CsvImport : Destinations("csv_import")
+
+    /** Weekly digest screen. */
+    data object WeeklyDigest : Destinations("weekly_digest")
+
     /** Sprint 11 — Docs/FAQ list. */
     data object DocsList : Destinations("docs")
 
@@ -106,6 +118,7 @@ sealed class MainTabRoute(
 ) {
     data object Home : MainTabRoute("home", "Home", "🏠")
     data object Calls : MainTabRoute("calls", "Calls", "📞")
+    data object Pipeline : MainTabRoute("pipeline_tab", "Pipeline", "📊")
     data object Inquiries : MainTabRoute("inquiries", "Inquiries", "📥")
     data object More : MainTabRoute("more", "More", "☰")
 }

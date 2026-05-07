@@ -15,6 +15,9 @@ class SupabaseClientProvider @Inject constructor() {
         require(BuildConfig.SUPABASE_URL.isNotBlank()) {
             "SUPABASE_URL missing — set it in local.properties (see local.properties.example)."
         }
+        require(BuildConfig.SUPABASE_ANON_KEY.isNotBlank()) {
+            "SUPABASE_ANON_KEY missing — set it in local.properties (see local.properties.example)."
+        }
         createSupabaseClient(
             supabaseUrl = BuildConfig.SUPABASE_URL,
             supabaseKey = BuildConfig.SUPABASE_ANON_KEY,

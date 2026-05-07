@@ -76,6 +76,15 @@ fun MoreScreen(
     var confirmLogout by remember { mutableStateOf(false) }
 
     val data = listOf(
+        MoreRow("📈", stringResource(R.string.more_weekly_digest), IconStatsTint) {
+            navController.navigate(Destinations.WeeklyDigest.route)
+        },
+        MoreRow("📊", stringResource(R.string.pipeline_screen_title), IconStatsTint) {
+            navController.navigate(Destinations.Pipeline.route)
+        },
+        MoreRow("📥", stringResource(R.string.csv_import_screen_title), IconBackupTint) {
+            navController.navigate(Destinations.CsvImport.route)
+        },
         MoreRow("📤", "Export", IconBackupTint) { navController.navigate(Destinations.Export.route) },
         MoreRow("🏷️", "Tags", IconTagsTint) { navController.navigate(Destinations.Tags.route) }
     )

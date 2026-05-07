@@ -21,8 +21,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.callvault.app.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 /** Email + password sign-in. */
 @Composable
@@ -34,53 +37,60 @@ fun LoginScreen(
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    var submitting by rememberSaveable { mutableStateOf(false) }
+    val busy by viewModel.busy.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { evt ->
             when (evt) {
-                AuthEvent.SignedIn -> { submitting = false; onAuthenticated() }
-                is AuthEvent.Error -> { submitting = false; snackbar.showSnackbar(evt.message) }
+                AuthEvent.SignedIn -> onAuthenticated()
+                is AuthEvent.Error -> snackbar.showSnackbar(evt.message)
                 else -> Unit
             }
         }
     }
 
-    val canSubmit = email.isNotBlank() && password.length >= 6 && !submitting
+    val canSubmit = email.isNotBlank() && password.length >= 6 && !busy
 
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         AuthFormScaffold(
-            title = "Welcome back",
-            subtitle = "Sign in to your CallVault account.",
+            title = stringResource(R.string.auth_login_title),
+            subtitle = stringResource(R.string.auth_login_subtitle),
             modifier = Modifier.padding(padding),
         ) {
             EmailField(value = email, onValueChange = { email = it })
-            PasswordField(value = password, onValueChange = { password = it })
+            PasswordField(
+                value = password,
+                onValueChange = { password = it },
+                imeAction = androidx.compose.ui.text.input.ImeAction.Done,
+                onImeAction = { if (canSubmit) viewModel.signIn(email, password) },
+            )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
-                TextButton(onClick = onForgotPassword) { Text("Forgot password?") }
+                TextButton(onClick = onForgotPassword) {
+                    Text(stringResource(R.string.auth_login_forgot))
+                }
             }
 
-            Button(
-                onClick = { submitting = true; viewModel.signIn(email, password) },
+            PrimaryAuthButton(
+                text = stringResource(R.string.auth_login_submit),
+                onClick = { viewModel.signIn(email, password) },
                 enabled = canSubmit,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (submitting) CircularProgressIndicator(strokeWidth = 2.dp)
-                else Text("Sign in")
-            }
+                busy = busy,
+            )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("New here?", style = MaterialTheme.typography.bodyMedium)
-                TextButton(onClick = onCreateAccount) { Text("Create an account") }
+                Text(stringResource(R.string.auth_login_new_here), style = MaterialTheme.typography.bodyMedium)
+                TextButton(onClick = onCreateAccount) {
+                    Text(stringResource(R.string.auth_welcome_create_account))
+                }
             }
         }
     }

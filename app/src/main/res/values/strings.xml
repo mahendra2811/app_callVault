@@ -8,6 +8,7 @@
     <string name="cv_tab_calls">Calls</string>
     <string name="cv_tab_inquiries">Inquiries</string>
     <string name="cv_tab_more">More</string>
+    <string name="cv_tab_pipeline">Pipeline</string>
     <string name="cv_topbar_search_cd">Search</string>
     <string name="cv_topbar_more_cd">More options</string>
     <string name="cv_overflow_profile">Profile</string>
@@ -654,4 +655,216 @@
     <string name="cv_back_press_exit">Press back again to exit</string>
     <string name="cv_calldetail_manage_section">Manage</string>
     <string name="cv_overflow_signout">Sign out of Drive</string>
+
+    <!-- Auth — common -->
+    <string name="auth_email_label">Email</string>
+    <string name="auth_password_label">Password</string>
+    <string name="auth_password_show_cd">Show password</string>
+    <string name="auth_password_hide_cd">Hide password</string>
+    <string name="auth_password_strength_too_short">Too short</string>
+    <string name="auth_password_strength_weak">Weak</string>
+    <string name="auth_password_strength_fair">Fair</string>
+    <string name="auth_password_strength_good">Good</string>
+    <string name="auth_password_strength_strong">Strong</string>
+    <string name="auth_generic_error">Something went wrong. Try again.</string>
+
+    <!-- Welcome -->
+    <string name="auth_welcome_brand">CallVault</string>
+    <string name="auth_welcome_tagline">Every call, a possibility.</string>
+    <string name="auth_welcome_create_account">Create an account</string>
+    <string name="auth_welcome_have_account">I already have an account</string>
+
+    <!-- Login -->
+    <string name="auth_login_title">Welcome back</string>
+    <string name="auth_login_subtitle">Sign in to your CallVault account.</string>
+    <string name="auth_login_forgot">Forgot password?</string>
+    <string name="auth_login_submit">Sign in</string>
+    <string name="auth_login_new_here">New here?</string>
+
+    <!-- Sign-up -->
+    <string name="auth_signup_title">Create account</string>
+    <string name="auth_signup_subtitle">Start tracking every inquiry call.</string>
+    <string name="auth_signup_full_name_label">Full name</string>
+    <string name="auth_signup_password_min8_label">Password (min 8)</string>
+    <string name="auth_signup_confirm_label">Confirm password</string>
+    <string name="auth_signup_passwords_mismatch">Passwords don\'t match</string>
+    <string name="auth_signup_terms">I agree to the Terms of Service and Privacy Policy</string>
+    <string name="auth_signup_submit">Create account</string>
+    <string name="auth_signup_already_member">Already a member?</string>
+
+    <!-- Forgot password -->
+    <string name="auth_forgot_title">Forgot password</string>
+    <string name="auth_forgot_subtitle">Enter the email you signed up with — we\'ll send a reset link.</string>
+    <string name="auth_forgot_sent_title">Check your email</string>
+    <string name="auth_forgot_sent_subtitle">We sent a reset link to %1$s. Tap the link to set a new password.</string>
+    <string name="auth_forgot_submit">Send reset link</string>
+    <string name="auth_forgot_back_to_signin">Back to sign in</string>
+    <string name="auth_forgot_resend">Resend link</string>
+
+    <!-- Reset password -->
+    <string name="auth_reset_title">Set new password</string>
+    <string name="auth_reset_subtitle">Choose a password you\'ll remember.</string>
+    <string name="auth_reset_new_password_label">New password (min 8)</string>
+    <string name="auth_reset_submit">Update password</string>
+    <string name="auth_reset_waiting">Waiting for the recovery link to verify…</string>
+    <string name="auth_reset_session_missing">This recovery link has expired. Request a new one from the Forgot password screen.</string>
+
+    <!-- Verify email -->
+    <string name="auth_verify_title">Verify your email</string>
+    <string name="auth_verify_subtitle">We sent a confirmation link to %1$s. Tap the link, then come back here.</string>
+    <string name="auth_verify_continue_busy">Checking…</string>
+    <string name="auth_verify_continue">I\'ve verified — continue</string>
+    <string name="auth_verify_resend">Resend verification email</string>
+    <string name="auth_verify_resent_snackbar">Verification email sent again.</string>
+
+    <!-- Sign in link (shared) -->
+    <string name="auth_signin_link">Sign in</string>
+
+    <!-- Weekly digest -->
+    <string name="digest_screen_title">Weekly digest</string>
+    <string name="digest_subtitle_fmt">Last 7 days · %1$s – %2$s</string>
+    <string name="digest_total_calls_fmt">%1$d total calls</string>
+    <string name="digest_breakdown_fmt">%1$d incoming · %2$d outgoing · %3$d missed</string>
+    <string name="digest_unique_contacts_fmt">%1$d unique contacts</string>
+    <string name="digest_hot_leads_fmt">%1$d hot leads (score ≥ 70)</string>
+    <string name="digest_top_callers_title">Top callers</string>
+    <string name="digest_top_caller_row_fmt">%1$s · %2$d calls · score %3$d</string>
+    <string name="digest_share_button">Share digest</string>
+    <string name="digest_share_subject">CallVault — last 7 days</string>
+    <string name="digest_notif_title">Your week on CallVault</string>
+    <string name="digest_notif_body_fmt">%1$d calls · %2$d hot leads. Open for the breakdown.</string>
+    <string name="settings_weekly_digest_title">Weekly digest</string>
+    <string name="settings_weekly_digest_subtitle">Monday 9 AM rollup of your last 7 days.</string>
+    <string name="more_weekly_digest">Weekly digest</string>
+    <string name="digest_top_tags_title">Top concerns you flagged this week</string>
+    <string name="digest_top_tag_row_fmt">%1$s · %2$d times</string>
+    <string name="digest_ai_section_title">AI summary</string>
+    <string name="digest_ai_busy">Asking the model…</string>
+    <string name="digest_ai_regenerate">Regenerate</string>
+    <string name="digest_ai_disabled_hint">Enable AI summary in Settings → Privacy and add your Claude API key.</string>
+    <string name="digest_ai_no_key">No API key set. Add it in Settings → Privacy.</string>
+    <string name="settings_ai_digest_title">AI summary on weekly digest</string>
+    <string name="settings_ai_digest_subtitle">Sends only aggregate counts + first names + tag names to Claude (your API key, BYOK). No call notes or phone numbers leave the device.</string>
+    <string name="settings_anthropic_key_title">Anthropic API key</string>
+    <string name="settings_anthropic_key_hint">sk-ant-…</string>
+    <string name="settings_anthropic_key_save">Save key</string>
+    <string name="settings_anthropic_key_cleared">Key cleared.</string>
+
+    <!-- Hot-lead alerts -->
+    <string name="channel_hot_lead_name">Hot lead alerts</string>
+    <string name="channel_hot_lead_desc">High-priority alert when a top lead calls.</string>
+    <string name="hot_lead_notif_title">🔥 Hot lead is calling</string>
+    <string name="hot_lead_notif_body_named_fmt">%1$s · score %2$d</string>
+    <string name="hot_lead_notif_body_unnamed_fmt">%1$s · score %2$d</string>
+    <string name="settings_hot_lead_alerts_title">Hot-lead call alerts</string>
+    <string name="settings_hot_lead_alerts_subtitle">Notify when a known top lead calls (score ≥ 70 or in Qualified/Won).</string>
+
+    <!-- CSV contact import -->
+    <string name="csv_import_screen_title">Import contacts (CSV)</string>
+    <string name="csv_import_pick_file">Pick a CSV file</string>
+    <string name="csv_import_format_hint">Expected: one row per contact. Columns: name, phone — header optional. Phone column accepts +91 / 10-digit Indian numbers.</string>
+    <string name="csv_import_no_file">No file picked yet.</string>
+    <string name="csv_import_parsed_fmt">%1$d valid · %2$d skipped</string>
+    <string name="csv_import_skipped_reasons">Skipped rows are missing a phone or have invalid format.</string>
+    <string name="csv_import_preview_title">Preview (first 50)</string>
+    <string name="csv_import_button">Import to phone contacts</string>
+    <string name="csv_import_done_fmt">%1$d contact(s) inserted.</string>
+    <string name="csv_import_failed_fmt">Import failed: %1$s</string>
+    <string name="csv_import_perm_denied">Permission denied. Enable "Contacts" in app settings, then try again.</string>
+
+    <!-- Why-score sheet -->
+    <string name="why_score_title">Why this score?</string>
+    <string name="why_score_total_fmt">Total: %1$d / 100</string>
+    <string name="why_score_manual_override">Manual override is on. Disable it to use the computed score.</string>
+    <string name="why_score_row_frequency">Call frequency</string>
+    <string name="why_score_row_duration">Total talk time</string>
+    <string name="why_score_row_recency">Recency</string>
+    <string name="why_score_row_followup">Open follow-up bonus</string>
+    <string name="why_score_row_customer_tag">"Customer" tag bonus</string>
+    <string name="why_score_row_saved">Saved-contact bonus</string>
+    <string name="why_score_row_rule_boosts">Rule boosts</string>
+    <string name="why_score_close">Close</string>
+    <string name="why_score_learn_more">How can I improve this score?</string>
+    <string name="why_score_value_pts_fmt">+%1$d pts</string>
+    <string name="why_score_subtitle">How each factor contributed to the 0–100 lead score for this contact.</string>
+
+    <!-- Lead pipeline -->
+    <string name="pipeline_screen_title">Lead pipeline</string>
+    <string name="pipeline_stage_new">New</string>
+    <string name="pipeline_stage_contacted">Contacted</string>
+    <string name="pipeline_stage_qualified">Qualified</string>
+    <string name="pipeline_stage_won">Won</string>
+    <string name="pipeline_stage_lost">Lost</string>
+    <string name="pipeline_move_to">Move to…</string>
+    <string name="pipeline_empty_column">No leads here yet</string>
+    <string name="pipeline_card_calls_fmt">%1$d calls</string>
+    <string name="pipeline_back_cd">Back</string>
+    <string name="pipeline_overdue_to_lost_cd">Move overdue follow-ups to Lost</string>
+    <string name="pipeline_overdue_dialog_title">Move overdue to Lost?</string>
+    <string name="pipeline_overdue_dialog_message">All contacts with overdue follow-ups will be moved to the Lost stage. You can move any back manually.</string>
+    <string name="pipeline_overdue_done_fmt">%1$d contact(s) moved to Lost.</string>
+    <string name="pipeline_overdue_none">No overdue follow-ups to move.</string>
+    <string name="pipeline_selected_count_fmt">%1$d selected</string>
+    <string name="pipeline_clear_selection_cd">Clear selection</string>
+    <string name="pipeline_bulk_send_cd">Send WhatsApp to selected</string>
+    <string name="bulk_blast_pick_template">Pick a template to send</string>
+    <string name="bulk_blast_progress_title">Bulk WhatsApp</string>
+    <string name="bulk_blast_progress_subtitle">Tap "Open" on each. WhatsApp opens with the message pre-filled — you tap Send there.</string>
+    <string name="bulk_blast_open">Open</string>
+    <string name="bulk_blast_sent">Sent</string>
+    <string name="bulk_blast_close">Close</string>
+    <string name="bulk_blast_done_count_fmt">%1$d of %2$d opened</string>
+
+    <string name="template_fallback_name">there</string>
+
+    <!-- Quick reply / templates -->
+    <string name="quickreply_sheet_title">Quick reply</string>
+    <string name="quickreply_send_via_whatsapp">Send via WhatsApp</string>
+    <string name="quickreply_open_chat">Open WhatsApp chat</string>
+    <string name="quickreply_no_app">WhatsApp isn\'t installed on this device.</string>
+    <string name="quickreply_manage">Manage templates</string>
+    <string name="templates_screen_title">Quick-reply templates</string>
+    <string name="templates_add">Add template</string>
+    <string name="templates_label_hint">Label (e.g. \"Send catalog\")</string>
+    <string name="templates_body_hint">Message body — use {name} to insert the contact\'s name</string>
+    <string name="templates_save">Save</string>
+    <string name="templates_cancel">Cancel</string>
+    <string name="templates_delete_cd">Delete template</string>
+    <string name="templates_built_in_chip">Built-in</string>
+    <string name="templates_preview_label_fmt">Preview · sample name "Rajesh":\n%1$s</string>
+    <string name="templates_empty">No custom templates yet. Built-ins above are always available.</string>
+    <string name="pipeline_empty_title">Your pipeline is empty</string>
+    <string name="pipeline_empty_body">Tag a few inquiry calls or auto-save them — they\'ll show up here as leads.</string>
+    <string name="demo_banner_title">Demo data shown</string>
+    <string name="demo_banner_body">A few sample contacts so you can explore. Clear them when you\'re ready.</string>
+    <string name="demo_banner_clear">Clear demo</string>
+    <string name="csv_empty_title">Pick a CSV to begin</string>
+    <string name="csv_empty_body">Two columns: name and phone. We\'ll preview before importing.</string>
+
+    <!-- App lock -->
+    <string name="lock_title">CallVault is locked</string>
+    <string name="lock_subtitle">Authenticate to access your call vault.</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="lock_prompt_title">Unlock CallVault</string>
+    <string name="lock_prompt_subtitle">Use fingerprint, face, or device PIN.</string>
+    <string name="lock_no_credentials_title">No screen lock set up</string>
+    <string name="lock_no_credentials_subtitle">App lock is enabled, but this device has no biometrics or PIN configured. Set one up, or disable App lock to continue.</string>
+    <string name="lock_open_security_settings">Open security settings</string>
+    <string name="lock_disable_app_lock">Disable App lock</string>
+    <string name="settings_biometric_lock_title">Require biometrics on app open</string>
+    <string name="settings_biometric_lock_subtitle">Require biometrics or PIN to open the app.</string>
+    <string name="settings_analytics_consent_title">Help improve CallVault (anonymous analytics)</string>
+
+    <!-- Profile -->
+    <string name="auth_profile_title">Profile</string>
+    <string name="auth_profile_back_cd">Back</string>
+    <string name="auth_profile_default_name">CallVault user</string>
+    <string name="auth_profile_change_password">Change password</string>
+    <string name="auth_profile_sign_out">Sign out</string>
+    <string name="auth_profile_not_signed_in">Not signed in.</string>
+    <string name="auth_profile_delete_account">Delete account</string>
+    <string name="auth_delete_dialog_title">Delete your account?</string>
+    <string name="auth_delete_dialog_warning">This permanently removes your CallVault account and all server-side data. Local call data on this device is not affected. Enter your password to confirm.</string>
+    <string name="auth_delete_dialog_confirm">Permanently delete</string>
+    <string name="auth_delete_dialog_cancel">Cancel</string>
 </resources>

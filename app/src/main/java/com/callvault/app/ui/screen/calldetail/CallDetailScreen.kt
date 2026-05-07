@@ -78,6 +78,8 @@ fun CallDetailScreen(
     var noteDeleteTarget by remember { mutableStateOf<Note?>(null) }
     var followUpPickerOpen by remember { mutableStateOf(false) }
     var bookmarkReasonOpen by remember { mutableStateOf(false) }
+    var whyScoreOpen by remember { mutableStateOf(false) }
+    val breakdown by viewModel.breakdown.collectAsStateWithLifecycle()
 
     StandardPage(
         title = state.contact?.displayName
@@ -119,12 +121,17 @@ fun CallDetailScreen(
                     saveStatus = status,
                     leadScore = state.contact?.computedLeadScore ?: 0,
                     onSaveContact = { /* triggers ContactsContract intent in ActionBar */ },
+                    onLeadScoreClick = {
+                        viewModel.loadBreakdown()
+                        whyScoreOpen = true
+                    },
                     summary = state.summary
                 )
             }
             item("actions") {
                 ActionBar(
                     normalizedNumber = state.normalizedNumber,
+                    displayName = state.contact?.displayName,
                     onSaveToContacts = {},
                     onBlock = {}
                 )
@@ -314,6 +321,15 @@ fun CallDetailScreen(
                 if (viewModel.isFirstBookmarkForNumber()) bookmarkReasonOpen = true
                 else viewModel.toggleBookmarkLatest(null)
             }
+        }
+    }
+
+    if (whyScoreOpen) {
+        breakdown?.let { b ->
+            com.callvault.app.ui.screen.calldetail.sections.WhyScoreSheet(
+                breakdown = b,
+                onDismiss = { whyScoreOpen = false },
+            )
         }
     }
 }

@@ -8,6 +8,7 @@ import com.callvault.app.data.local.dao.ContactMetaDao
 import com.callvault.app.data.local.dao.DocFeedbackDao
 import com.callvault.app.data.local.dao.FilterPresetDao
 import com.callvault.app.data.local.dao.NoteDao
+import com.callvault.app.data.local.dao.PipelineStageDao
 import com.callvault.app.data.local.dao.RuleScoreBoostDao
 import com.callvault.app.data.local.dao.SearchHistoryDao
 import com.callvault.app.data.local.dao.SkippedUpdateDao
@@ -23,6 +24,7 @@ import com.callvault.app.data.local.entity.FilterPresetEntity
 import com.callvault.app.data.local.entity.NoteEntity
 import com.callvault.app.data.local.entity.NoteFts
 import com.callvault.app.data.local.entity.NoteHistoryEntity
+import com.callvault.app.data.local.entity.PipelineStageEntity
 import com.callvault.app.data.local.entity.SearchHistoryEntity
 import com.callvault.app.data.local.entity.SkippedUpdateEntity
 import com.callvault.app.data.local.entity.TagEntity
@@ -34,7 +36,7 @@ import com.callvault.app.data.local.entity.TagEntity
  * changes.
  */
 @Database(
-    version = 3,
+    version = 4,
     exportSchema = true,
     entities = [
         CallEntity::class,
@@ -50,7 +52,8 @@ import com.callvault.app.data.local.entity.TagEntity
         DocFeedbackEntity::class,
         SkippedUpdateEntity::class,
         CallFts::class,
-        NoteFts::class
+        NoteFts::class,
+        PipelineStageEntity::class
     ]
 )
 abstract class CallVaultDatabase : RoomDatabase() {
@@ -65,6 +68,7 @@ abstract class CallVaultDatabase : RoomDatabase() {
     abstract fun docFeedbackDao(): DocFeedbackDao
     abstract fun skippedUpdateDao(): SkippedUpdateDao
     abstract fun ruleScoreBoostDao(): RuleScoreBoostDao
+    abstract fun pipelineStageDao(): PipelineStageDao
 
     companion object {
         const val DATABASE_NAME = "callvault.db"

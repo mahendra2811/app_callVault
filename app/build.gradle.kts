@@ -224,6 +224,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
 
+    implementation(libs.androidx.biometric)
+
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)

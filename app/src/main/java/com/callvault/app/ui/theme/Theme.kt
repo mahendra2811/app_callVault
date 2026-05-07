@@ -23,6 +23,8 @@ private val CallVaultColorScheme = lightColorScheme(
 
     tertiary = SageColors.Gold,
     onTertiary = SageColors.TextOnAccent,
+    tertiaryContainer = SageColors.SurfaceAlt,
+    onTertiaryContainer = SageColors.TextPrimary,
 
     background = SageColors.Canvas,
     onBackground = SageColors.TextPrimary,
@@ -36,7 +38,9 @@ private val CallVaultColorScheme = lightColorScheme(
     outlineVariant = SageColors.BorderMuted,
 
     error = SageColors.StatusError,
-    onError = SageColors.TextOnAccent
+    onError = SageColors.TextOnAccent,
+    errorContainer = SageColors.SurfaceAlt,
+    onErrorContainer = SageColors.StatusError,
 )
 
 /**

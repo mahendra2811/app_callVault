@@ -280,5 +280,55 @@ class SettingsDataStore @Inject constructor(
         val K_STATS_LAST_RANGE_PRESET = intPreferencesKey("statsLastRangePresetIndex")
         val K_STATS_CUSTOM_FROM = longPreferencesKey("statsCustomFrom")
         val K_STATS_CUSTOM_TO = longPreferencesKey("statsCustomTo")
+        val K_ANALYTICS_CONSENT = booleanPreferencesKey("analyticsConsent")
+        val K_BIOMETRIC_LOCK = booleanPreferencesKey("biometricLockEnabled")
+        val K_MESSAGE_TEMPLATES_JSON = stringPreferencesKey("messageTemplatesJson")
+        val K_HOT_LEAD_ALERTS = booleanPreferencesKey("hotLeadAlertsEnabled")
+        val K_WEEKLY_DIGEST = booleanPreferencesKey("weeklyDigestEnabled")
+        val K_WEEKLY_DIGEST_LAST_FIRED = longPreferencesKey("weeklyDigestLastFiredMs")
+        val K_DEMO_SEED_ACTIVE = booleanPreferencesKey("demoSeedActive")
+        val K_DEMO_SEED_DISMISSED = booleanPreferencesKey("demoSeedDismissedOnce")
+        val K_AI_DIGEST = booleanPreferencesKey("aiDigestEnabled")
+        val K_ANTHROPIC_API_KEY = stringPreferencesKey("anthropicApiKey")
     }
+
+    /** User-added message templates as a JSON array of `{id,label,body}`. Built-ins are NOT stored here. */
+    val messageTemplatesJson: Flow<String> = ds.data.read(K_MESSAGE_TEMPLATES_JSON, "[]")
+    suspend fun setMessageTemplatesJson(v: String) = write(K_MESSAGE_TEMPLATES_JSON, v)
+
+    /** Whether the user has opted in to anonymous PostHog analytics. Default: off. */
+    val analyticsConsent: Flow<Boolean> = ds.data.read(K_ANALYTICS_CONSENT, false)
+    suspend fun setAnalyticsConsent(v: Boolean) = write(K_ANALYTICS_CONSENT, v)
+
+    /** Whether the app should require biometric/credential auth on cold start + after backgrounding. */
+    val biometricLockEnabled: Flow<Boolean> = ds.data.read(K_BIOMETRIC_LOCK, false)
+    suspend fun setBiometricLockEnabled(v: Boolean) = write(K_BIOMETRIC_LOCK, v)
+
+    /** Notify the user when a "hot lead" calls (score ≥ 70 or pipeline stage Qualified/Won). */
+    val hotLeadAlertsEnabled: Flow<Boolean> = ds.data.read(K_HOT_LEAD_ALERTS, true)
+    suspend fun setHotLeadAlertsEnabled(v: Boolean) = write(K_HOT_LEAD_ALERTS, v)
+
+    /** Post a weekly summary every Monday morning. */
+    val weeklyDigestEnabled: Flow<Boolean> = ds.data.read(K_WEEKLY_DIGEST, true)
+    suspend fun setWeeklyDigestEnabled(v: Boolean) = write(K_WEEKLY_DIGEST, v)
+
+    /** Last successful weekly-digest fire — used to dedupe repeated WorkManager runs in the flex window. */
+    val weeklyDigestLastFiredMs: Flow<Long> = ds.data.read(K_WEEKLY_DIGEST_LAST_FIRED, 0L)
+    suspend fun setWeeklyDigestLastFiredMs(v: Long) = write(K_WEEKLY_DIGEST_LAST_FIRED, v)
+
+    /** Whether the demo-data seed has been written. Set true after seeding; false after user clears it. */
+    val demoSeedActive: Flow<Boolean> = ds.data.read(K_DEMO_SEED_ACTIVE, false)
+    suspend fun setDemoSeedActive(v: Boolean) = write(K_DEMO_SEED_ACTIVE, v)
+    val demoSeedDismissedOnce: Flow<Boolean> = ds.data.read(K_DEMO_SEED_DISMISSED, false)
+    suspend fun setDemoSeedDismissedOnce(v: Boolean) = write(K_DEMO_SEED_DISMISSED, v)
+
+    /** Opt-in to send the weekly digest stats (no notes / phone numbers) to a chosen LLM provider. */
+    val aiDigestEnabled: Flow<Boolean> = ds.data.read(K_AI_DIGEST, false)
+    suspend fun setAiDigestEnabled(v: Boolean) = write(K_AI_DIGEST, v)
+
+    // Anthropic API key moved to SecretStore (EncryptedSharedPreferences). The plaintext key
+    // here is retained for one-time migration only; production reads/writes go through SecretStore.
+    @Deprecated("Migrated to SecretStore", ReplaceWith("secretStore.get(SecretStore.K_ANTHROPIC_KEY)"))
+    val anthropicApiKeyPlaintextLegacy: Flow<String> = ds.data.read(K_ANTHROPIC_API_KEY, "")
+    suspend fun clearLegacyAnthropicKey() = write(K_ANTHROPIC_API_KEY, "")
 }

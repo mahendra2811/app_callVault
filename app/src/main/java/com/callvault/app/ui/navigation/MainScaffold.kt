@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inbox
@@ -67,6 +68,8 @@ import com.callvault.app.ui.screen.more.MoreScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.callvault.app.ui.theme.IconCallsTint
 import com.callvault.app.ui.theme.IconHomeTint
+import com.callvault.app.ui.theme.IconStatsTint
+import com.callvault.app.ui.theme.TabBgStats
 import com.callvault.app.ui.theme.IconInquiriesTint
 import com.callvault.app.ui.theme.NeoColors
 import com.callvault.app.ui.theme.SageColors
@@ -133,6 +136,7 @@ fun MainScaffold(
     val tabs = listOf(
         MainTabRoute.Home,
         MainTabRoute.Calls,
+        MainTabRoute.Pipeline,
         MainTabRoute.Inquiries,
         MainTabRoute.More
     )
@@ -140,6 +144,7 @@ fun MainScaffold(
 
     val homeLabel = stringResource(R.string.cv_tab_home)
     val callsLabel = stringResource(R.string.cv_tab_calls)
+    val pipelineLabel = stringResource(R.string.cv_tab_pipeline)
     val inquiriesLabel = stringResource(R.string.cv_tab_inquiries)
     val moreLabel = stringResource(R.string.cv_tab_more)
     val brand = stringResource(R.string.cv_main_brand)
@@ -147,6 +152,7 @@ fun MainScaffold(
     val neoTabs = listOf(
         NeoTab(homeLabel, Icons.Filled.Home, activeTint = IconHomeTint),
         NeoTab(callsLabel, Icons.Filled.Call, activeTint = IconCallsTint),
+        NeoTab(pipelineLabel, Icons.Filled.BarChart, activeTint = IconStatsTint),
         NeoTab(
             inquiriesLabel,
             Icons.Filled.Inbox,
@@ -193,6 +199,7 @@ fun MainScaffold(
     val currentTabBg = when (tabs[selectedIndex]) {
         MainTabRoute.Home -> TabBgHome
         MainTabRoute.Calls -> TabBgCalls
+        MainTabRoute.Pipeline -> TabBgStats
         MainTabRoute.Inquiries -> TabBgInquiries
         MainTabRoute.More -> TabBgMore
     }
@@ -370,6 +377,16 @@ fun MainScaffold(
                             onOpenDocs = {
                                 rootNavController.navigate(Destinations.DocsList.route)
                             }
+                        )
+                    }
+                }
+                composable(MainTabRoute.Pipeline.route) {
+                    saveableHolder.SaveableStateProvider(MainTabRoute.Pipeline.route) {
+                        com.callvault.app.ui.screen.pipeline.PipelineScreen(
+                            onBack = null,
+                            onCardOpenCallDetail = { number ->
+                                rootNavController.navigate(Destinations.CallDetail.routeFor(number))
+                            },
                         )
                     }
                 }

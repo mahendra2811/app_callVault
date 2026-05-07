@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name kept in English (brand). -->
+    <string name="app_name">CallVault</string>
+
+    <!-- Top tabs -->
+    <string name="cv_tab_home">होम</string>
+    <string name="cv_tab_calls">कॉल</string>
+    <string name="cv_tab_inquiries">पूछताछ</string>
+    <string name="cv_tab_more">अधिक</string>
+    <string name="cv_tab_pipeline">पाइपलाइन</string>
+    <string name="cv_topbar_more_cd">अधिक विकल्प</string>
+
+    <!-- Calls tab -->
+    <string name="calls_title">कॉल</string>
+    <string name="calls_action_search">कॉल खोजें</string>
+    <string name="calls_action_filter">फ़िल्टर लगाएँ</string>
+    <string name="calls_action_view_mode">व्यू मोड बदलें</string>
+    <string name="calls_action_more">अधिक</string>
+    <string name="calls_pinned_unsaved_title">सहेजी न गई पूछताछ — पिछले 7 दिन</string>
+    <string name="calls_pinned_hide">सेक्शन छिपाएँ</string>
+    <string name="calls_empty_title">अभी कोई कॉल नहीं</string>
+    <string name="calls_empty_body">सिंक करने के लिए नीचे खींचें।</string>
+    <string name="calls_empty_filter_title">इन फ़िल्टरों से कोई कॉल मेल नहीं खाती</string>
+    <string name="calls_empty_filter_clear">फ़िल्टर हटाएँ</string>
+
+    <!-- Detail / actions -->
+    <string name="detail_action_call">कॉल करें</string>
+
+    <!-- Follow-ups -->
+    <string name="followups_tab_today">आज</string>
+    <string name="followups_tab_overdue">समय बीत चुका</string>
+    <string name="followups_tab_upcoming">आगामी</string>
+    <string name="followups_tab_done">पूरे हुए</string>
+    <string name="followup_action_call_back">वापस कॉल करें</string>
+
+    <!-- Inquiries -->
+    <string name="inquiries_title">पूछताछ</string>
+    <string name="inquiries_search_hint">पूछताछ खोजें</string>
+    <string name="inquiries_empty_title">अभी कोई पूछताछ नहीं</string>
+    <string name="inquiries_action_convert">मेरे संपर्क में जोड़ें</string>
+    <string name="inquiries_action_convert_all">सभी जोड़ें</string>
+    <string name="inquiries_cancel">रद्द करें</string>
+
+    <!-- Auth — common -->
+    <string name="auth_email_label">ईमेल</string>
+    <string name="auth_password_label">पासवर्ड</string>
+    <string name="auth_password_show_cd">पासवर्ड दिखाएँ</string>
+    <string name="auth_password_hide_cd">पासवर्ड छिपाएँ</string>
+    <string name="auth_password_strength_too_short">बहुत छोटा</string>
+    <string name="auth_password_strength_weak">कमज़ोर</string>
+    <string name="auth_password_strength_fair">ठीक है</string>
+    <string name="auth_password_strength_good">अच्छा</string>
+    <string name="auth_password_strength_strong">मज़बूत</string>
+    <string name="auth_generic_error">कुछ गड़बड़ हुई। फिर से कोशिश करें।</string>
+
+    <!-- Welcome -->
+    <string name="auth_welcome_brand">CallVault</string>
+    <string name="auth_welcome_tagline">हर कॉल — एक मौका।</string>
+    <string name="auth_welcome_create_account">खाता बनाएँ</string>
+    <string name="auth_welcome_have_account">मेरा पहले से खाता है</string>
+
+    <!-- Login -->
+    <string name="auth_login_title">वापस स्वागत है</string>
+    <string name="auth_login_subtitle">अपने CallVault खाते में साइन इन करें।</string>
+    <string name="auth_login_forgot">पासवर्ड भूल गए?</string>
+    <string name="auth_login_submit">साइन इन</string>
+    <string name="auth_login_new_here">नए हैं?</string>
+
+    <!-- Sign-up -->
+    <string name="auth_signup_title">खाता बनाएँ</string>
+    <string name="auth_signup_subtitle">हर पूछताछ कॉल को सहेजना शुरू करें।</string>
+    <string name="auth_signup_full_name_label">पूरा नाम</string>
+    <string name="auth_signup_password_min8_label">पासवर्ड (कम से कम 8 अक्षर)</string>
+    <string name="auth_signup_confirm_label">पासवर्ड दोबारा डालें</string>
+    <string name="auth_signup_passwords_mismatch">पासवर्ड मेल नहीं खाते</string>
+    <string name="auth_signup_terms">मैं सेवा की शर्तें और गोपनीयता नीति स्वीकार करता/करती हूँ</string>
+    <string name="auth_signup_submit">खाता बनाएँ</string>
+    <string name="auth_signup_already_member">पहले से सदस्य हैं?</string>
+
+    <!-- Forgot password -->
+    <string name="auth_forgot_title">पासवर्ड भूल गए</string>
+    <string name="auth_forgot_subtitle">वही ईमेल डालें जिससे आपने साइन अप किया था — हम रीसेट लिंक भेज देंगे।</string>
+    <string name="auth_forgot_sent_title">अपना ईमेल देखें</string>
+    <string name="auth_forgot_sent_subtitle">हमने %1$s पर रीसेट लिंक भेज दिया है। नया पासवर्ड बनाने के लिए लिंक पर टैप करें।</string>
+    <string name="auth_forgot_submit">रीसेट लिंक भेजें</string>
+    <string name="auth_forgot_back_to_signin">साइन इन पर वापस जाएँ</string>
+    <string name="auth_forgot_resend">लिंक फिर से भेजें</string>
+
+    <!-- Reset password -->
+    <string name="auth_reset_title">नया पासवर्ड सेट करें</string>
+    <string name="auth_reset_subtitle">ऐसा पासवर्ड चुनें जो आपको याद रहे।</string>
+    <string name="auth_reset_new_password_label">नया पासवर्ड (कम से कम 8 अक्षर)</string>
+    <string name="auth_reset_submit">पासवर्ड अपडेट करें</string>
+    <string name="auth_reset_waiting">रीसेट लिंक की पुष्टि हो रही है…</string>
+    <string name="auth_reset_session_missing">यह रीसेट लिंक खत्म हो चुका है। पासवर्ड भूल गए स्क्रीन से नया लिंक मँगवाएँ।</string>
+
+    <!-- Verify email -->
+    <string name="auth_verify_title">अपना ईमेल पुष्ट करें</string>
+    <string name="auth_verify_subtitle">हमने %1$s पर पुष्टि लिंक भेजा है। लिंक पर टैप करें, फिर यहाँ वापस आएँ।</string>
+    <string name="auth_verify_continue_busy">जाँच रहे हैं…</string>
+    <string name="auth_verify_continue">मैंने पुष्टि कर ली — आगे बढ़ें</string>
+    <string name="auth_verify_resend">पुष्टि ईमेल फिर से भेजें</string>
+    <string name="auth_verify_resent_snackbar">पुष्टि ईमेल फिर से भेज दिया गया।</string>
+
+    <!-- Sign in link (shared) -->
+    <string name="auth_signin_link">साइन इन</string>
+
+    <!-- Why-score sheet -->
+    <string name="why_score_title">यह स्कोर क्यों?</string>
+    <string name="why_score_total_fmt">कुल: %1$d / 100</string>
+    <string name="why_score_manual_override">मैनुअल ओवरराइड चालू है। कंप्यूटेड स्कोर इस्तेमाल करने के लिए इसे बंद करें।</string>
+    <string name="why_score_row_frequency">कॉल बारंबारता</string>
+    <string name="why_score_row_duration">कुल बातचीत समय</string>
+    <string name="why_score_row_recency">हाल का संपर्क</string>
+    <string name="why_score_row_followup">खुले फ़ॉलो-अप का बोनस</string>
+    <string name="why_score_row_customer_tag">"ग्राहक" टैग बोनस</string>
+    <string name="why_score_row_saved">सहेजे गए संपर्क का बोनस</string>
+    <string name="why_score_row_rule_boosts">नियम बूस्ट</string>
+    <string name="why_score_close">बंद करें</string>
+    <string name="why_score_value_pts_fmt">+%1$d अंक</string>
+    <string name="why_score_subtitle">इस संपर्क के 0–100 लीड स्कोर में हर कारक का योगदान।</string>
+
+    <string name="template_fallback_name">साथी</string>
+
+    <!-- Lead pipeline -->
+    <string name="pipeline_screen_title">लीड पाइपलाइन</string>
+    <string name="pipeline_stage_new">नया</string>
+    <string name="pipeline_stage_contacted">संपर्क किया</string>
+    <string name="pipeline_stage_qualified">योग्य</string>
+    <string name="pipeline_stage_won">जीता</string>
+    <string name="pipeline_stage_lost">हारा</string>
+    <string name="pipeline_move_to">यहाँ ले जाएँ…</string>
+    <string name="pipeline_empty_column">अभी यहाँ कोई लीड नहीं</string>
+    <string name="demo_banner_title">डेमो डेटा दिख रहा है</string>
+    <string name="demo_banner_body">कुछ नमूना संपर्क ताकि आप ऐप को आज़मा सकें। तैयार होने पर इन्हें हटा दें।</string>
+    <string name="demo_banner_clear">डेमो हटाएँ</string>
+    <string name="pipeline_card_calls_fmt">%1$d कॉल</string>
+    <string name="pipeline_back_cd">वापस</string>
+    <string name="pipeline_selected_count_fmt">%1$d चुने गए</string>
+    <string name="pipeline_clear_selection_cd">चयन हटाएँ</string>
+    <string name="pipeline_bulk_send_cd">चुने गए लोगों को WhatsApp भेजें</string>
+    <string name="bulk_blast_pick_template">भेजने के लिए टेम्पलेट चुनें</string>
+    <string name="bulk_blast_progress_title">बल्क WhatsApp</string>
+    <string name="bulk_blast_progress_subtitle">हर एक पर "खोलें" दबाएँ। WhatsApp में संदेश पहले से भरा होगा — वहाँ Send दबाएँ।</string>
+    <string name="bulk_blast_open">खोलें</string>
+    <string name="bulk_blast_sent">भेजा गया</string>
+    <string name="bulk_blast_close">बंद करें</string>
+    <string name="bulk_blast_done_count_fmt">%2$d में से %1$d खोले गए</string>
+
+    <!-- Weekly digest -->
+    <string name="digest_screen_title">साप्ताहिक डाइजेस्ट</string>
+    <string name="digest_subtitle_fmt">पिछले 7 दिन · %1$s – %2$s</string>
+    <string name="digest_total_calls_fmt">कुल %1$d कॉल</string>
+    <string name="digest_breakdown_fmt">%1$d इनकमिंग · %2$d आउटगोइंग · %3$d मिस्ड</string>
+    <string name="digest_unique_contacts_fmt">%1$d अलग-अलग संपर्क</string>
+    <string name="digest_hot_leads_fmt">%1$d हॉट लीड (स्कोर ≥ 70)</string>
+    <string name="digest_top_callers_title">शीर्ष कॉल करने वाले</string>
+    <string name="digest_top_caller_row_fmt">%1$s · %2$d कॉल · स्कोर %3$d</string>
+    <string name="digest_share_button">डाइजेस्ट साझा करें</string>
+    <string name="digest_share_subject">CallVault — पिछले 7 दिन</string>
+    <string name="digest_notif_title">CallVault पर आपका सप्ताह</string>
+    <string name="digest_notif_body_fmt">%1$d कॉल · %2$d हॉट लीड। ब्रेकडाउन देखने के लिए खोलें।</string>
+    <string name="settings_weekly_digest_title">साप्ताहिक डाइजेस्ट</string>
+    <string name="settings_weekly_digest_subtitle">हर सोमवार सुबह 9 बजे पिछले 7 दिनों का सारांश।</string>
+    <string name="more_weekly_digest">साप्ताहिक डाइजेस्ट</string>
+    <string name="digest_top_tags_title">इस सप्ताह आपने जो चिंताएँ चिह्नित कीं</string>
+    <string name="digest_top_tag_row_fmt">%1$s · %2$d बार</string>
+    <string name="digest_ai_section_title">AI सारांश</string>
+    <string name="digest_ai_busy">मॉडल से पूछ रहे हैं…</string>
+    <string name="digest_ai_regenerate">फिर से बनाएँ</string>
+    <string name="digest_ai_disabled_hint">सेटिंग्स → गोपनीयता में AI सारांश चालू करें और अपनी Claude API कुंजी जोड़ें।</string>
+    <string name="digest_ai_no_key">कोई API कुंजी सेट नहीं है। सेटिंग्स → गोपनीयता में जोड़ें।</string>
+    <string name="settings_ai_digest_title">साप्ताहिक डाइजेस्ट पर AI सारांश</string>
+    <string name="settings_ai_digest_subtitle">केवल कुल गणना + पहले नाम + टैग नाम Claude को भेजे जाते हैं (आपकी कुंजी, BYOK)। कोई कॉल नोट या फ़ोन नंबर डिवाइस से नहीं जाता।</string>
+    <string name="settings_anthropic_key_title">Anthropic API कुंजी</string>
+    <string name="settings_anthropic_key_hint">sk-ant-…</string>
+    <string name="settings_anthropic_key_save">कुंजी सहेजें</string>
+    <string name="settings_anthropic_key_cleared">कुंजी हटा दी गई।</string>
+
+    <!-- Hot-lead alerts -->
+    <string name="channel_hot_lead_name">हॉट लीड अलर्ट</string>
+    <string name="channel_hot_lead_desc">जब कोई शीर्ष लीड कॉल करे तो उच्च-प्राथमिकता अलर्ट।</string>
+    <string name="hot_lead_notif_title">🔥 हॉट लीड कॉल कर रहा है</string>
+    <string name="hot_lead_notif_body_named_fmt">%1$s · स्कोर %2$d</string>
+    <string name="hot_lead_notif_body_unnamed_fmt">%1$s · स्कोर %2$d</string>
+    <string name="settings_hot_lead_alerts_title">हॉट-लीड कॉल अलर्ट</string>
+    <string name="settings_hot_lead_alerts_subtitle">जब कोई जाना-पहचाना शीर्ष लीड (स्कोर ≥ 70 या Qualified/Won) कॉल करे तो सूचित करें।</string>
+
+    <!-- App lock -->
+    <string name="lock_title">CallVault लॉक है</string>
+    <string name="lock_subtitle">अपने कॉल वॉल्ट तक पहुँचने के लिए पुष्टि करें।</string>
+    <string name="lock_unlock">अनलॉक करें</string>
+    <string name="lock_prompt_title">CallVault अनलॉक करें</string>
+    <string name="lock_prompt_subtitle">फ़िंगरप्रिंट, चेहरा, या डिवाइस पिन इस्तेमाल करें।</string>
+    <string name="lock_no_credentials_title">स्क्रीन लॉक सेट नहीं है</string>
+    <string name="lock_no_credentials_subtitle">ऐप लॉक चालू है, पर इस डिवाइस पर बायोमेट्रिक्स या पिन सेट नहीं है। एक सेट करें, या आगे बढ़ने के लिए ऐप लॉक बंद करें।</string>
+    <string name="lock_open_security_settings">सुरक्षा सेटिंग्स खोलें</string>
+    <string name="lock_disable_app_lock">ऐप लॉक बंद करें</string>
+
+    <!-- Settings (new toggles only) -->
+    <string name="settings_biometric_lock_title">ऐप खोलने पर बायोमेट्रिक माँगें</string>
+    <string name="settings_biometric_lock_subtitle">ऐप खोलने के लिए बायोमेट्रिक्स या पिन ज़रूरी करें।</string>
+    <string name="settings_analytics_consent_title">CallVault को बेहतर बनाने में मदद करें (गुमनाम विश्लेषण)</string>
+
+    <!-- Profile -->
+    <string name="auth_profile_title">प्रोफ़ाइल</string>
+    <string name="auth_profile_back_cd">वापस</string>
+    <string name="auth_profile_default_name">CallVault उपयोगकर्ता</string>
+    <string name="auth_profile_change_password">पासवर्ड बदलें</string>
+    <string name="auth_profile_sign_out">साइन आउट</string>
+    <string name="auth_profile_not_signed_in">साइन इन नहीं हैं।</string>
+    <string name="auth_profile_delete_account">खाता हटाएँ</string>
+    <string name="auth_delete_dialog_title">अपना खाता हटाएँ?</string>
+    <string name="auth_delete_dialog_warning">यह आपके CallVault खाते और सभी सर्वर डेटा को हमेशा के लिए हटा देगा। इस डिवाइस पर मौजूद कॉल डेटा प्रभावित नहीं होगा। पुष्टि के लिए अपना पासवर्ड डालें।</string>
+    <string name="auth_delete_dialog_confirm">हमेशा के लिए हटाएँ</string>
+    <string name="auth_delete_dialog_cancel">रद्द करें</string>
+</resources>

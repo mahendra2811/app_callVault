@@ -1,5 +1,6 @@
 package com.callvault.app.ui.screen.calldetail.sections
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +46,7 @@ fun HeroCard(
     saveStatus: SaveStatus,
     leadScore: Int,
     onSaveContact: () -> Unit,
+    onLeadScoreClick: () -> Unit = {},
     summary: String? = null,
     modifier: Modifier = Modifier
 ) {
@@ -76,7 +80,7 @@ fun HeroCard(
                         )
                     }
                 }
-                LeadScoreBadge(leadScore)
+                LeadScoreBadge(leadScore, onClick = onLeadScoreClick)
             }
             if (!summary.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -125,16 +129,27 @@ private fun StatusPill(status: SaveStatus) {
 }
 
 @Composable
-private fun LeadScoreBadge(score: Int) {
+private fun LeadScoreBadge(score: Int, onClick: () -> Unit) {
     val color: Color = when {
         score < 30 -> SageColors.TextSecondary
         score < 70 -> NeoColors.AccentAmber
         else -> NeoColors.AccentRose
     }
+    val infinite = androidx.compose.animation.core.rememberInfiniteTransition(label = "leadBadgePulse")
+    val pulseAlpha by infinite.animateFloat(
+        initialValue = if (score >= 70) 0.18f else 0.18f,
+        targetValue = if (score >= 70) 0.42f else 0.18f,
+        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+            animation = androidx.compose.animation.core.tween(durationMillis = 1200),
+            repeatMode = androidx.compose.animation.core.RepeatMode.Reverse,
+        ),
+        label = "leadBadgeAlpha",
+    )
     NeoSurface(
         elevation = NeoElevation.ConvexSmall,
         shape = CircleShape,
-        color = color.copy(alpha = 0.18f)
+        color = color.copy(alpha = pulseAlpha),
+        modifier = Modifier.clickable(onClick = onClick)
     ) {
         Text(
             text = "$score",

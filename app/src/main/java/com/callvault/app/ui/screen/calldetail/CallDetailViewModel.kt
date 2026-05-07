@@ -28,6 +28,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import timber.log.Timber
 
 /** Aggregated stats shown on the detail "Stats" card. */
 data class DetailStats(
@@ -69,8 +70,28 @@ class CallDetailViewModel @Inject constructor(
     private val contactRepo: ContactRepository,
     private val noteRepo: NoteRepository,
     private val tagRepo: TagRepository,
-    private val scheduleFollowUp: ScheduleFollowUpUseCase
+    private val scheduleFollowUp: ScheduleFollowUpUseCase,
+    private val computeLeadScore: com.callvault.app.domain.usecase.ComputeLeadScoreUseCase,
 ) : ViewModel() {
+
+    private val _breakdown = kotlinx.coroutines.flow.MutableStateFlow<com.callvault.app.domain.model.LeadScore?>(null)
+    val breakdown: kotlinx.coroutines.flow.StateFlow<com.callvault.app.domain.model.LeadScore?> = _breakdown
+
+    /** Compute and emit the per-component breakdown for the current contact. Cheap; safe to call repeatedly. */
+    fun loadBreakdown() {
+        val current = state.value
+        val contact = current.contact ?: return
+        viewModelScope.launch {
+            runCatching {
+                computeLeadScore(
+                    meta = contact,
+                    hasFollowUp = current.followUpAt != null,
+                    customerTagApplied = current.tags.any { it.name.equals("customer", ignoreCase = true) },
+                )
+            }.onSuccess { _breakdown.value = it }
+                .onFailure { Timber.w(it, "loadBreakdown failed") }
+        }
+    }
 
     val normalizedNumber: String =
         Uri.decode(savedState.get<String>(Destinations.CallDetail.ARG_NUMBER) ?: "")

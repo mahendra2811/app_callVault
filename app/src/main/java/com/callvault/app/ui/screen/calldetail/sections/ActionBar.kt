@@ -14,6 +14,10 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -29,11 +33,14 @@ import com.callvault.app.ui.components.neo.NeoIconButton
 @Composable
 fun ActionBar(
     normalizedNumber: String,
+    displayName: String? = null,
     onSaveToContacts: () -> Unit,
     onBlock: () -> Unit,
+    onManageTemplates: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val ctx = LocalContext.current
+    var quickReplyOpen by remember { mutableStateOf(false) }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -59,11 +66,7 @@ fun ActionBar(
         NeoIconButton(
             icon = Icons.AutoMirrored.Filled.Chat,
             contentDescription = "WhatsApp",
-            onClick = {
-                val digits = normalizedNumber.filter { it.isDigit() }
-                val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$digits"))
-                runCatching { ctx.startActivity(i) }
-            }
+            onClick = { quickReplyOpen = true },
         )
         NeoIconButton(
             icon = Icons.Filled.PersonAdd,
@@ -81,6 +84,15 @@ fun ActionBar(
             icon = Icons.Filled.Block,
             contentDescription = "Block",
             onClick = onBlock
+        )
+    }
+
+    if (quickReplyOpen) {
+        WhatsAppQuickReplySheet(
+            normalizedNumber = normalizedNumber,
+            displayName = displayName,
+            onDismiss = { quickReplyOpen = false },
+            onManageTemplates = onManageTemplates,
         )
     }
 }

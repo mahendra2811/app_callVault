@@ -63,6 +63,18 @@ interface TagDao {
     @Query("SELECT * FROM call_tag_cross_ref")
     fun observeAllCrossRefs(): Flow<List<CallTagCrossRef>>
 
+    /** Tag-name → application count, for cross-refs whose [CallTagCrossRef.appliedAt] is in the window. */
+    @Query("""
+        SELECT t.name AS name, COUNT(*) AS count
+        FROM call_tag_cross_ref x
+        JOIN tags t ON t.id = x.tagId
+        WHERE x.appliedAt BETWEEN :fromMs AND :toMs
+        GROUP BY t.id
+        ORDER BY count DESC
+        LIMIT :limit
+    """)
+    suspend fun topTagsBetween(fromMs: Long, toMs: Long, limit: Int = 5): List<TagCount>
+
     /** Count of calls each tag is applied to. Drives the badge on
      *  [com.callvault.app.ui.screen.tags.TagsManagerScreen]. */
     @Query("SELECT tagId AS tagId, COUNT(*) AS count FROM call_tag_cross_ref GROUP BY tagId")

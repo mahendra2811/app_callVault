@@ -40,4 +40,19 @@ val MIGRATION_2_3: Migration = object : Migration(2, 3) {
     }
 }
 
-val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
+val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `pipeline_stage` (
+              `normalizedNumber` TEXT NOT NULL,
+              `stageKey` TEXT NOT NULL,
+              `updatedAt` INTEGER NOT NULL,
+              PRIMARY KEY(`normalizedNumber`)
+            )
+            """.trimIndent()
+        )
+    }
+}
+
+val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)

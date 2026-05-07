@@ -11,6 +11,7 @@ import com.callvault.app.domain.usecase.ResetAllDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -42,7 +43,14 @@ data class SettingsUiState(
     val groupedByNumber: Boolean = false,
 
     val blockHidden: Boolean = false,
-    val hideBlocked: Boolean = false
+    val hideBlocked: Boolean = false,
+
+    val biometricLock: Boolean = false,
+    val analyticsConsent: Boolean = false,
+    val hotLeadAlerts: Boolean = true,
+    val weeklyDigest: Boolean = true,
+    val aiDigest: Boolean = false,
+    val anthropicKeySet: Boolean = false,
 )
 
 /**
@@ -56,7 +64,8 @@ class SettingsViewModel @Inject constructor(
     private val settings: SettingsDataStore,
     private val notes: NoteDao,
     private val search: SearchHistoryDao,
-    private val resetAll: ResetAllDataUseCase
+    private val resetAll: ResetAllDataUseCase,
+    private val secrets: com.callvault.app.data.secrets.SecretStore,
 ) : AndroidViewModel(app) {
 
     @Suppress("UNCHECKED_CAST")
@@ -71,7 +80,10 @@ class SettingsViewModel @Inject constructor(
             settings.leadScoreEnabled,
             settings.autoBackupEnabled, settings.autoBackupRetention,
             settings.displayShowUnsavedPinned, settings.displayGroupedByNumber,
-            settings.privacyBlockHidden, settings.privacyHideBlocked
+            settings.privacyBlockHidden, settings.privacyHideBlocked,
+            settings.biometricLockEnabled, settings.analyticsConsent,
+            settings.hotLeadAlertsEnabled, settings.weeklyDigestEnabled,
+            settings.aiDigestEnabled
         ).map { it as kotlinx.coroutines.flow.Flow<Any?> }
     ) { values: Array<Any?> ->
         SettingsUiState(
@@ -93,7 +105,13 @@ class SettingsViewModel @Inject constructor(
             pinnedAtTop = values[15] as Boolean,
             groupedByNumber = values[16] as Boolean,
             blockHidden = values[17] as Boolean,
-            hideBlocked = values[18] as Boolean
+            hideBlocked = values[18] as Boolean,
+            biometricLock = values[19] as Boolean,
+            analyticsConsent = values[20] as Boolean,
+            hotLeadAlerts = values[21] as Boolean,
+            weeklyDigest = values[22] as Boolean,
+            aiDigest = values[23] as Boolean,
+            anthropicKeySet = secrets.get(com.callvault.app.data.secrets.SecretStore.K_ANTHROPIC_KEY).isNotBlank(),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
@@ -129,6 +147,20 @@ class SettingsViewModel @Inject constructor(
 
     fun setBlockHidden(v: Boolean) = launchSet { settings.setPrivacyBlockHidden(v) }
     fun setHideBlocked(v: Boolean) = launchSet { settings.setPrivacyHideBlocked(v) }
+    fun setBiometricLock(v: Boolean) = launchSet { settings.setBiometricLockEnabled(v) }
+    fun setAnalyticsConsent(v: Boolean) = launchSet { settings.setAnalyticsConsent(v) }
+    fun setHotLeadAlerts(v: Boolean) = launchSet { settings.setHotLeadAlertsEnabled(v) }
+    fun setAiDigest(v: Boolean) = launchSet { settings.setAiDigestEnabled(v) }
+    fun setAnthropicKey(v: String) = launchSet {
+        secrets.set(com.callvault.app.data.secrets.SecretStore.K_ANTHROPIC_KEY, v.trim())
+    }
+    fun setWeeklyDigest(v: Boolean) {
+        launchSet {
+            settings.setWeeklyDigestEnabled(v)
+            if (v) com.callvault.app.data.work.WeeklyDigestWorker.schedule(getApplication())
+            else com.callvault.app.data.work.WeeklyDigestWorker.cancel(getApplication())
+        }
+    }
 
     // -------- privacy actions --------
     fun clearSearchHistory() = launchSet { search.deleteAll() }

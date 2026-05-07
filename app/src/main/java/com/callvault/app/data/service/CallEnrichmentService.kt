@@ -40,6 +40,7 @@ class CallEnrichmentService : LifecycleService() {
     @Inject lateinit var settings: SettingsDataStore
     @Inject lateinit var overlayManager: OverlayManager
     @Inject lateinit var contextResolver: CallContextResolver
+    @Inject lateinit var hotLeadNotifier: HotLeadNotifier
 
     private var monitorJob: Job? = null
     private var lastOffhookNumber: String? = null
@@ -86,6 +87,7 @@ class CallEnrichmentService : LifecycleService() {
                 }
                 is PhoneStateMonitor.CallState.Ringing -> {
                     lastOffhookNumber = state.number ?: lastOffhookNumber
+                    hotLeadNotifier.maybeAlert(state.number)
                 }
                 PhoneStateMonitor.CallState.Idle -> {
                     overlayManager.hideBubble()

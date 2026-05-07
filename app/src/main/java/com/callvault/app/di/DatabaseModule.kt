@@ -54,6 +54,7 @@ object DatabaseModule {
     @Provides fun provideDocFeedbackDao(db: CallVaultDatabase): DocFeedbackDao = db.docFeedbackDao()
     @Provides fun provideSkippedUpdateDao(db: CallVaultDatabase): SkippedUpdateDao = db.skippedUpdateDao()
     @Provides fun provideRuleScoreBoostDao(db: CallVaultDatabase): RuleScoreBoostDao = db.ruleScoreBoostDao()
+    @Provides fun providePipelineStageDao(db: CallVaultDatabase): com.callvault.app.data.local.dao.PipelineStageDao = db.pipelineStageDao()
 }
 
 /**

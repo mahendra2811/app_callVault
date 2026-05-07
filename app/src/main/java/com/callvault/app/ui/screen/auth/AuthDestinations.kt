@@ -1,6 +1,7 @@
 package com.callvault.app.ui.screen.auth
 
 /** Routes for the auth nav graph. Kept as a flat object for easy navigation. */
+/** Routes for the auth nav graph. Constants only — keep flat for easy navigation. */
 object AuthDestinations {
     const val GRAPH = "auth_graph"
 

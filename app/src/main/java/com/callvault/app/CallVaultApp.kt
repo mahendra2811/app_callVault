@@ -40,6 +40,7 @@ class CallVaultApp : Application(), Configuration.Provider {
     @Inject lateinit var settingsDataStore: SettingsDataStore
     @Inject lateinit var analytics: AnalyticsTracker
     @Inject lateinit var pushTokenSync: PushTokenSync
+    @Inject lateinit var demoSeeder: com.callvault.app.data.demo.DemoSeeder
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -54,11 +55,18 @@ class CallVaultApp : Application(), Configuration.Provider {
         }
         registerNotificationChannels(this)
         analytics.init(this)
-        pushTokenSync.registerCurrentToken()
+        MainScope().launch {
+            settingsDataStore.analyticsConsent.collect { granted ->
+                analytics.setConsent(granted)
+            }
+        }
+        pushTokenSync.start()
         // Sprint 7 — start real-time service if user has finished onboarding & enabled toggles.
         MainScope().launch {
             try {
                 if (settingsDataStore.onboardingComplete.first()) {
+                    runCatching { demoSeeder.seedIfNeeded() }
+                        .onFailure { Timber.w(it, "DemoSeeder.seedIfNeeded failed") }
                     realTimeServiceController.evaluateAndApply()
                     // Sprint 10/11 — background workers gated on onboarding completion.
                     runCatching { UpdateCheckWorker.schedule(this@CallVaultApp) }
@@ -70,6 +78,11 @@ class CallVaultApp : Application(), Configuration.Provider {
                     if (settingsDataStore.followUpRemindersEnabled.first()) {
                         runCatching { StaleLeadNudgeWorker.schedule(this@CallVaultApp) }
                             .onFailure { Timber.w(it, "StaleLeadNudgeWorker.schedule failed") }
+                    }
+                    if (settingsDataStore.weeklyDigestEnabled.first()) {
+                        runCatching {
+                            com.callvault.app.data.work.WeeklyDigestWorker.schedule(this@CallVaultApp)
+                        }.onFailure { Timber.w(it, "WeeklyDigestWorker.schedule failed") }
                     }
                 }
             } catch (t: Throwable) {
@@ -116,6 +129,23 @@ class CallVaultApp : Application(), Configuration.Provider {
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = context.getString(R.string.channel_daily_summary_desc)
+            },
+            NotificationChannel(
+                CHANNEL_HOT_LEAD,
+                context.getString(R.string.channel_hot_lead_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = context.getString(R.string.channel_hot_lead_desc)
+                enableVibration(true)
+                // Use the device's ringtone (more distinctive than the default notification sound).
+                val ringtoneUri = android.media.RingtoneManager
+                    .getDefaultUri(android.media.RingtoneManager.TYPE_RINGTONE)
+                val audioAttrs = android.media.AudioAttributes.Builder()
+                    .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+                setSound(ringtoneUri, audioAttrs)
+                vibrationPattern = longArrayOf(0, 250, 100, 250)
             }
         )
         nm.createNotificationChannels(channels)
@@ -127,5 +157,6 @@ class CallVaultApp : Application(), Configuration.Provider {
         const val CHANNEL_SYNC = "sync"
         const val CHANNEL_REALTIME_CALL = "realtime_call"
         const val CHANNEL_DAILY_SUMMARY = "daily_summary"
+        const val CHANNEL_HOT_LEAD = "hot_lead"
     }
 }

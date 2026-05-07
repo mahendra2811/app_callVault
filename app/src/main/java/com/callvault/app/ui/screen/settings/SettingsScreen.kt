@@ -111,7 +111,58 @@ fun SettingsScreen(
                 SectionCard(stringResource(R.string.settings_section_privacy)) {
                     ToggleRow(stringResource(R.string.settings_privacy_block_hidden), state.blockHidden, vm::setBlockHidden)
                     ToggleRow(stringResource(R.string.settings_privacy_hide_blocked), state.hideBlocked, vm::setHideBlocked)
+                    ToggleRow(
+                        stringResource(R.string.settings_hot_lead_alerts_title),
+                        state.hotLeadAlerts,
+                        vm::setHotLeadAlerts,
+                    )
+                    ToggleRow(
+                        stringResource(R.string.settings_weekly_digest_title),
+                        state.weeklyDigest,
+                        vm::setWeeklyDigest,
+                    )
+                    ToggleRow(
+                        stringResource(R.string.settings_ai_digest_title),
+                        state.aiDigest,
+                        vm::setAiDigest,
+                    )
+                    if (state.aiDigest) {
+                        var apiKeyDraft by androidx.compose.runtime.saveable.rememberSaveable {
+                            androidx.compose.runtime.mutableStateOf("")
+                        }
+                        androidx.compose.material3.OutlinedTextField(
+                            value = apiKeyDraft,
+                            onValueChange = { apiKeyDraft = it },
+                            label = { Text(stringResource(R.string.settings_anthropic_key_title)) },
+                            placeholder = { Text(stringResource(R.string.settings_anthropic_key_hint)) },
+                            singleLine = true,
+                            visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        NeoButton(
+                            text = stringResource(R.string.settings_anthropic_key_save),
+                            onClick = {
+                                vm.setAnthropicKey(apiKeyDraft)
+                                apiKeyDraft = ""
+                            },
+                        )
+                    }
+                    ToggleRow(
+                        stringResource(R.string.settings_biometric_lock_title),
+                        state.biometricLock,
+                        vm::setBiometricLock,
+                    )
+                    ToggleRow(
+                        stringResource(R.string.settings_analytics_consent_title),
+                        state.analyticsConsent,
+                        vm::setAnalyticsConsent,
+                    )
                     Spacer(Modifier.height(8.dp))
+                    NavRow(stringResource(R.string.quickreply_manage)) {
+                        navController.navigate(Destinations.Templates.route)
+                    }
+                    Spacer(Modifier.height(6.dp))
                     NeoButton(
                         text = stringResource(R.string.settings_privacy_clear_history),
                         onClick = { vm.clearSearchHistory() }

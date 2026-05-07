@@ -18,7 +18,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.callvault.app.R
+import com.callvault.app.domain.model.AuthState
 
 /** Set a new password after returning from the email reset link (Supabase recovery deep link). */
 @Composable
@@ -28,14 +32,15 @@ fun ResetPasswordScreen(
 ) {
     var password by rememberSaveable { mutableStateOf("") }
     var confirm by rememberSaveable { mutableStateOf("") }
-    var submitting by rememberSaveable { mutableStateOf(false) }
+    val busy by viewModel.busy.collectAsStateWithLifecycle()
+    val authState by viewModel.authState.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { evt ->
             when (evt) {
-                AuthEvent.PasswordUpdated -> { submitting = false; onPasswordUpdated() }
-                is AuthEvent.Error -> { submitting = false; snackbar.showSnackbar(evt.message) }
+                AuthEvent.PasswordUpdated -> onPasswordUpdated()
+                is AuthEvent.Error -> snackbar.showSnackbar(evt.message)
                 else -> Unit
             }
         }
@@ -44,23 +49,43 @@ fun ResetPasswordScreen(
     val match = password.isNotEmpty() && password == confirm
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         AuthFormScaffold(
-            title = "Set new password",
-            subtitle = "Choose a password you'll remember.",
+            title = stringResource(R.string.auth_reset_title),
+            subtitle = stringResource(R.string.auth_reset_subtitle),
             modifier = Modifier.padding(padding),
         ) {
-            PasswordField(value = password, onValueChange = { password = it }, label = "New password (min 6)")
-            PasswordField(value = confirm, onValueChange = { confirm = it }, label = "Confirm password")
+            PasswordField(
+                value = password,
+                onValueChange = { password = it },
+                label = stringResource(R.string.auth_reset_new_password_label),
+            )
+            PasswordField(
+                value = confirm,
+                onValueChange = { confirm = it },
+                label = stringResource(R.string.auth_signup_confirm_label),
+            )
             if (confirm.isNotEmpty() && !match) {
-                Text("Passwords don't match", color = MaterialTheme.colorScheme.error)
+                Text(
+                    stringResource(R.string.auth_signup_passwords_mismatch),
+                    color = MaterialTheme.colorScheme.error,
+                )
             }
-            Button(
-                onClick = { submitting = true; viewModel.updatePassword(password) },
-                enabled = match && password.length >= 6 && !submitting,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (submitting) CircularProgressIndicator(strokeWidth = 2.dp)
-                else Text("Update password")
+            val sessionReady = authState is AuthState.SignedIn
+            if (!sessionReady) {
+                Text(
+                    stringResource(
+                        if (authState is AuthState.Loading) R.string.auth_reset_waiting
+                        else R.string.auth_reset_session_missing
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
+            PrimaryAuthButton(
+                text = stringResource(R.string.auth_reset_submit),
+                onClick = { viewModel.updatePassword(password) },
+                enabled = sessionReady && match && password.length >= 8,
+                busy = busy,
+            )
         }
     }
 }
