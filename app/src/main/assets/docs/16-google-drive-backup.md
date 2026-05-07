@@ -1,6 +1,6 @@
 # Backing up to Google Drive
 
-CallVault can optionally upload your encrypted backup file (`.cvb`) to your
+callNest can optionally upload your encrypted backup file (`.cvb`) to your
 own Google Drive — handy for surviving a lost or wiped device. The feature
 is **off by default** and only activates after you sign in to Google.
 
@@ -13,14 +13,14 @@ sees opaque ciphertext, not your call log.
 
 ## Where it lives
 
-Files land in a folder named **CallVault Backups** at the root of your
-Drive. CallVault creates this folder the first time it uploads. You can
-move or rename it — CallVault recreates it as needed.
+Files land in a folder named **callNest Backups** at the root of your
+Drive. callNest creates this folder the first time it uploads. You can
+move or rename it — callNest recreates it as needed.
 
 ## Revoking access
 
 Open <https://myaccount.google.com/permissions> on any device and revoke
-**CallVault**. Existing backups stay in Drive; new uploads will require
+**callNest**. Existing backups stay in Drive; new uploads will require
 signing in again.
 
 ## Spec note

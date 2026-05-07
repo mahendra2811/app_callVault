@@ -1,6 +1,6 @@
 # 07 — MCP Servers (Context7 + Playwright)
 
-CallVault's `.mcp.json` registers two project-scoped MCP servers. Both are **optional helpers** — the app builds and runs without them — but they speed up specific tasks for AI agents working in this repo.
+callNest's `.mcp.json` registers two project-scoped MCP servers. Both are **optional helpers** — the app builds and runs without them — but they speed up specific tasks for AI agents working in this repo.
 
 ## Files
 
@@ -14,21 +14,25 @@ CallVault's `.mcp.json` registers two project-scoped MCP servers. Both are **opt
 **What it does**: fetches up-to-date docs for any library, framework, SDK, or CLI. Resolves a name like "Compose Navigation" to a canonical library id (`/jetbrains/compose-navigation`), then fetches live API references and code samples.
 
 **When to use**:
+
 - "How do I use the new `PullToRefreshBox` API in Material 3?" — much faster than guessing or reading the source.
 - Migration questions across versions of Hilt / Room / Compose / WorkManager.
 - Verifying iText 8 / POI / Tink API surface (these were spec-locked years before some of Claude's training cutoffs).
 - Library-specific debugging (e.g. "Why does `AssistedInject` fail with this error?").
 
 **When NOT to use**:
+
 - General Kotlin questions ("how do I write a lambda?") — your training is already current enough.
 - Refactoring work or business-logic debugging — Context7 doesn't know the codebase.
 - Broad searches ("show me all Android networking libs") — too vague to be useful.
 
 **Tools available** (when the server is connected):
+
 - `resolve-library-id` — turn a name into a `/org/project` id.
 - `query-docs` — fetch docs for a resolved id with a specific question.
 
 **Usage pattern** (paraphrasing the typical flow):
+
 ```
 1. mcp__context7__resolve-library-id (libraryName: "Apache POI")
    → returns multiple matches; pick by relevance + description
@@ -40,6 +44,7 @@ CallVault's `.mcp.json` registers two project-scoped MCP servers. Both are **opt
 ```
 
 **Tips**:
+
 - Be specific in the query. "How do I configure Hilt for WorkManager" beats "Hilt".
 - If results look wrong, try alternate names ("next.js" not "nextjs"; "compose multiplatform" not "compose").
 - If quota errors appear, the user can run `npx ctx7 login` or set `CONTEXT7_API_KEY`.
@@ -49,6 +54,7 @@ CallVault's `.mcp.json` registers two project-scoped MCP servers. Both are **opt
 **What it does**: drives a real browser (Chromium by default) to navigate URLs, fill forms, click, screenshot, scrape DOM, and run scripts.
 
 **When to use** (in this repo):
+
 - **Hosting the update manifest**: when the user stands up a `versions-stable.json` page (e.g. on GitHub Pages), Playwright can verify the file is reachable, parses cleanly, and returns the right `Content-Type`.
 - **Visual regression for the in-app docs landing page** if/when one is added.
 - **Smoke-testing a release notes page** before bumping the manifest version.
@@ -56,10 +62,12 @@ CallVault's `.mcp.json` registers two project-scoped MCP servers. Both are **opt
 - **Scraping OEM vendor pages** for updated autostart deep-link components when manufacturers change paths between OS versions.
 
 **When NOT to use**:
+
 - Anything Android-specific — Playwright drives browsers, not phones. Use `adb` for phones.
 - General web research — Firecrawl/WebFetch is fine for one-shots.
 
 **Tools available** (when the server is connected) include:
+
 - `browser_navigate`, `browser_click`, `browser_type`, `browser_fill`
 - `browser_snapshot`, `browser_take_screenshot`
 - `browser_evaluate` (run JS on the page)
@@ -67,8 +75,9 @@ CallVault's `.mcp.json` registers two project-scoped MCP servers. Both are **opt
 - `browser_console_messages` (inspect console)
 
 **Usage pattern**:
+
 ```
-browser_navigate(url: "https://callvault.app/dl/versions-stable.json")
+browser_navigate(url: "https://callNest.app/dl/versions-stable.json")
 browser_evaluate(function: "() => document.body.innerText")
    → confirm valid JSON, correct schema
 ```
@@ -107,11 +116,12 @@ When a Claude Code session opens this folder, the user is prompted (per the proj
 
 - **Don't browse user-private URLs with Playwright unprompted.** Playwright can run JS against any page; treat the user's data perimeter respectfully. Confirm before navigating to `localhost:*`, internal tools, or anything authenticated.
 - **Don't paste sensitive strings (API keys, passphrases, PII) into Context7 queries.** They go to a third-party service.
-- **Don't lean on Context7 for project-specific debugging.** It doesn't know CallVault. Use Read + Grep against the codebase.
+- **Don't lean on Context7 for project-specific debugging.** It doesn't know callNest. Use Read + Grep against the codebase.
 
 ## Removing them
 
 If a contributor objects to either server, they can:
+
 - Remove the entry from `.mcp.json`, or
 - Click "Disable" in the Claude Code MCP-server prompt on first open.
 

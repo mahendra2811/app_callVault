@@ -32,11 +32,11 @@ fun envOrLocal(key: String, fallback: String = ""): String =
     localProps.getProperty(key) ?: System.getenv(key) ?: fallback
 
 android {
-    namespace = "com.callvault.app"
+    namespace = "com.callNest.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.callvault.app"
+        applicationId = "com.callNest.app"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -52,12 +52,12 @@ android {
         buildConfigField(
             "String",
             "UPDATE_MANIFEST_STABLE_URL",
-            "\"https://callvault.app/dl/versions-stable.json\""
+            "\"https://callNest.app/dl/versions-stable.json\""
         )
         buildConfigField(
             "String",
             "UPDATE_MANIFEST_BETA_URL",
-            "\"https://callvault.app/dl/versions-beta.json\""
+            "\"https://callNest.app/dl/versions-beta.json\""
         )
 
         buildConfigField("String", "SUPABASE_URL", "\"${envOrLocal("SUPABASE_URL")}\"")

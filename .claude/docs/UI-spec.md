@@ -1,6 +1,6 @@
-# CallVault — UI System Specification
+# callNest — UI System Specification
 
-> **Audience:** Any AI coding assistant (Claude Code, Cursor, Windsurf, Copilot) or human developer building the CallVault Android UI.
+> **Audience:** Any AI coding assistant (Claude Code, Cursor, Windsurf, Copilot) or human developer building the callNest Android UI.
 > **Status:** Locked. Treat every token, rule, and component anatomy as binding unless explicitly overridden.
 > **Stack target:** Native Android (Kotlin 2.0+, Jetpack Compose, Material 3 substrate).
 > **Direction:** Sage / Earth — Modern Edition with gradient system.
@@ -35,7 +35,7 @@
 
 ## 1. Design Philosophy
 
-CallVault's UI is built on three non-negotiable principles:
+callNest's UI is built on three non-negotiable principles:
 
 **Calm over loud.** The user opens this app 50+ times per day. Every visual element is tuned to reduce cognitive load, not demand attention. Warm cream backgrounds, low-chroma colors, generous breathing room, slow motion easing.
 
@@ -47,7 +47,7 @@ CallVault's UI is built on three non-negotiable principles:
 
 ## 2. Strategic Bet
 
-The differentiation moat: SMB owners who try CallVault feel a measurable difference within 30 seconds of opening it compared to every other call-log/CRM app on the Play Store. That difference is achieved by:
+The differentiation moat: SMB owners who try callNest feel a measurable difference within 30 seconds of opening it compared to every other call-log/CRM app on the Play Store. That difference is achieved by:
 
 - Warm tonality (cream + sage + burnt orange) vs. industry-default cold blue-on-white
 - Editorial typography vs. industry-default Roboto/Inter
@@ -98,7 +98,7 @@ Every solid color sits in the 30–60% saturation range. No neon. No pure primar
 
 ## 4. Gradient System
 
-Gradients are first-class design primitives in CallVault. Every gradient below ships as a named token and a Compose `Brush` factory.
+Gradients are first-class design primitives in callNest. Every gradient below ships as a named token and a Compose `Brush` factory.
 
 ### 4.1 Gradient tokens
 
@@ -307,7 +307,7 @@ The single exception is the FAB, which gets a subtle `inset 0 1.5dp 0 rgba(255, 
 | `duration.standard` | 320ms | Page transitions, sheet open/close |
 | `duration.slow`     | 480ms | Hero entrance, splash logo         |
 
-CallVault's standard duration (320ms) is intentionally slower than Material's default (200–250ms) to reinforce the calm philosophy.
+callNest's standard duration (320ms) is intentionally slower than Material's default (200–250ms) to reinforce the calm philosophy.
 
 ### 10.3 Spring physics
 
@@ -608,7 +608,7 @@ Every primary action ships with a calibrated haptic. This is non-optional — mo
 ### 14.7 Premium upsell (Phase 2 ready, scaffold in Phase 1)
 
 - Full-bleed `gradient.mesh.hero` top half
-- Hero text "CallVault Pro" in Instrument Serif 40sp italic with `gradient.text.hero` fill
+- Hero text "callNest Pro" in Instrument Serif 40sp italic with `gradient.text.hero` fill
 - Tier cards in solid `bg.surfaceElevated`, 1dp `border.subtle`
 - Selected tier: 1.5dp `gradient.border` outline
 - Single `PrimaryButton` at bottom
@@ -648,7 +648,7 @@ Tokens defined now even though Phase 1 ships light only. This guarantees the sys
 | `gradient.score`      | `#7A7268` → `#D9A845` → `#E8A488` → `#D9665C` |
 | `gradient.mesh.hero`  | Same composition, alphas dropped to 30/25/20% |
 
-This is a **warm-toned dark mode** — rare and distinctive. Most apps default to cool blue-gray dark themes. CallVault keeps its earth-warm identity in both modes.
+This is a **warm-toned dark mode** — rare and distinctive. Most apps default to cool blue-gray dark themes. callNest keeps its earth-warm identity in both modes.
 
 ---
 
@@ -802,7 +802,7 @@ Each component must ship with a `@Preview` showing default + all variants before
 ### 19.1 Color tokens
 
 ```kotlin
-package com.callvault.core.design.tokens
+package com.callNest.core.design.tokens
 
 import androidx.compose.ui.graphics.Color
 
@@ -843,7 +843,7 @@ object SageColors {
 ### 19.2 Gradient tokens
 
 ```kotlin
-package com.callvault.core.design.tokens
+package com.callNest.core.design.tokens
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -894,7 +894,7 @@ object SageGradients {
 ### 19.3 Mesh gradient composable
 
 ```kotlin
-package com.callvault.core.design.components
+package com.callNest.core.design.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -903,7 +903,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import com.callvault.core.design.tokens.SageColors
+import com.callNest.core.design.tokens.SageColors
 
 @Composable
 fun HeroMesh(
@@ -962,12 +962,12 @@ fun HeroMesh(
 ### 19.4 Theme wrapper
 
 ```kotlin
-package com.callvault.core.design
+package com.callNest.core.design
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.callvault.core.design.tokens.*
+import com.callNest.core.design.tokens.*
 
 val LocalSageColors = staticCompositionLocalOf { SageColors }
 val LocalSageGradients = staticCompositionLocalOf { SageGradients }
@@ -1141,6 +1141,6 @@ The following are explicitly banned. AI assistants should refuse or warn when as
 
 ---
 
-**End of CallVault UI System Specification.**
+**End of callNest UI System Specification.**
 
-This document is the single source of truth for all UI work on CallVault. Update it before changing implementation, never after.
+This document is the single source of truth for all UI work on callNest. Update it before changing implementation, never after.

@@ -1,8 +1,8 @@
-./gradlew assembleDebug 
+./gradlew assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk  
- adb shell am start -n com.callvault.app.debug/com.callvault.app.MainActivity
+ adb shell am start -n com.callNest.app.debug/com.callNest.app.MainActivity
 
-# CallVault — Release Plan
+# callNest — Release Plan
 
 Path from current state to "APK live on a website", with a tight split between **what you do** and **what Claude does**. Goal: minimum touch-time from you (~1 hour total, spread across 6 short sessions).
 
@@ -36,7 +36,7 @@ You're on the laptop for ~1 hour total, in six brief check-ins. The rest is Clau
 
 ### Claude
 
-- Diagnoses every error via the `callvault-build-fixer` agent.
+- Diagnoses every error via the `callNest-build-fixer` agent.
 - Patches `gradle.properties`, manifest, KSP, Hilt, Room, packaging excludes — whatever surfaces.
 - Updates `DECISIONS.md` for any non-obvious fix.
 
@@ -54,7 +54,7 @@ You're on the laptop for ~1 hour total, in six brief check-ins. The rest is Clau
 ### You
 
 1. Connect a phone with USB debugging enabled. Run `adb devices` to confirm.
-2. `./gradlew installDebug && adb shell am start -n com.callvault.app/.MainActivity`.
+2. `./gradlew installDebug && adb shell am start -n com.callNest.app/.MainActivity`.
 3. Walk the 12-step smoke list in `DEVELOPING.md` §4 (onboarding → sync → calls → tags → backup → etc.).
 4. Note anything that crashes, looks broken, or behaves wrong. Paste the broken-flow list + relevant logcat stack traces.
 
@@ -80,7 +80,7 @@ The five P0 items in `TODO.md`.
 | 2   | Release keystore        | Run `keytool -genkeypair ...` once. Claude will hand you the exact command + secrets to paste into `keystore.properties`. **5 min, real interruption.**                     | Wires `signingConfigs.release` to read it. Verifies `assembleRelease` produces a signed APK.                                                                     |
 | 3   | Update-manifest hosting | Decide where: **GitHub Pages** (free, easiest), Vercel, S3, your own host. Tell Claude the URL. **2 min decision; then 0 if GitHub Pages — Claude can write the workflow.** | Generates `versions-stable.json` + `versions-beta.json` skeletons. If GitHub Pages: writes `.github/workflows/publish-manifest.yml`. Updates `BuildConfig` URLs. |
 | 4   | Launcher icons          | Provide a 1024×1024 PNG of your final icon. **5 min if you have one; otherwise Claude generates a placeholder you can ship as v1.**                                         | Runs it through Image Asset Studio's mipmap layout (or generates all densities + adaptive variants via script).                                                  |
-| 5   | MainScaffold 5-tab nav  | Nothing.                                                                                                                                                                    | `callvault-android-engineer` wires `MainScaffold` into `CallVaultNavHost` as nested graph. Default tab Calls. ~30 min of agent time.                             |
+| 5   | MainScaffold 5-tab nav  | Nothing.                                                                                                                                                                    | `callNest-android-engineer` wires `MainScaffold` into `callNestNavHost` as nested graph. Default tab Calls. ~30 min of agent time.                               |
 
 ### Total your interruption: ~12 min.
 
@@ -121,14 +121,14 @@ After all 7 land, do **one batch test**: `./gradlew installDebug` + ~10 min of p
 
 ## Phase 5 — Quality bar
 
-| Item                                | You do                                                                                            | Claude does                                                         |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| ViewModel + DAO tests               | Run `./gradlew test connectedDebugAndroidTest` once. Paste failures if any.                       | Writes all tests via `callvault-test-writer`. Iterates on failures. |
-| `@Preview` audit                    | Nothing.                                                                                          | Sweeps + fills gaps.                                                |
-| Lint warnings sweep                 | Run `./gradlew lint`. Paste report path.                                                          | Triages each via `callvault-build-fixer`.                           |
-| Performance check                   | On your phone, time: cold-start, filter on seeded sample data, FTS query, sync run. Send numbers. | Profiles via the Android Studio Profiler if numbers miss spec.      |
-| Empty / loading / error state sweep | Nothing.                                                                                          | `callvault-ui-builder` audits every screen.                         |
-| Accessibility                       | Run TalkBack on the phone for ~5 min, hit each main screen, send observations.                    | Fixes anything you flag.                                            |
+| Item                                | You do                                                                                            | Claude does                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| ViewModel + DAO tests               | Run `./gradlew test connectedDebugAndroidTest` once. Paste failures if any.                       | Writes all tests via `callNest-test-writer`. Iterates on failures. |
+| `@Preview` audit                    | Nothing.                                                                                          | Sweeps + fills gaps.                                               |
+| Lint warnings sweep                 | Run `./gradlew lint`. Paste report path.                                                          | Triages each via `callNest-build-fixer`.                           |
+| Performance check                   | On your phone, time: cold-start, filter on seeded sample data, FTS query, sync run. Send numbers. | Profiles via the Android Studio Profiler if numbers miss spec.     |
+| Empty / loading / error state sweep | Nothing.                                                                                          | `callNest-ui-builder` audits every screen.                         |
+| Accessibility                       | Run TalkBack on the phone for ~5 min, hit each main screen, send observations.                    | Fixes anything you flag.                                           |
 
 ### Total your interruption: ~5 min.
 
@@ -155,7 +155,7 @@ After all 7 land, do **one batch test**: `./gradlew installDebug` + ~10 min of p
 - Decide your manifest hosting URL.
 - Touch git (commit / push / release / tag).
 - Send anything to a third-party service.
-- Modify the locked spec at `/home/primathon/Downloads/callvault_mega_prompt.md`.
+- Modify the locked spec at `/home/primathon/Downloads/callNest_mega_prompt.md`.
 - Modify `gradle/libs.versions.toml` (locked tech stack).
 
 These are the boundaries. If Claude proposes one, push back.

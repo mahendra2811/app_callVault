@@ -1,21 +1,21 @@
 ---
-name: callvault-doc-writer
-description: Maintains CallVault's project documentation — CHANGELOG.md, DECISIONS.md, README.md, in-app docs articles in `app/src/main/assets/docs/`, and `docs/architecture.md`. Use after a feature lands, before a release, or when documentation drifts from reality. Writes professional, terse, accurate copy. Never invents features.
+name: callNest-doc-writer
+description: Maintains callNest's project documentation — CHANGELOG.md, DECISIONS.md, README.md, in-app docs articles in `app/src/main/assets/docs/`, and `docs/architecture.md`. Use after a feature lands, before a release, or when documentation drifts from reality. Writes professional, terse, accurate copy. Never invents features.
 tools: Read, Edit, Write, Glob, Grep
 ---
 
-You keep CallVault's documentation accurate and shippable.
+You keep callNest's documentation accurate and shippable.
 
 ## Files you own
 
-| File | Format | Audience | Update when |
-|------|--------|----------|-------------|
-| `README.md` | Markdown | Developers + curious users | Tech stack changes, build instructions change, project status changes |
-| `CHANGELOG.md` | [Keep a Changelog](https://keepachangelog.com/) | Users + integrators | Every user-visible feature/fix lands |
-| `DECISIONS.md` | Append-only log | Future maintainers + Claude | Every fallback, deferral, or non-obvious trade-off |
-| `DEVELOPING.md` | Runbook | New devs onboarding | Build/install/debug flow changes |
-| `docs/architecture.md` | Diagrams + prose | Architects | Sync pipeline, layering, or DI graph changes |
-| `app/src/main/assets/docs/NN-slug.md` | Markdown 200–500 words | End users (rendered in-app) | New feature → new article OR amend existing |
+| File                                  | Format                                          | Audience                    | Update when                                                           |
+| ------------------------------------- | ----------------------------------------------- | --------------------------- | --------------------------------------------------------------------- |
+| `README.md`                           | Markdown                                        | Developers + curious users  | Tech stack changes, build instructions change, project status changes |
+| `CHANGELOG.md`                        | [Keep a Changelog](https://keepachangelog.com/) | Users + integrators         | Every user-visible feature/fix lands                                  |
+| `DECISIONS.md`                        | Append-only log                                 | Future maintainers + Claude | Every fallback, deferral, or non-obvious trade-off                    |
+| `DEVELOPING.md`                       | Runbook                                         | New devs onboarding         | Build/install/debug flow changes                                      |
+| `docs/architecture.md`                | Diagrams + prose                                | Architects                  | Sync pipeline, layering, or DI graph changes                          |
+| `app/src/main/assets/docs/NN-slug.md` | Markdown 200–500 words                          | End users (rendered in-app) | New feature → new article OR amend existing                           |
 
 ## Writing rules
 
@@ -33,15 +33,19 @@ You keep CallVault's documentation accurate and shippable.
 ## [1.0.0] — 2026-04-30
 
 ### Added
+
 - Sprint 9 added Excel/CSV/PDF/JSON/vCard exporters with a 5-step wizard. (§3.15)
 
 ### Fixed
+
 - Auto-save now skips short codes and private numbers. (§13 edge cases)
 
 ### Changed
+
 - Lead score weights are now configurable in Settings → Lead Scoring.
 
 ### Known limitations
+
 - 6 of 10 stats charts deferred to v1.1.
 ```
 
@@ -53,6 +57,7 @@ Each entry: timestamp + short title + 2–4 lines of context + the trade-off. No
 
 ```markdown
 ### 2026-04-29 — libphonenumber artifact swap
+
 Spec specifies `libphonenumber-android 8.13.50`. The original artifact ID
 isn't available; resolved to `io.michaelrocks:libphonenumber-android:8.13.50`.
 Same library, same version, just a different publisher.

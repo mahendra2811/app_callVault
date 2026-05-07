@@ -1,4 +1,4 @@
-# CallVault — Phase 1 Optimized Plan
+# callNest — Phase 1 Optimized Plan
 
 > **Performance-first. Local-only. Optional telemetry. Encrypted at rest.**
 >
@@ -328,7 +328,7 @@ A user with 100 calls/day generates 36,500 rows/year. After 3 years that's 109k 
 | ----------- | ----------------------------------------------------------------------- |
 | File format | Encrypted Protobuf (binary, dense)                                      |
 | Naming      | `archive_2024_Q3.cvarc`                                                 |
-| Location    | `app-private/archives/` (only readable by CallVault process)            |
+| Location    | `app-private/archives/` (only readable by callNest process)             |
 | Encryption  | AES-256-GCM with key derived from user's master passphrase              |
 | Compression | LZ4 (fast, ~3x compression on call data)                                |
 | Schema      | `CallArchiveProto` — slim Protobuf message; one entry per archived call |
@@ -565,7 +565,7 @@ object TelemetryModule {
 
 ### 8.5 The single metric that matters: active users
 
-Phase 1 needs only one piece of analytics: **how many people are currently using CallVault**.
+Phase 1 needs only one piece of analytics: **how many people are currently using callNest**.
 
 This is a daily heartbeat ping to a tiny endpoint:
 
@@ -683,7 +683,7 @@ class BaselineProfileGenerator {
 
     @Test
     fun startup() = rule.collect(
-        packageName = "com.callvault",
+        packageName = "com.callNest",
         profileBlock = {
             startActivityAndWait()
             // Drive through critical paths
@@ -700,7 +700,7 @@ Output: `baseline-prof.txt` shipped in the APK. ART pre-compiles the listed meth
 
 ```kotlin
 @HiltAndroidApp
-class CallVaultApplication : Application() {
+class callNestApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         // Only what HAS to happen at startup:
@@ -942,7 +942,7 @@ Every layout below uses tight spacing (16dp screen padding, 12dp card padding, 6
 │                                     │
 │         [LOGO 96×96]                │
 │                                     │
-│         CallVault                   │  ← Instrument Serif 32sp
+│         callNest                   │  ← Instrument Serif 32sp
 │                                     │
 │                                     │
 │                                     │
@@ -960,7 +960,7 @@ Every layout below uses tight spacing (16dp screen padding, 12dp card padding, 6
 
 ```
 ┌─────────────────────────────────────┐
-│ CallVault              🔍   ⚙️       │  ← Top bar 48dp, transparent
+│ callNest              🔍   ⚙️       │  ← Top bar 48dp, transparent
 ├─────────────────────────────────────┤
 │                                     │
 │  Today's pulse                      │  ← 14sp uppercase 600 label
@@ -1055,7 +1055,7 @@ Every layout below uses tight spacing (16dp screen padding, 12dp card padding, 6
 │ This week (12)                      │  ← Section header 32dp
 ├─────────────────────────────────────┤
 │ ●  +91 9876 543 210        [88] 🔖 │  ← Bookmark indicator
-│    callVault-s1 · 2 calls · 5m      │
+│    callNest-s1 · 2 calls · 5m      │
 │ ─────────────────────────────────── │
 │ ...                                 │
 ├─────────────────────────────────────┤
@@ -1090,7 +1090,7 @@ Same row anatomy as Calls tab. Sectioned by week. "Convert" mode toggles a multi
 │ 🔒 Privacy                     ›    │
 │ ⚙️ Settings                    ›    │
 │ ─────────────────────────────────── │
-│ ℹ️ About CallVault             ›    │
+│ ℹ️ About callNest             ›    │
 │                                     │
 ├─────────────────────────────────────┤
 │  🏠   📞   📥   ⋯                  │
@@ -1235,7 +1235,7 @@ Privacy section only shows toggles for telemetries that are actually configured 
 │ ┌─────────────────────────────────┐ │
 │ │ ✅ Last backup successful       │ │
 │ │    2 hours ago · 247 calls      │ │
-│ │    Downloads/CallVault/         │ │
+│ │    Downloads/callNest/         │ │
 │ └─────────────────────────────────┘ │
 │                                     │
 │ AUTOMATIC                           │
@@ -1350,7 +1350,7 @@ Verify budgets continuously with Macrobenchmark suite + Perfetto traces.
 
 1. Repo setup, multi-module Gradle, `libs.versions.toml`
 2. Detekt + Spotless + GitHub Actions CI
-3. `:core:design` tokens (per `CALLVAULT-UI-SPEC.md`)
+3. `:core:design` tokens (per `callNest-UI-SPEC.md`)
 4. SageTheme wrapper
 
 ### Phase B — Storage (weeks 3–4)
@@ -1420,11 +1420,11 @@ object DatabaseModule {
     fun provideDatabase(
         @ApplicationContext context: Context,
         passphraseProvider: PassphraseProvider,
-    ): CallVaultDatabase {
+    ): callNestDatabase {
         val passphrase = passphraseProvider.get()  // From SecurePrefs or onboarding
         val factory = SupportFactory(SQLiteDatabase.getBytes(passphrase.toCharArray()))
 
-        return Room.databaseBuilder(context, CallVaultDatabase::class.java, "callvault.db")
+        return Room.databaseBuilder(context, callNestDatabase::class.java, "callNest.db")
             .openHelperFactory(factory)
             .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .setQueryCallback({ sql, args ->
@@ -1611,7 +1611,7 @@ data class CallUiModel(
 
 ### 15.6 UI
 
-- [ ] Sage / Earth design system per `CALLVAULT-UI-SPEC.md` fully implemented
+- [ ] Sage / Earth design system per `callNest-UI-SPEC.md` fully implemented
 - [ ] All layouts at 16dp horizontal padding, 64dp list rows
 - [ ] No empty space wastage (every screen reviewed against layout plan)
 - [ ] All editors are bottom sheets (no AlertDialog)
@@ -1643,13 +1643,13 @@ data class CallUiModel(
 ## Appendix A — File structure
 
 ```
-callvault/
+callNest/
 ├── app/
 │   ├── build.gradle.kts
 │   ├── baseline-prof.txt
 │   └── src/main/
-│       ├── java/com/callvault/
-│       │   ├── CallVaultApplication.kt
+│       ├── java/com/callNest/
+│       │   ├── callNestApplication.kt
 │       │   ├── MainActivity.kt
 │       │   ├── di/TelemetryModule.kt
 │       │   └── di/DatabaseModule.kt
@@ -1681,8 +1681,8 @@ callvault/
 │   └── libs.versions.toml
 ├── docs/
 │   ├── APP-SPEC.md
-│   ├── CALLVAULT-UI-SPEC.md
-│   ├── CALLVAULT-PHASE1-OPTIMIZED.md   ← this file
+│   ├── callNest-UI-SPEC.md
+│   ├── callNest-PHASE1-OPTIMIZED.md   ← this file
 │   ├── DECISIONS.md
 │   └── CHANGELOG.md
 └── README.md
@@ -1705,6 +1705,6 @@ Place in `local.properties` (gitignored) or as CI secrets. Never commit.
 
 ---
 
-**End of CallVault Phase 1 Optimized Plan.**
+**End of callNest Phase 1 Optimized Plan.**
 
-This document supersedes the previous Phase 1 gap analysis. Pair with `CALLVAULT-UI-SPEC.md` for visual specification and `APP-SPEC.md` for domain logic.
+This document supersedes the previous Phase 1 gap analysis. Pair with `callNest-UI-SPEC.md` for visual specification and `APP-SPEC.md` for domain logic.

@@ -1,4 +1,4 @@
-# CallVault — TODO
+# callNest — TODO
 
 Outstanding work, ranked. Check items off (`- [x]`) as they ship. Add new items in the right tier.
 
@@ -10,7 +10,7 @@ Last refreshed: 2026-05-01.
 - [ ] Generate release keystore + populate `keystore.properties`. Verify `assembleRelease` produces a signed APK.
 - [ ] Stand up real `versions-stable.json` and `versions-beta.json` hosts; replace placeholder URLs in `BuildConfig` (`UPDATE_MANIFEST_STABLE_URL`, `UPDATE_MANIFEST_BETA_URL`).
 - [ ] Replace launcher icons (currently a vector "C" placeholder) with final artwork at all densities + adaptive variants.
-- [ ] Wire `MainScaffold` (5-tab `NeoTabBar`) into `CallVaultNavHost` as nested graph. Tabs: Home / Calls / My Contacts / Inquiries / More. Default = Calls.
+- [ ] Wire `MainScaffold` (5-tab `NeoTabBar`) into `callNestNavHost` as nested graph. Tabs: Home / Calls / My Contacts / Inquiries / More. Default = Calls.
 
 ## P1 — Functional spec misses
 
@@ -25,8 +25,8 @@ Last refreshed: 2026-05-01.
 
 ## P2 — Quality bar (spec §0)
 
-- [ ] Unit tests for every ViewModel (currently 0 of ~14). Use `callvault-test-writer`.
-- [ ] DAO instrumentation tests for every DAO (currently 0 of 9). Use `callvault-test-writer`.
+- [ ] Unit tests for every ViewModel (currently 0 of ~14). Use `callNest-test-writer`.
+- [ ] DAO instrumentation tests for every DAO (currently 0 of 9). Use `callNest-test-writer`.
 - [ ] `@Preview` audit — ensure every shipped composable has at least one preview that renders.
 - [ ] Lint warnings sweep post-build.
 - [ ] Performance verification on a real device:
@@ -35,7 +35,7 @@ Last refreshed: 2026-05-01.
   - FTS query < 100ms
   - sync 5k entries < 8s
   - APK size < 25 MB
-- [ ] Empty / loading / error state sweep — every screen has all three (`callvault-ui-builder`).
+- [ ] Empty / loading / error state sweep — every screen has all three (`callNest-ui-builder`).
 - [ ] Accessibility sweep — TalkBack labels, 48dp touch targets, WCAG AA contrast on lead-score badges.
 
 ## P3 — Nice-to-haves before public sideload
@@ -52,5 +52,5 @@ Last refreshed: 2026-05-01.
 - Add new items under the correct tier.
 - Promote/demote tier when reality changes (e.g. P3 → P0 if a release date moves).
 - Tick boxes (`- [x]`) when shipped. Don't delete completed items — they become the changelog source for the next release.
-- Reference subagents by name (`callvault-android-engineer`, etc.) — `/next` will route based on phrasing.
+- Reference subagents by name (`callNest-android-engineer`, etc.) — `/next` will route based on phrasing.
 - One sentence per item, max. If it needs a paragraph, link to a separate doc instead.

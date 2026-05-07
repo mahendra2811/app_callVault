@@ -1,8 +1,8 @@
-# CallVault APP-SPEC — Part 06
+# callNest APP-SPEC — Part 06
 
-## Settings Master + Sub-Settings + Update Screens + Docs + Permission Screens + Neo* Component Reference + Copy Guide + Appendices
+## Settings Master + Sub-Settings + Update Screens + Docs + Permission Screens + Neo\* Component Reference + Copy Guide + Appendices
 
-> Audience: a UX engineer rebuilding CallVault from scratch.
+> Audience: a UX engineer rebuilding callNest from scratch.
 > This part is self-contained. Cross-references to Part 01 (sync algorithm), Part 02 (data layer), Part 03 (real-time services), Part 04 (lead scoring), and Part 05 (backup/export) are noted explicitly.
 > All copy strings are normative. All wireframes are reference. All component signatures are normative.
 
@@ -10,22 +10,22 @@
 
 ## Table of contents (sections 33–46)
 
-| # | Title | Approx lines |
-|---|---|---|
-| 33 | Settings master screen | 600 |
-| 34 | AutoSaveSettings screen | 350 |
-| 35 | RealTimeSettings screen | 300 |
-| 36 | LeadScoringSettings screen | 300 |
-| 37 | UpdateSettings screen | 300 |
-| 38 | UpdateAvailable screen | 350 |
-| 39 | DocsList screen | 250 |
-| 40 | DocsArticle screen | 200 |
-| 41 | PermissionRationale screen | 200 |
-| 42 | PermissionDenied screen | 150 |
-| 43 | Neo* component reference | 600 |
-| 44 | Copy / voice guide | 250 |
-| 45 | Empty / loading / error state catalog | 250 |
-| 46 | Future-proofing notes | 150 |
+| #   | Title                                 | Approx lines |
+| --- | ------------------------------------- | ------------ |
+| 33  | Settings master screen                | 600          |
+| 34  | AutoSaveSettings screen               | 350          |
+| 35  | RealTimeSettings screen               | 300          |
+| 36  | LeadScoringSettings screen            | 300          |
+| 37  | UpdateSettings screen                 | 300          |
+| 38  | UpdateAvailable screen                | 350          |
+| 39  | DocsList screen                       | 250          |
+| 40  | DocsArticle screen                    | 200          |
+| 41  | PermissionRationale screen            | 200          |
+| 42  | PermissionDenied screen               | 150          |
+| 43  | Neo\* component reference             | 600          |
+| 44  | Copy / voice guide                    | 250          |
+| 45  | Empty / loading / error state catalog | 250          |
+| 46  | Future-proofing notes                 | 150          |
 
 ---
 
@@ -33,7 +33,7 @@
 
 ## 33.1 Purpose
 
-The Settings master screen is the single hub for every persistent preference in CallVault. It exposes:
+The Settings master screen is the single hub for every persistent preference in callNest. It exposes:
 
 - 12 grouped collapsible NeoCards (Sync, Auto-Save, Real-Time, Notifications, Lead Scoring, Auto-Tag Rules, Backup & Restore, Display, Privacy, App Updates, Help & Docs, About).
 - Master toggles that gate dependent options below them (progressive disclosure).
@@ -134,15 +134,15 @@ Every persisted toggle writes to `SettingsDataStore` (DataStore<Preferences>) de
 
 ### 33.5.2 Interval radio (revealed only when master ON)
 
-| Option | Stored value | Worker policy |
-|---|---|---|
-| Manual | `MANUAL` | No worker; user uses pull-to-refresh |
-| 5 min | `MIN_5` | PeriodicWorkRequest 15min (Android floor) |
-| 15 min | `MIN_15` | PeriodicWorkRequest 15min |
-| 1 hour | `HOUR_1` | PeriodicWorkRequest 1h |
-| 12 hours | `HOUR_12` | PeriodicWorkRequest 12h |
-| 24 hours | `DAY_1` | PeriodicWorkRequest 24h |
-| Daily 2 AM | `DAILY_2AM` | PeriodicWorkRequest 24h, initial delay aligned |
+| Option     | Stored value | Worker policy                                  |
+| ---------- | ------------ | ---------------------------------------------- |
+| Manual     | `MANUAL`     | No worker; user uses pull-to-refresh           |
+| 5 min      | `MIN_5`      | PeriodicWorkRequest 15min (Android floor)      |
+| 15 min     | `MIN_15`     | PeriodicWorkRequest 15min                      |
+| 1 hour     | `HOUR_1`     | PeriodicWorkRequest 1h                         |
+| 12 hours   | `HOUR_12`    | PeriodicWorkRequest 12h                        |
+| 24 hours   | `DAY_1`      | PeriodicWorkRequest 24h                        |
+| Daily 2 AM | `DAILY_2AM`  | PeriodicWorkRequest 24h, initial delay aligned |
 
 Note: Android WorkManager's minimum periodic interval is 15min. The "5 min" label is preserved for future expedited execution but currently maps to 15min — see Part 01 §6.1 for the sync algorithm rationale.
 
@@ -188,11 +188,11 @@ Single sub-link → `RealTimeSettings` (§35).
 
 ## 33.8 Group: Notifications
 
-| Key | Default | Effect |
-|---|---|---|
-| `notif.followup_reminders` | true | Enables FollowUpReminderWorker (15min check) |
-| `notif.daily_summary` | false | Schedule/cancel DailySummaryWorker @ 9AM |
-| `notif.update_alerts` | true | Allow UpdateCheckWorker to post a notification when an update is found |
+| Key                        | Default | Effect                                                                 |
+| -------------------------- | ------- | ---------------------------------------------------------------------- |
+| `notif.followup_reminders` | true    | Enables FollowUpReminderWorker (15min check)                           |
+| `notif.daily_summary`      | false   | Schedule/cancel DailySummaryWorker @ 9AM                               |
+| `notif.update_alerts`      | true    | Allow UpdateCheckWorker to post a notification when an update is found |
 
 ### 33.8.1 Daily summary worker
 
@@ -215,10 +215,10 @@ Sub-link → `AutoTagRules` (defined in Part 04 §22). Master row shows count: "
 
 ## 33.11 Group: Backup & Restore
 
-| Key | Default | Effect |
-|---|---|---|
-| `backup.auto.enabled` | true | Schedule/cancel `DailyBackupWorker` |
-| `backup.retention.days` | 7 | Slider 1–30. Trims older files on each run. |
+| Key                     | Default | Effect                                      |
+| ----------------------- | ------- | ------------------------------------------- |
+| `backup.auto.enabled`   | true    | Schedule/cancel `DailyBackupWorker`         |
+| `backup.retention.days` | 7       | Slider 1–30. Trims older files on each run. |
 
 Sub-link "Open backup screen" → `Backup` (Part 05 §27).
 
@@ -230,11 +230,11 @@ Sub-link "Open backup screen" → `Backup` (Part 05 §27).
 
 ## 33.12 Group: Display
 
-| Key | Default | Effect |
-|---|---|---|
-| `display.default_tab` | `CALLS` (locked) | Reserved; v1 only Calls |
-| `display.pin_unsaved` | true | Calls list pins unsaved-number rows above saved |
-| `display.group_by_date` | true | Calls list shows section headers Today/Yesterday/Earlier |
+| Key                     | Default          | Effect                                                   |
+| ----------------------- | ---------------- | -------------------------------------------------------- |
+| `display.default_tab`   | `CALLS` (locked) | Reserved; v1 only Calls                                  |
+| `display.pin_unsaved`   | true             | Calls list pins unsaved-number rows above saved          |
+| `display.group_by_date` | true             | Calls list shows section headers Today/Yesterday/Earlier |
 
 ## 33.13 Group: Privacy
 
@@ -271,16 +271,16 @@ Sub-link → `UpdateSettings` (§37).
 
 ## 33.15 Group: Help & Docs (8 sub-links)
 
-| Label | Destination |
-|---|---|
-| Getting started | DocsArticle/01-getting-started |
-| FAQ | DocsList |
-| Permission troubleshooting | DocsArticle/02-permissions |
-| OEM battery setup | DocsArticle/12-oem-battery |
-| Contact support | mailto:support@callvault.app |
-| Privacy policy | DocsArticle/15-privacy |
-| Terms of use | DocsArticle/15-privacy#terms |
-| What's new | DocsArticle/14-self-update |
+| Label                      | Destination                    |
+| -------------------------- | ------------------------------ |
+| Getting started            | DocsArticle/01-getting-started |
+| FAQ                        | DocsList                       |
+| Permission troubleshooting | DocsArticle/02-permissions     |
+| OEM battery setup          | DocsArticle/12-oem-battery     |
+| Contact support            | mailto:support@callNest.app    |
+| Privacy policy             | DocsArticle/15-privacy         |
+| Terms of use               | DocsArticle/15-privacy#terms   |
+| What's new                 | DocsArticle/14-self-update     |
 
 ## 33.16 Group: About
 
@@ -288,7 +288,7 @@ Read-only rows:
 
 - Version: `BuildConfig.VERSION_NAME` (build `BuildConfig.VERSION_CODE`)
 - Last sync: formatted via `DateFormatter.relative(lastSyncTimestamp)`
-- DB size: `context.getDatabasePath("callvault.db").length()` formatted to MB
+- DB size: `context.getDatabasePath("callNest.db").length()` formatted to MB
 - Calls tracked: `CallLogDao.count()`
 - Auto-saved: `ContactMetaDao.countAutoSaved()`
 
@@ -300,71 +300,71 @@ Read-only rows:
 
 ## 33.18 Copy table (50 strings)
 
-| Key | EN |
-|---|---|
-| settings.title | Settings |
-| settings.group.sync | Sync |
-| settings.sync.auto | Automatic sync |
-| settings.sync.interval | Interval |
-| settings.sync.interval.manual | Manual |
-| settings.sync.interval.5m | Every 5 minutes |
-| settings.sync.interval.15m | Every 15 minutes |
-| settings.sync.interval.1h | Every hour |
-| settings.sync.interval.12h | Every 12 hours |
-| settings.sync.interval.24h | Every 24 hours |
-| settings.sync.interval.daily2am | Daily at 2 AM |
-| settings.sync.wifi_only | Wi-Fi only |
-| settings.sync.charging_only | Charging only |
-| settings.sync.on_open | Sync on app open |
-| settings.sync.on_reboot | Sync on reboot |
-| settings.group.autosave | Auto-save inquiries |
-| settings.autosave.open | Open auto-save settings |
-| settings.group.realtime | Real-time features |
-| settings.realtime.open | Open real-time settings |
-| settings.group.notifications | Notifications |
-| settings.notif.followup | Follow-up reminders |
-| settings.notif.daily_summary | Daily summary at 9 AM |
-| settings.notif.updates | Update alerts |
-| settings.group.scoring | Lead scoring |
-| settings.scoring.open | Tune lead scoring |
-| settings.group.rules | Auto-tag rules |
-| settings.rules.count | %d active rules |
-| settings.group.backup | Backup & restore |
-| settings.backup.auto | Auto-backup |
-| settings.backup.retention | Keep last %d days |
-| settings.backup.open | Open backup screen |
-| settings.group.display | Display |
-| settings.display.default_tab | Default tab |
-| settings.display.default_tab.locked | Calls (locked in v1) |
-| settings.display.pin_unsaved | Pin unsaved on Calls |
-| settings.display.group_by_date | Group by date |
-| settings.group.privacy | Privacy |
-| settings.privacy.block_hidden | Block hidden numbers |
-| settings.privacy.hide_blocked | Hide blocked from list |
-| settings.privacy.clear_search | Clear search history |
-| settings.privacy.clear_notes | Clear all notes |
-| settings.privacy.reset | Reset all data |
-| settings.privacy.reset.confirm1.title | Reset all data? |
-| settings.privacy.reset.confirm1.body | This wipes notes, search history, and skipped update versions. Re-sync will rebuild calls from your OS log. |
-| settings.privacy.reset.confirm2.title | Type DELETE to confirm |
-| settings.privacy.reset.confirm2.hint | DELETE |
-| settings.privacy.reset.confirm.action | Reset |
-| settings.group.updates | App updates |
-| settings.updates.open | Update settings |
-| settings.group.help | Help & docs |
-| settings.help.start | Getting started |
-| settings.help.faq | Frequently asked questions |
-| settings.help.permissions | Permission troubleshooting |
-| settings.help.oem | OEM battery setup |
-| settings.help.support | Contact support |
-| settings.help.privacy | Privacy policy |
-| settings.help.terms | Terms of use |
-| settings.group.about | About |
-| settings.about.version | Version %s (build %d) |
-| settings.about.last_sync | Last sync %s |
-| settings.about.db_size | Database size %s |
-| settings.about.calls_tracked | Calls tracked %d |
-| settings.about.auto_saved | Auto-saved %d |
+| Key                                   | EN                                                                                                          |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| settings.title                        | Settings                                                                                                    |
+| settings.group.sync                   | Sync                                                                                                        |
+| settings.sync.auto                    | Automatic sync                                                                                              |
+| settings.sync.interval                | Interval                                                                                                    |
+| settings.sync.interval.manual         | Manual                                                                                                      |
+| settings.sync.interval.5m             | Every 5 minutes                                                                                             |
+| settings.sync.interval.15m            | Every 15 minutes                                                                                            |
+| settings.sync.interval.1h             | Every hour                                                                                                  |
+| settings.sync.interval.12h            | Every 12 hours                                                                                              |
+| settings.sync.interval.24h            | Every 24 hours                                                                                              |
+| settings.sync.interval.daily2am       | Daily at 2 AM                                                                                               |
+| settings.sync.wifi_only               | Wi-Fi only                                                                                                  |
+| settings.sync.charging_only           | Charging only                                                                                               |
+| settings.sync.on_open                 | Sync on app open                                                                                            |
+| settings.sync.on_reboot               | Sync on reboot                                                                                              |
+| settings.group.autosave               | Auto-save inquiries                                                                                         |
+| settings.autosave.open                | Open auto-save settings                                                                                     |
+| settings.group.realtime               | Real-time features                                                                                          |
+| settings.realtime.open                | Open real-time settings                                                                                     |
+| settings.group.notifications          | Notifications                                                                                               |
+| settings.notif.followup               | Follow-up reminders                                                                                         |
+| settings.notif.daily_summary          | Daily summary at 9 AM                                                                                       |
+| settings.notif.updates                | Update alerts                                                                                               |
+| settings.group.scoring                | Lead scoring                                                                                                |
+| settings.scoring.open                 | Tune lead scoring                                                                                           |
+| settings.group.rules                  | Auto-tag rules                                                                                              |
+| settings.rules.count                  | %d active rules                                                                                             |
+| settings.group.backup                 | Backup & restore                                                                                            |
+| settings.backup.auto                  | Auto-backup                                                                                                 |
+| settings.backup.retention             | Keep last %d days                                                                                           |
+| settings.backup.open                  | Open backup screen                                                                                          |
+| settings.group.display                | Display                                                                                                     |
+| settings.display.default_tab          | Default tab                                                                                                 |
+| settings.display.default_tab.locked   | Calls (locked in v1)                                                                                        |
+| settings.display.pin_unsaved          | Pin unsaved on Calls                                                                                        |
+| settings.display.group_by_date        | Group by date                                                                                               |
+| settings.group.privacy                | Privacy                                                                                                     |
+| settings.privacy.block_hidden         | Block hidden numbers                                                                                        |
+| settings.privacy.hide_blocked         | Hide blocked from list                                                                                      |
+| settings.privacy.clear_search         | Clear search history                                                                                        |
+| settings.privacy.clear_notes          | Clear all notes                                                                                             |
+| settings.privacy.reset                | Reset all data                                                                                              |
+| settings.privacy.reset.confirm1.title | Reset all data?                                                                                             |
+| settings.privacy.reset.confirm1.body  | This wipes notes, search history, and skipped update versions. Re-sync will rebuild calls from your OS log. |
+| settings.privacy.reset.confirm2.title | Type DELETE to confirm                                                                                      |
+| settings.privacy.reset.confirm2.hint  | DELETE                                                                                                      |
+| settings.privacy.reset.confirm.action | Reset                                                                                                       |
+| settings.group.updates                | App updates                                                                                                 |
+| settings.updates.open                 | Update settings                                                                                             |
+| settings.group.help                   | Help & docs                                                                                                 |
+| settings.help.start                   | Getting started                                                                                             |
+| settings.help.faq                     | Frequently asked questions                                                                                  |
+| settings.help.permissions             | Permission troubleshooting                                                                                  |
+| settings.help.oem                     | OEM battery setup                                                                                           |
+| settings.help.support                 | Contact support                                                                                             |
+| settings.help.privacy                 | Privacy policy                                                                                              |
+| settings.help.terms                   | Terms of use                                                                                                |
+| settings.group.about                  | About                                                                                                       |
+| settings.about.version                | Version %s (build %d)                                                                                       |
+| settings.about.last_sync              | Last sync %s                                                                                                |
+| settings.about.db_size                | Database size %s                                                                                            |
+| settings.about.calls_tracked          | Calls tracked %d                                                                                            |
+| settings.about.auto_saved             | Auto-saved %d                                                                                               |
 
 ## 33.19 Test plan
 
@@ -387,7 +387,7 @@ Read-only rows:
 
 ## 34.1 Purpose
 
-Tunes how CallVault names new contacts when it auto-saves an unsaved number. The combined name template is:
+Tunes how callNest names new contacts when it auto-saves an unsaved number. The combined name template is:
 
 ```
 {prefix}{simSuffix} {phoneNumber}
@@ -404,13 +404,13 @@ Tunes how CallVault names new contacts when it auto-saves an unsaved number. The
 ```
 ┌──────────────────────────────────────────┐
 │ ← Auto-save                              │
-│ How CallVault names new inquiries  💡    │
+│ How callNest names new inquiries  💡    │
 ├──────────────────────────────────────────┤
 │  Auto-save unsaved numbers     [ ●   ]   │
 │                                          │
 │  Prefix                                  │
 │  ┌──────────────────────────┐            │
-│  │ callVault                │            │
+│  │ callNest                │            │
 │  └──────────────────────────┘            │
 │                                          │
 │  Include SIM tag (-s1/-s2)    [ ●   ]    │
@@ -422,12 +422,12 @@ Tunes how CallVault names new contacts when it auto-saves an unsaved number. The
 │                                          │
 │  Preview                                 │
 │  ┌──────────────────────────────────┐   │
-│  │ callVault-s1 +91 98765 43210     │   │
+│  │ callNest-s1 +91 98765 43210     │   │
 │  └──────────────────────────────────┘   │
 │                                          │
 │  Group name                              │
 │  ┌──────────────────────────┐  [Apply]   │
-│  │ CallVault Inquiries      │            │
+│  │ callNest Inquiries      │            │
 │  └──────────────────────────┘            │
 │                                          │
 │  Default phone label                     │
@@ -447,7 +447,7 @@ Tunes how CallVault names new contacts when it auto-saves an unsaved number. The
 
 ## 34.4 Components
 
-- `StandardPage(title="Auto-save", description="How CallVault names new inquiries", emoji="💡")`
+- `StandardPage(title="Auto-save", description="How callNest names new inquiries", emoji="💡")`
 - `NeoToggle` — master autoSaveEnabled
 - `NeoTextField` — prefix
 - `NeoToggle` — includeSimTag
@@ -480,16 +480,16 @@ Recomputes on every keystroke (text changes flow through a `derivedStateOf`).
 
 ## 34.7 Defaults
 
-| Key | Default |
-|---|---|
-| `autosave.enabled` | true |
-| `autosave.prefix` | `callVault` |
-| `autosave.include_sim` | true |
-| `autosave.suffix` | (empty) |
-| `autosave.group` | `CallVault Inquiries` |
-| `autosave.label` | `MOBILE` |
-| `autosave.label.custom` | (empty) |
-| `autosave.region` | `IN` |
+| Key                     | Default              |
+| ----------------------- | -------------------- |
+| `autosave.enabled`      | true                 |
+| `autosave.prefix`       | `callNest`           |
+| `autosave.include_sim`  | true                 |
+| `autosave.suffix`       | (empty)              |
+| `autosave.group`        | `callNest Inquiries` |
+| `autosave.label`        | `MOBILE`             |
+| `autosave.label.custom` | (empty)              |
+| `autosave.region`       | `IN`                 |
 
 ## 34.8 Edge cases
 
@@ -502,28 +502,28 @@ Recomputes on every keystroke (text changes flow through a `derivedStateOf`).
 
 ## 34.9 Copy table (20 strings)
 
-| Key | EN |
-|---|---|
-| autosave.title | Auto-save |
-| autosave.subtitle | How CallVault names new inquiries |
-| autosave.master | Auto-save unsaved numbers |
-| autosave.prefix.label | Prefix |
-| autosave.prefix.hint | callVault |
-| autosave.sim_tag | Include SIM tag (-s1/-s2) |
-| autosave.suffix.label | Suffix |
-| autosave.suffix.hint | (none) |
-| autosave.preview.title | Preview |
-| autosave.group.label | Group name |
-| autosave.group.apply | Apply |
-| autosave.label.title | Default phone label |
-| autosave.label.mobile | Mobile |
-| autosave.label.work | Work |
-| autosave.label.home | Home |
-| autosave.label.other | Other |
-| autosave.label.custom.hint | Custom label |
-| autosave.region.label | Default region for normalization |
-| autosave.region.invalid | Unknown region. Use a 2-letter code like IN or US. |
-| autosave.warn.long_prefix | Long prefixes may be truncated by your phone. |
+| Key                        | EN                                                 |
+| -------------------------- | -------------------------------------------------- |
+| autosave.title             | Auto-save                                          |
+| autosave.subtitle          | How callNest names new inquiries                   |
+| autosave.master            | Auto-save unsaved numbers                          |
+| autosave.prefix.label      | Prefix                                             |
+| autosave.prefix.hint       | callNest                                           |
+| autosave.sim_tag           | Include SIM tag (-s1/-s2)                          |
+| autosave.suffix.label      | Suffix                                             |
+| autosave.suffix.hint       | (none)                                             |
+| autosave.preview.title     | Preview                                            |
+| autosave.group.label       | Group name                                         |
+| autosave.group.apply       | Apply                                              |
+| autosave.label.title       | Default phone label                                |
+| autosave.label.mobile      | Mobile                                             |
+| autosave.label.work        | Work                                               |
+| autosave.label.home        | Home                                               |
+| autosave.label.other       | Other                                              |
+| autosave.label.custom.hint | Custom label                                       |
+| autosave.region.label      | Default region for normalization                   |
+| autosave.region.invalid    | Unknown region. Use a 2-letter code like IN or US. |
+| autosave.warn.long_prefix  | Long prefixes may be truncated by your phone.      |
 
 ## 34.10 Test plan
 
@@ -587,12 +587,12 @@ Toggles the two real-time UX surfaces: the floating bubble during an active call
 
 ## 35.5 Defaults
 
-| Key | Default |
-|---|---|
-| `realtime.bubble.enabled` | true |
-| `realtime.popup.enabled` | true |
-| `realtime.popup.timeout_s` | 8 |
-| `realtime.popup.only_unsaved` | true |
+| Key                           | Default |
+| ----------------------------- | ------- |
+| `realtime.bubble.enabled`     | true    |
+| `realtime.popup.enabled`      | true    |
+| `realtime.popup.timeout_s`    | 8       |
+| `realtime.popup.only_unsaved` | true    |
 
 ## 35.6 Edge cases
 
@@ -602,23 +602,23 @@ Toggles the two real-time UX surfaces: the floating bubble during an active call
 
 ## 35.7 Copy table (15 strings)
 
-| Key | EN |
-|---|---|
-| realtime.title | Real-time |
-| realtime.subtitle | Floating bubble and post-call popup |
-| realtime.bubble | Floating bubble during calls |
-| realtime.popup | Post-call popup |
-| realtime.popup.timeout | Popup timeout |
-| realtime.popup.timeout.fmt | %ds |
-| realtime.popup.only_unsaved | Show only for unsaved numbers |
-| realtime.permission.title | Display over other apps |
-| realtime.permission.granted | Granted |
-| realtime.permission.notgranted | Not granted |
-| realtime.permission.open | Open Settings |
-| realtime.warn.revoked | Display permission was revoked. Re-grant to use the floating bubble. |
-| realtime.warn.killed | Background services were restricted. Open OEM battery setup. |
-| realtime.banner.oem | Open OEM battery setup |
-| realtime.banner.dismiss | Dismiss |
+| Key                            | EN                                                                   |
+| ------------------------------ | -------------------------------------------------------------------- |
+| realtime.title                 | Real-time                                                            |
+| realtime.subtitle              | Floating bubble and post-call popup                                  |
+| realtime.bubble                | Floating bubble during calls                                         |
+| realtime.popup                 | Post-call popup                                                      |
+| realtime.popup.timeout         | Popup timeout                                                        |
+| realtime.popup.timeout.fmt     | %ds                                                                  |
+| realtime.popup.only_unsaved    | Show only for unsaved numbers                                        |
+| realtime.permission.title      | Display over other apps                                              |
+| realtime.permission.granted    | Granted                                                              |
+| realtime.permission.notgranted | Not granted                                                          |
+| realtime.permission.open       | Open Settings                                                        |
+| realtime.warn.revoked          | Display permission was revoked. Re-grant to use the floating bubble. |
+| realtime.warn.killed           | Background services were restricted. Open OEM battery setup.         |
+| realtime.banner.oem            | Open OEM battery setup                                               |
+| realtime.banner.dismiss        | Dismiss                                                              |
 
 ## 35.8 Cross-references
 
@@ -675,14 +675,14 @@ Lets the user tune the 6 weights used by `LeadScoreCalculator`. After save, a `L
 
 ## 36.4 Defaults
 
-| Slider | Range | Default |
-|---|---|---|
-| Call frequency | 0..50 | 25 |
-| Total duration | 0..50 | 20 |
-| Recency | 0..50 | 25 |
-| Has follow-up | 0..25 | 10 |
-| Customer tag | 0..30 | 20 |
-| Saved contact | 0..25 | 15 |
+| Slider         | Range | Default |
+| -------------- | ----- | ------- |
+| Call frequency | 0..50 | 25      |
+| Total duration | 0..50 | 20      |
+| Recency        | 0..50 | 25      |
+| Has follow-up  | 0..25 | 10      |
+| Customer tag   | 0..30 | 20      |
+| Saved contact  | 0..25 | 15      |
 
 ## 36.5 Persistence + worker
 
@@ -701,23 +701,23 @@ On any slider's debounced 400ms commit:
 
 ## 36.7 Copy table (15 strings)
 
-| Key | EN |
-|---|---|
-| scoring.title | Lead scoring |
-| scoring.subtitle | Tune what makes a hot lead |
-| scoring.master | Use lead scoring |
-| scoring.weight.frequency | Weight: Call frequency |
-| scoring.weight.duration | Weight: Total duration |
-| scoring.weight.recency | Weight: Recency |
-| scoring.bonus.followup | Bonus: Has follow-up |
-| scoring.bonus.customer_tag | Bonus: Customer tag |
-| scoring.bonus.saved_contact | Bonus: Saved contact |
-| scoring.buckets.title | Buckets (locked) |
-| scoring.buckets.cold | Cold below 30 |
-| scoring.buckets.warm | Warm 30 to 70 |
-| scoring.buckets.hot | Hot above 70 |
-| scoring.reset | Reset to defaults |
-| scoring.snackbar.recomputing | Recomputing scores… |
+| Key                          | EN                         |
+| ---------------------------- | -------------------------- |
+| scoring.title                | Lead scoring               |
+| scoring.subtitle             | Tune what makes a hot lead |
+| scoring.master               | Use lead scoring           |
+| scoring.weight.frequency     | Weight: Call frequency     |
+| scoring.weight.duration      | Weight: Total duration     |
+| scoring.weight.recency       | Weight: Recency            |
+| scoring.bonus.followup       | Bonus: Has follow-up       |
+| scoring.bonus.customer_tag   | Bonus: Customer tag        |
+| scoring.bonus.saved_contact  | Bonus: Saved contact       |
+| scoring.buckets.title        | Buckets (locked)           |
+| scoring.buckets.cold         | Cold below 30              |
+| scoring.buckets.warm         | Warm 30 to 70              |
+| scoring.buckets.hot          | Hot above 70               |
+| scoring.reset                | Reset to defaults          |
+| scoring.snackbar.recomputing | Recomputing scores…        |
 
 ## 36.8 Cross-references
 
@@ -730,7 +730,7 @@ On any slider's debounced 400ms commit:
 
 ## 37.1 Purpose
 
-Manages the self-update channel and auto-check policy. CallVault is sideloaded; `UpdateCheckWorker` polls a JSON manifest hosted by the developer.
+Manages the self-update channel and auto-check policy. callNest is sideloaded; `UpdateCheckWorker` polls a JSON manifest hosted by the developer.
 
 ## 37.2 Wireframe
 
@@ -767,10 +767,10 @@ Manages the self-update channel and auto-check policy. CallVault is sideloaded; 
 
 ## 37.4 Defaults
 
-| Key | Default |
-|---|---|
-| `update.channel` | `STABLE` |
-| `update.auto_check` | true |
+| Key                 | Default  |
+| ------------------- | -------- |
+| `update.channel`    | `STABLE` |
+| `update.auto_check` | true     |
 
 ## 37.5 Behaviors
 
@@ -791,24 +791,24 @@ Manages the self-update channel and auto-check policy. CallVault is sideloaded; 
 
 ## 37.7 Copy table (12 strings)
 
-| Key | EN |
-|---|---|
-| update.title | App updates |
-| update.subtitle | Stable or beta channel, auto-check |
-| update.current | Current version %s (build %d) |
-| update.channel | Channel |
-| update.channel.stable | Stable |
-| update.channel.beta | Beta |
-| update.auto_check | Check for updates automatically |
-| update.check_now | Check now |
-| update.last_checked | Last checked %s |
-| update.clear_skipped | Clear skipped versions |
-| update.snack.up_to_date | You're on the latest version. |
-| update.snack.available | Update available: v%s |
-| update.snack.offline | No internet. Try again later. |
-| update.snack.bad_manifest | Update server returned bad data. |
-| update.snack.beta_latest | You're on the latest beta. |
-| update.snack.cleared | Skipped versions cleared. |
+| Key                       | EN                                 |
+| ------------------------- | ---------------------------------- |
+| update.title              | App updates                        |
+| update.subtitle           | Stable or beta channel, auto-check |
+| update.current            | Current version %s (build %d)      |
+| update.channel            | Channel                            |
+| update.channel.stable     | Stable                             |
+| update.channel.beta       | Beta                               |
+| update.auto_check         | Check for updates automatically    |
+| update.check_now          | Check now                          |
+| update.last_checked       | Last checked %s                    |
+| update.clear_skipped      | Clear skipped versions             |
+| update.snack.up_to_date   | You're on the latest version.      |
+| update.snack.available    | Update available: v%s              |
+| update.snack.offline      | No internet. Try again later.      |
+| update.snack.bad_manifest | Update server returned bad data.   |
+| update.snack.beta_latest  | You're on the latest beta.         |
+| update.snack.cleared      | Skipped versions cleared.          |
 
 ## 37.8 Cross-references
 
@@ -901,23 +901,23 @@ Single screen that switches its body based on `UpdateState`: Available → Downl
 
 ## 38.10 Copy table (12 strings)
 
-| Key | EN |
-|---|---|
-| upd.title | Update |
-| upd.available.title | Update to v%s |
-| upd.btn.update | Update now |
-| upd.btn.skip | Skip this version |
-| upd.btn.later | Later |
-| upd.downloading | Downloading… |
-| upd.btn.cancel | Cancel |
-| upd.ready | Ready to install v%s |
-| upd.btn.install | Install now |
-| upd.installing | Opening installer… |
-| upd.error.title | Couldn't update |
-| upd.error.reason | Reason: %s |
-| upd.btn.retry | Retry |
+| Key                    | EN                                              |
+| ---------------------- | ----------------------------------------------- |
+| upd.title              | Update                                          |
+| upd.available.title    | Update to v%s                                   |
+| upd.btn.update         | Update now                                      |
+| upd.btn.skip           | Skip this version                               |
+| upd.btn.later          | Later                                           |
+| upd.downloading        | Downloading…                                    |
+| upd.btn.cancel         | Cancel                                          |
+| upd.ready              | Ready to install v%s                            |
+| upd.btn.install        | Install now                                     |
+| upd.installing         | Opening installer…                              |
+| upd.error.title        | Couldn't update                                 |
+| upd.error.reason       | Reason: %s                                      |
+| upd.btn.retry          | Retry                                           |
 | upd.error.install_perm | Allow install from unknown sources to continue. |
-| upd.btn.open_settings | Open Settings |
+| upd.btn.open_settings  | Open Settings                                   |
 
 ## 38.11 Cross-references
 
@@ -937,15 +937,15 @@ Lists 16 in-app help articles bundled in `assets/docs/*.md`. Each row shows emoj
 ```
 ┌──────────────────────────────────────────┐
 │ ← Help                                   │
-│ 16 guides about CallVault 📚             │
+│ 16 guides about callNest 📚             │
 ├──────────────────────────────────────────┤
 │ 👋 Getting started                       │
 │    Updated 2026-03-12                    │
-│    Welcome to CallVault. Here's how…   ➤ │
+│    Welcome to callNest. Here's how…   ➤ │
 ├──────────────────────────────────────────┤
 │ 🔐 Permissions                           │
 │    Updated 2026-02-04                    │
-│    CallVault needs phone, contacts…    ➤ │
+│    callNest needs phone, contacts…    ➤ │
 ├──────────────────────────────────────────┤
 │ … (15 more)                              │
 └──────────────────────────────────────────┘
@@ -953,7 +953,7 @@ Lists 16 in-app help articles bundled in `assets/docs/*.md`. Each row shows emoj
 
 ## 39.3 Components
 
-- `StandardPage("Help", "16 guides about CallVault", "📚")`
+- `StandardPage("Help", "16 guides about callNest", "📚")`
 - `LazyColumn` of article rows (NeoCard each, tappable)
 
 ## 39.4 Article slugs (locked)
@@ -991,13 +991,13 @@ Lists 16 in-app help articles bundled in `assets/docs/*.md`. Each row shows emoj
 
 ## 39.7 Copy table
 
-| Key | EN |
-|---|---|
-| docs.title | Help |
-| docs.subtitle.fmt | %d guides about CallVault |
-| docs.row.updated | Updated %s |
-| docs.empty.title | No help articles |
-| docs.empty.body | Help articles weren't bundled in this build. |
+| Key               | EN                                           |
+| ----------------- | -------------------------------------------- |
+| docs.title        | Help                                         |
+| docs.subtitle.fmt | %d guides about callNest                     |
+| docs.row.updated  | Updated %s                                   |
+| docs.empty.title  | No help articles                             |
+| docs.empty.body   | Help articles weren't bundled in this build. |
 
 ## 39.8 Cross-references
 
@@ -1016,12 +1016,12 @@ Renders one markdown article and captures helpful/not-helpful feedback.
 ```
 ┌──────────────────────────────────────────┐
 │ ← Permissions                            │
-│ Why CallVault needs each one 📖          │
+│ Why callNest needs each one 📖          │
 ├──────────────────────────────────────────┤
 │ Updated 2026-02-04                       │
 │                                          │
 │ # Permissions                            │
-│ CallVault needs the following…           │
+│ callNest needs the following…           │
 │ - **READ_CALL_LOG** — to read your call  │
 │   history.                               │
 │ - **READ_CONTACTS** …                    │
@@ -1048,10 +1048,10 @@ Renders one markdown article and captures helpful/not-helpful feedback.
 
 ## 40.6 Copy table
 
-| Key | EN |
-|---|---|
-| docs.article.updated | Updated %s |
-| docs.feedback.q | Was this helpful? |
+| Key                  | EN                       |
+| -------------------- | ------------------------ |
+| docs.article.updated | Updated %s               |
+| docs.feedback.q      | Was this helpful?        |
 | docs.feedback.thanks | Thanks for the feedback. |
 
 ## 40.7 Cross-references
@@ -1071,7 +1071,7 @@ Shown the first time the user lands on Calls without the critical runtime permis
 ```
 ┌──────────────────────────────────────────┐
 │ ← Permissions                            │
-│ Why CallVault needs access 🔐            │
+│ Why callNest needs access 🔐            │
 ├──────────────────────────────────────────┤
 │ 📞  Phone state                          │
 │    To detect when you're on a call.      │
@@ -1091,7 +1091,7 @@ Shown the first time the user lands on Calls without the critical runtime permis
 
 ## 41.3 Components
 
-- `StandardPage("Permissions", "Why CallVault needs access", "🔐")`
+- `StandardPage("Permissions", "Why callNest needs access", "🔐")`
 - List of permission rows (icon + name + reason)
 - `NeoButton` Primary
 
@@ -1110,19 +1110,19 @@ Shown the first time the user lands on Calls without the critical runtime permis
 
 ## 41.6 Copy table
 
-| Key | EN |
-|---|---|
-| perm.title | Permissions |
-| perm.subtitle | Why CallVault needs access |
-| perm.phone_state | Phone state |
+| Key                  | EN                               |
+| -------------------- | -------------------------------- |
+| perm.title           | Permissions                      |
+| perm.subtitle        | Why callNest needs access        |
+| perm.phone_state     | Phone state                      |
 | perm.phone_state.why | To detect when you're on a call. |
-| perm.read_log | Read call log |
-| perm.read_log.why | To read your call history. |
-| perm.contacts | Contacts |
-| perm.contacts.why | To match numbers to names. |
-| perm.notif | Post notifications |
-| perm.notif.why | To remind you of follow-ups. |
-| perm.grant | Grant permissions |
+| perm.read_log        | Read call log                    |
+| perm.read_log.why    | To read your call history.       |
+| perm.contacts        | Contacts                         |
+| perm.contacts.why    | To match numbers to names.       |
+| perm.notif           | Post notifications               |
+| perm.notif.why       | To remind you of follow-ups.     |
+| perm.grant           | Grant permissions                |
 
 ## 41.7 Cross-references
 
@@ -1142,7 +1142,7 @@ Shown when permissions were permanently denied (Android "Don't ask again"). The 
 ┌──────────────────────────────────────────┐
 │ ← Permissions are blocked                │
 ├──────────────────────────────────────────┤
-│  CallVault can't run without phone,      │
+│  callNest can't run without phone,      │
 │  call log, and contacts access. Open     │
 │  System Settings to enable them.         │
 │                                          │
@@ -1168,15 +1168,15 @@ Shown when permissions were permanently denied (Android "Don't ask again"). The 
 
 ## 42.6 Copy table
 
-| Key | EN |
-|---|---|
-| perm.denied.title | Permissions are blocked |
-| perm.denied.body | CallVault can't run without phone, call log, and contacts access. Open System Settings to enable them. |
-| perm.denied.open | Open Settings |
+| Key               | EN                                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| perm.denied.title | Permissions are blocked                                                                               |
+| perm.denied.body  | callNest can't run without phone, call log, and contacts access. Open System Settings to enable them. |
+| perm.denied.open  | Open Settings                                                                                         |
 
 ---
 
-# 43 — Neo* component reference
+# 43 — Neo\* component reference
 
 This is the canonical catalog of every reusable UI primitive prefixed `Neo`. Use these — do not roll your own surfaces.
 
@@ -1198,11 +1198,11 @@ fun NeoSurface(
 )
 ```
 
-| Param | Notes |
-|---|---|
+| Param     | Notes                                                                 |
+| --------- | --------------------------------------------------------------------- |
 | elevation | `Flat`, `Raised`, `Sunken`. Maps to a paired light/dark shadow stack. |
-| shape | Defaults to a 16dp rounded card shape. |
-| pressed | When true, swaps to inverted (sunken) shadow stack. |
+| shape     | Defaults to a 16dp rounded card shape.                                |
+| pressed   | When true, swaps to inverted (sunken) shadow stack.                   |
 
 Rules:
 
@@ -1244,7 +1244,7 @@ Rules:
 
 States: default, pressed (NeoSurface sunken), disabled (alpha 0.6).
 
-Pitfalls: nesting `Modifier.clickable` *and* passing `onClick` doubles the ripple — pick one.
+Pitfalls: nesting `Modifier.clickable` _and_ passing `onClick` doubles the ripple — pick one.
 
 ## 43.3 NeoButton
 
@@ -1588,7 +1588,7 @@ fun StandardPage(
 )
 ```
 
-Rules: every leaf screen in CallVault uses StandardPage as its outermost composable (except Main, which uses MainScaffold).
+Rules: every leaf screen in callNest uses StandardPage as its outermost composable (except Main, which uses MainScaffold).
 
 ## 43.26 MainScaffold
 
@@ -1597,30 +1597,30 @@ Rules: every leaf screen in CallVault uses StandardPage as its outermost composa
 
 ## 43.27 Component matrix
 
-| Component | a11y | Theme tokens used |
-|---|---|---|
-| NeoSurface | n/a | bg, shadowLight, shadowDark |
-| NeoCard | role="button" if onClick | bg, shadow* |
-| NeoButton | role="button" | accent, onAccent, disabledAlpha |
-| NeoIconButton | contentDescription required | accent |
-| NeoChip | role="checkbox" | accent, surface |
-| NeoToggle | role="switch" | accent, track |
-| NeoSlider | role="slider" | accent |
-| NeoSearchBar | role="search" | bg, hint |
-| NeoFAB | role="button" | accent |
-| NeoTabBar | role="tablist" | accent |
-| NeoTopBar | landmark="banner" | bg |
-| NeoBottomSheet | trapFocus | bg, scrim |
-| NeoTextField | role="textbox" | bg, border, error |
-| NeoProgressBar | role="progressbar" | accent |
-| NeoLoader | role="progressbar" | accent |
-| NeoTopLineLoader | role="progressbar" | accent |
-| NeoBadge | role="status" | accent |
-| NeoAvatar | contentDescription | derived |
-| NeoDivider | n/a | divider |
-| NeoEmptyState | n/a | text |
-| NeoHelpIcon | role="button" | hint |
-| NeoDialog | role="alertdialog" | bg, scrim |
+| Component        | a11y                        | Theme tokens used               |
+| ---------------- | --------------------------- | ------------------------------- |
+| NeoSurface       | n/a                         | bg, shadowLight, shadowDark     |
+| NeoCard          | role="button" if onClick    | bg, shadow\*                    |
+| NeoButton        | role="button"               | accent, onAccent, disabledAlpha |
+| NeoIconButton    | contentDescription required | accent                          |
+| NeoChip          | role="checkbox"             | accent, surface                 |
+| NeoToggle        | role="switch"               | accent, track                   |
+| NeoSlider        | role="slider"               | accent                          |
+| NeoSearchBar     | role="search"               | bg, hint                        |
+| NeoFAB           | role="button"               | accent                          |
+| NeoTabBar        | role="tablist"              | accent                          |
+| NeoTopBar        | landmark="banner"           | bg                              |
+| NeoBottomSheet   | trapFocus                   | bg, scrim                       |
+| NeoTextField     | role="textbox"              | bg, border, error               |
+| NeoProgressBar   | role="progressbar"          | accent                          |
+| NeoLoader        | role="progressbar"          | accent                          |
+| NeoTopLineLoader | role="progressbar"          | accent                          |
+| NeoBadge         | role="status"               | accent                          |
+| NeoAvatar        | contentDescription          | derived                         |
+| NeoDivider       | n/a                         | divider                         |
+| NeoEmptyState    | n/a                         | text                            |
+| NeoHelpIcon      | role="button"               | hint                            |
+| NeoDialog        | role="alertdialog"          | bg, scrim                       |
 
 ## 43.28 Common pitfalls (across components)
 
@@ -1641,14 +1641,14 @@ Rules: every leaf screen in CallVault uses StandardPage as its outermost composa
 
 ## 44.2 Per-screen tone
 
-| Screen | Tone |
-|---|---|
-| Onboarding | Warm + reassuring |
-| Errors | Actionable; never blame the user |
-| Empty states | Light + actionable |
-| Settings | Descriptive + neutral |
-| Docs | Clear + hands-on |
-| Dialogs | Direct; no exclamations |
+| Screen       | Tone                             |
+| ------------ | -------------------------------- |
+| Onboarding   | Warm + reassuring                |
+| Errors       | Actionable; never blame the user |
+| Empty states | Light + actionable               |
+| Settings     | Descriptive + neutral            |
+| Docs         | Clear + hands-on                 |
+| Dialogs      | Direct; no exclamations          |
 
 ## 44.3 Patterns
 
@@ -1676,59 +1676,59 @@ Examples:
 
 ## 44.4 Bad → Good (50 examples)
 
-| Bad | Good |
-|---|---|
-| Oops! Something went wrong! | Couldn't load. Try again. |
-| Awesome! Saved! | Saved. |
-| Sync failed because the network could not be reached. | Couldn't sync. No internet. |
-| The note could not be deleted. | Couldn't delete the note. |
-| You have no calls. | No calls yet. |
-| Click here to grant permissions. | Grant permissions |
-| Are you sure you want to do this? | Reset all data? |
-| Yes | Reset |
-| No | Cancel |
-| Please enter a valid number. | Use digits only. |
-| Loading… please wait. | Loading… |
-| Your changes were saved successfully. | Saved. |
-| Your changes were not saved. | Couldn't save. Try again. |
-| Tap to add your first contact! | Add a contact |
-| You have not set up backups. | No backups yet. |
-| Backups are saved! | Backup created. |
-| Failed to export. | Couldn't export. Try again. |
-| There are no results matching your search. | No matches. |
-| Permissions are required for the app. | CallVault needs phone access. |
-| Couldn't load due to error 502. | Couldn't load. Try again. |
-| Are you really sure you want to delete this? | Delete this note? |
-| Hooray! | (omit) |
-| Update was a success. | Updated to v%s. |
-| Update was a failure. | Couldn't update. %s. |
-| Click here to retry. | Retry |
-| Settings saved successfully. | Saved. |
-| Network connection lost. | No internet. |
-| Hidden numbers found. | %d hidden numbers. |
-| Sync is in progress, please don't close the app. | Syncing… |
-| Backup file is corrupted. | Backup file is unreadable. |
-| Your phone might restrict background tasks. | Background tasks may be restricted by your phone. |
-| Tap below to continue. | Continue |
-| You have unsaved changes. | Unsaved changes. |
-| Field is required. | Required. |
-| Phone number must be valid. | Use a valid phone number. |
-| Please grant the permission to continue. | Grant permissions to continue. |
-| Notes was successfully cleared. | Notes cleared. |
-| Failure during contact import. | Couldn't import contacts. |
-| File too big! | File is too large. |
-| Calculation error occurred. | Couldn't compute the score. |
-| You're now on Beta channel! | Switched to Beta. |
-| Update server unreachable. | Couldn't reach update server. |
-| All set! | Done. |
-| Operation failed. | Couldn't complete. Try again. |
-| It worked! | Done. |
-| Please give us a moment. | One moment… |
-| Apologies for the inconvenience. | (omit) |
-| You're all good to go. | Ready. |
-| Save was performed. | Saved. |
-| Could not load the document. | Couldn't open the document. |
-| Failed: timeout. | Timed out. Try again. |
+| Bad                                                   | Good                                              |
+| ----------------------------------------------------- | ------------------------------------------------- |
+| Oops! Something went wrong!                           | Couldn't load. Try again.                         |
+| Awesome! Saved!                                       | Saved.                                            |
+| Sync failed because the network could not be reached. | Couldn't sync. No internet.                       |
+| The note could not be deleted.                        | Couldn't delete the note.                         |
+| You have no calls.                                    | No calls yet.                                     |
+| Click here to grant permissions.                      | Grant permissions                                 |
+| Are you sure you want to do this?                     | Reset all data?                                   |
+| Yes                                                   | Reset                                             |
+| No                                                    | Cancel                                            |
+| Please enter a valid number.                          | Use digits only.                                  |
+| Loading… please wait.                                 | Loading…                                          |
+| Your changes were saved successfully.                 | Saved.                                            |
+| Your changes were not saved.                          | Couldn't save. Try again.                         |
+| Tap to add your first contact!                        | Add a contact                                     |
+| You have not set up backups.                          | No backups yet.                                   |
+| Backups are saved!                                    | Backup created.                                   |
+| Failed to export.                                     | Couldn't export. Try again.                       |
+| There are no results matching your search.            | No matches.                                       |
+| Permissions are required for the app.                 | callNest needs phone access.                      |
+| Couldn't load due to error 502.                       | Couldn't load. Try again.                         |
+| Are you really sure you want to delete this?          | Delete this note?                                 |
+| Hooray!                                               | (omit)                                            |
+| Update was a success.                                 | Updated to v%s.                                   |
+| Update was a failure.                                 | Couldn't update. %s.                              |
+| Click here to retry.                                  | Retry                                             |
+| Settings saved successfully.                          | Saved.                                            |
+| Network connection lost.                              | No internet.                                      |
+| Hidden numbers found.                                 | %d hidden numbers.                                |
+| Sync is in progress, please don't close the app.      | Syncing…                                          |
+| Backup file is corrupted.                             | Backup file is unreadable.                        |
+| Your phone might restrict background tasks.           | Background tasks may be restricted by your phone. |
+| Tap below to continue.                                | Continue                                          |
+| You have unsaved changes.                             | Unsaved changes.                                  |
+| Field is required.                                    | Required.                                         |
+| Phone number must be valid.                           | Use a valid phone number.                         |
+| Please grant the permission to continue.              | Grant permissions to continue.                    |
+| Notes was successfully cleared.                       | Notes cleared.                                    |
+| Failure during contact import.                        | Couldn't import contacts.                         |
+| File too big!                                         | File is too large.                                |
+| Calculation error occurred.                           | Couldn't compute the score.                       |
+| You're now on Beta channel!                           | Switched to Beta.                                 |
+| Update server unreachable.                            | Couldn't reach update server.                     |
+| All set!                                              | Done.                                             |
+| Operation failed.                                     | Couldn't complete. Try again.                     |
+| It worked!                                            | Done.                                             |
+| Please give us a moment.                              | One moment…                                       |
+| Apologies for the inconvenience.                      | (omit)                                            |
+| You're all good to go.                                | Ready.                                            |
+| Save was performed.                                   | Saved.                                            |
+| Could not load the document.                          | Couldn't open the document.                       |
+| Failed: timeout.                                      | Timed out. Try again.                             |
 
 ## 44.5 Punctuation rules
 
@@ -1744,10 +1744,10 @@ Examples:
 
 ## 44.7 Plural rules
 
-| One | Other |
-|---|---|
-| 1 call | %d calls |
-| 1 day | %d days |
+| One      | Other      |
+| -------- | ---------- |
+| 1 call   | %d calls   |
+| 1 day    | %d days    |
 | 1 minute | %d minutes |
 
 ## 44.8 Cross-references
@@ -1760,56 +1760,56 @@ Examples:
 
 ## 45.1 Pattern overview
 
-| State | Component | When |
-|---|---|---|
-| Empty | NeoEmptyState | Query returned no rows |
-| Loading | NeoLoader / NeoTopLineLoader / skeleton | Async fetch in flight |
-| Error | NeoEmptyState (sad icon) / Snackbar / inline | Async fetch failed |
+| State   | Component                                    | When                   |
+| ------- | -------------------------------------------- | ---------------------- |
+| Empty   | NeoEmptyState                                | Query returned no rows |
+| Loading | NeoLoader / NeoTopLineLoader / skeleton      | Async fetch in flight  |
+| Error   | NeoEmptyState (sad icon) / Snackbar / inline | Async fetch failed     |
 
 ## 45.2 Empty state catalog
 
-| Screen | Title | Body | CTA |
-|---|---|---|---|
-| Calls | No calls yet | New calls will appear here. | (none) |
-| Calls (filtered) | No matches | Try a different filter. | Clear filters |
-| Search | No matches | Try a shorter query. | (none) |
-| MyContacts | No contacts | Saved contacts appear here. | Sync now |
-| Inquiries | No inquiries yet | Auto-saved numbers appear here. | (none) |
-| Notes | No notes | Add a note to remember context. | Add note |
-| FollowUps | No follow-ups | Schedule one from a call. | (none) |
-| Tags | No tags | Tags help you filter calls. | New tag |
-| Rules | No rules | Auto-tag rules go here. | New rule |
-| Backups | No backups | Auto-backup creates one daily. | Back up now |
-| Stats | No data yet | Stats appear after a few calls. | (none) |
-| Updates | No updates | You're on the latest version. | Check now |
-| Docs | No help articles | Help articles weren't bundled. | (none) |
+| Screen           | Title            | Body                            | CTA           |
+| ---------------- | ---------------- | ------------------------------- | ------------- |
+| Calls            | No calls yet     | New calls will appear here.     | (none)        |
+| Calls (filtered) | No matches       | Try a different filter.         | Clear filters |
+| Search           | No matches       | Try a shorter query.            | (none)        |
+| MyContacts       | No contacts      | Saved contacts appear here.     | Sync now      |
+| Inquiries        | No inquiries yet | Auto-saved numbers appear here. | (none)        |
+| Notes            | No notes         | Add a note to remember context. | Add note      |
+| FollowUps        | No follow-ups    | Schedule one from a call.       | (none)        |
+| Tags             | No tags          | Tags help you filter calls.     | New tag       |
+| Rules            | No rules         | Auto-tag rules go here.         | New rule      |
+| Backups          | No backups       | Auto-backup creates one daily.  | Back up now   |
+| Stats            | No data yet      | Stats appear after a few calls. | (none)        |
+| Updates          | No updates       | You're on the latest version.   | Check now     |
+| Docs             | No help articles | Help articles weren't bundled.  | (none)        |
 
 ## 45.3 Loading state catalog
 
-| Screen | Style | Why |
-|---|---|---|
-| Calls | NeoTopLineLoader during sync, list visible | Don't block; user can browse cached |
-| Inquiries | NeoTopLineLoader | Same |
-| MyContacts | NeoTopLineLoader | Same |
-| Stats | Full-page skeleton | Initial load only |
-| Backups | NeoLoader inline on row | One-off action |
-| Update download | NeoProgressBar (determinate) | Has known progress |
-| Update install | NeoLoader (indeterminate) | Unknown duration |
-| Search | NeoLoader inline next to bar | Debounced |
-| Onboarding | NeoLoader full-page | First sync |
+| Screen          | Style                                      | Why                                 |
+| --------------- | ------------------------------------------ | ----------------------------------- |
+| Calls           | NeoTopLineLoader during sync, list visible | Don't block; user can browse cached |
+| Inquiries       | NeoTopLineLoader                           | Same                                |
+| MyContacts      | NeoTopLineLoader                           | Same                                |
+| Stats           | Full-page skeleton                         | Initial load only                   |
+| Backups         | NeoLoader inline on row                    | One-off action                      |
+| Update download | NeoProgressBar (determinate)               | Has known progress                  |
+| Update install  | NeoLoader (indeterminate)                  | Unknown duration                    |
+| Search          | NeoLoader inline next to bar               | Debounced                           |
+| Onboarding      | NeoLoader full-page                        | First sync                          |
 
 ## 45.4 Error state catalog
 
-| Screen | Style | Copy |
-|---|---|---|
-| Calls (sync error) | Snackbar | Couldn't sync. %s. [Retry] |
-| MyContacts | Snackbar | Couldn't sync. [Retry] |
-| Backup creation | Snackbar | Couldn't create backup. [Retry] |
-| Backup restore | Full-page | Couldn't restore. The file is unreadable. |
-| Update download | Full-page | Couldn't download. %s. [Retry] |
-| Update install | Full-page | Couldn't install. %s. [Retry] |
-| Docs article | Inline fallback | Couldn't render this article. |
-| Settings write | Snackbar | Couldn't save. Try again. |
+| Screen             | Style           | Copy                                      |
+| ------------------ | --------------- | ----------------------------------------- |
+| Calls (sync error) | Snackbar        | Couldn't sync. %s. [Retry]                |
+| MyContacts         | Snackbar        | Couldn't sync. [Retry]                    |
+| Backup creation    | Snackbar        | Couldn't create backup. [Retry]           |
+| Backup restore     | Full-page       | Couldn't restore. The file is unreadable. |
+| Update download    | Full-page       | Couldn't download. %s. [Retry]            |
+| Update install     | Full-page       | Couldn't install. %s. [Retry]             |
+| Docs article       | Inline fallback | Couldn't render this article.             |
+| Settings write     | Snackbar        | Couldn't save. Try again.                 |
 
 ## 45.5 Snackbar guidelines
 
@@ -1834,34 +1834,34 @@ Examples:
 
 ## 46.1 v1.1 (next minor)
 
-| Item | Notes |
-|---|---|
-| 6 missing stats charts | Hourly distribution, top callers, week-over-week, missed-call ratio, average duration, hot-lead conversion. |
-| PDF chart embedding | Export of stats screen with charts as a single PDF. |
-| NoteEditorDialog → NeoDialog | Migrate from raw AlertDialog. |
-| TagEditorDialog → NeoDialog | Same. |
-| Padding/empty-state audit | Walk every leaf screen, ensure StandardPage padding consistent. |
-| Real release keystore | Replace debug keystore for sideload distribution. |
-| Manifest hosting | Host `versions.json` at a stable URL with signed checksums. |
-| Launcher icon densities | Add xxxhdpi + adaptive icon foreground/background. |
-| @Preview audit | Every Composable in `ui/components/neo/*` must have a @Preview with both themes. |
-| ViewModel test coverage | Target ≥ 70% for VM code. |
-| DAO instrumentation tests | Cover migrations + complex queries. |
-| R8 shrink | Enable; verify no proguard issues with Room/DataStore. |
-| Lint sweep | Address all warnings, then enforce in CI. |
+| Item                         | Notes                                                                                                       |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 6 missing stats charts       | Hourly distribution, top callers, week-over-week, missed-call ratio, average duration, hot-lead conversion. |
+| PDF chart embedding          | Export of stats screen with charts as a single PDF.                                                         |
+| NoteEditorDialog → NeoDialog | Migrate from raw AlertDialog.                                                                               |
+| TagEditorDialog → NeoDialog  | Same.                                                                                                       |
+| Padding/empty-state audit    | Walk every leaf screen, ensure StandardPage padding consistent.                                             |
+| Real release keystore        | Replace debug keystore for sideload distribution.                                                           |
+| Manifest hosting             | Host `versions.json` at a stable URL with signed checksums.                                                 |
+| Launcher icon densities      | Add xxxhdpi + adaptive icon foreground/background.                                                          |
+| @Preview audit               | Every Composable in `ui/components/neo/*` must have a @Preview with both themes.                            |
+| ViewModel test coverage      | Target ≥ 70% for VM code.                                                                                   |
+| DAO instrumentation tests    | Cover migrations + complex queries.                                                                         |
+| R8 shrink                    | Enable; verify no proguard issues with Room/DataStore.                                                      |
+| Lint sweep                   | Address all warnings, then enforce in CI.                                                                   |
 
 ## 46.2 v2.0 (major, deferred)
 
-| Item | Notes |
-|---|---|
-| Dark mode | Two new shadow stacks; theme toggle in Display group. |
-| Multi-language | Hindi + ES + AR; ensure all strings in `strings.xml`. |
+| Item                   | Notes                                                         |
+| ---------------------- | ------------------------------------------------------------- |
+| Dark mode              | Two new shadow stacks; theme toggle in Display group.         |
+| Multi-language         | Hindi + ES + AR; ensure all strings in `strings.xml`.         |
 | Voice-to-text on notes | Tap mic in NoteEditor; speech-to-text via `RecognizerIntent`. |
-| WhatsApp integration | LOCKED DEFERRED. |
-| Call recording | LOCKED DEFERRED (regulatory complexity). |
-| Tablet layout | Two-pane on width ≥ 600dp. |
-| Wear OS companion | Quick "log a follow-up" surface. |
-| Web mirror (read-only) | Encrypted backup syncs to a static viewer. |
+| WhatsApp integration   | LOCKED DEFERRED.                                              |
+| Call recording         | LOCKED DEFERRED (regulatory complexity).                      |
+| Tablet layout          | Two-pane on width ≥ 600dp.                                    |
+| Wear OS companion      | Quick "log a follow-up" surface.                              |
+| Web mirror (read-only) | Encrypted backup syncs to a static viewer.                    |
 
 ## 46.3 Tech debt watchlist
 
@@ -1880,136 +1880,136 @@ Examples:
 
 # Appendix A — Glossary
 
-| Term | Definition |
-|---|---|
-| Inquiry | Auto-saved unsaved number, named with prefix template. |
-| Bucket | Cold/Warm/Hot bin in lead scoring. |
-| Manifest | The `versions.json` file the self-update worker fetches. |
-| Skipped version | A versionCode the user dismissed; not re-prompted. |
-| OEM battery setup | OEM-specific path to whitelist CallVault from background restrictions. |
-| Sideload | Install via APK, not Play Store. |
-| StandardPage | Outer composable for every leaf screen. |
-| Neo* | Neumorphic component family. |
+| Term              | Definition                                                            |
+| ----------------- | --------------------------------------------------------------------- |
+| Inquiry           | Auto-saved unsaved number, named with prefix template.                |
+| Bucket            | Cold/Warm/Hot bin in lead scoring.                                    |
+| Manifest          | The `versions.json` file the self-update worker fetches.              |
+| Skipped version   | A versionCode the user dismissed; not re-prompted.                    |
+| OEM battery setup | OEM-specific path to whitelist callNest from background restrictions. |
+| Sideload          | Install via APK, not Play Store.                                      |
+| StandardPage      | Outer composable for every leaf screen.                               |
+| Neo\*             | Neumorphic component family.                                          |
 
 # Appendix B — Settings keys cheat sheet
 
-| Key | Type | Default |
-|---|---|---|
-| sync.auto.enabled | Boolean | true |
-| sync.interval | String | MIN_15 |
-| sync.constraint.wifi | Boolean | false |
-| sync.constraint.charging | Boolean | false |
-| sync.on_open | Boolean | true |
-| sync.on_reboot | Boolean | false |
-| autosave.enabled | Boolean | true |
-| autosave.prefix | String | callVault |
-| autosave.include_sim | Boolean | true |
-| autosave.suffix | String | "" |
-| autosave.group | String | CallVault Inquiries |
-| autosave.label | String | MOBILE |
-| autosave.label.custom | String | "" |
-| autosave.region | String | IN |
-| realtime.bubble.enabled | Boolean | true |
-| realtime.popup.enabled | Boolean | true |
-| realtime.popup.timeout_s | Int | 8 |
-| realtime.popup.only_unsaved | Boolean | true |
-| notif.followup_reminders | Boolean | true |
-| notif.daily_summary | Boolean | false |
-| notif.update_alerts | Boolean | true |
-| scoring.enabled | Boolean | true |
-| scoring.weight.frequency | Int | 25 |
-| scoring.weight.duration | Int | 20 |
-| scoring.weight.recency | Int | 25 |
-| scoring.bonus.followup | Int | 10 |
-| scoring.bonus.customer_tag | Int | 20 |
-| scoring.bonus.saved_contact | Int | 15 |
-| backup.auto.enabled | Boolean | true |
-| backup.retention.days | Int | 7 |
-| display.default_tab | String | CALLS |
-| display.pin_unsaved | Boolean | true |
-| display.group_by_date | Boolean | true |
-| privacy.block_hidden | Boolean | false |
-| privacy.hide_blocked | Boolean | true |
-| update.channel | String | STABLE |
-| update.auto_check | Boolean | true |
+| Key                         | Type    | Default            |
+| --------------------------- | ------- | ------------------ |
+| sync.auto.enabled           | Boolean | true               |
+| sync.interval               | String  | MIN_15             |
+| sync.constraint.wifi        | Boolean | false              |
+| sync.constraint.charging    | Boolean | false              |
+| sync.on_open                | Boolean | true               |
+| sync.on_reboot              | Boolean | false              |
+| autosave.enabled            | Boolean | true               |
+| autosave.prefix             | String  | callNest           |
+| autosave.include_sim        | Boolean | true               |
+| autosave.suffix             | String  | ""                 |
+| autosave.group              | String  | callNest Inquiries |
+| autosave.label              | String  | MOBILE             |
+| autosave.label.custom       | String  | ""                 |
+| autosave.region             | String  | IN                 |
+| realtime.bubble.enabled     | Boolean | true               |
+| realtime.popup.enabled      | Boolean | true               |
+| realtime.popup.timeout_s    | Int     | 8                  |
+| realtime.popup.only_unsaved | Boolean | true               |
+| notif.followup_reminders    | Boolean | true               |
+| notif.daily_summary         | Boolean | false              |
+| notif.update_alerts         | Boolean | true               |
+| scoring.enabled             | Boolean | true               |
+| scoring.weight.frequency    | Int     | 25                 |
+| scoring.weight.duration     | Int     | 20                 |
+| scoring.weight.recency      | Int     | 25                 |
+| scoring.bonus.followup      | Int     | 10                 |
+| scoring.bonus.customer_tag  | Int     | 20                 |
+| scoring.bonus.saved_contact | Int     | 15                 |
+| backup.auto.enabled         | Boolean | true               |
+| backup.retention.days       | Int     | 7                  |
+| display.default_tab         | String  | CALLS              |
+| display.pin_unsaved         | Boolean | true               |
+| display.group_by_date       | Boolean | true               |
+| privacy.block_hidden        | Boolean | false              |
+| privacy.hide_blocked        | Boolean | true               |
+| update.channel              | String  | STABLE             |
+| update.auto_check           | Boolean | true               |
 
 # Appendix C — Worker matrix
 
-| Worker | Periodicity | Trigger | Constraints |
-|---|---|---|---|
-| PeriodicSyncWorker | per `sync.interval` | sync master ON | wifi/charging optional |
-| SyncOnceWorker | one-shot | app open / reboot / pull-to-refresh | network |
-| FollowUpReminderWorker | 15 min | follow-ups exist | none |
-| DailySummaryWorker | 24 h | notif.daily_summary | none |
-| LeadScoreRecomputeWorker | one-shot | weights changed | none |
-| DailyBackupWorker | 24 h | backup.auto.enabled | storage available |
-| UpdateCheckWorker | 7 d | update.auto_check | network |
-| DownloadAndInstallUpdateUseCase | one-shot | user tap | network |
+| Worker                          | Periodicity         | Trigger                             | Constraints            |
+| ------------------------------- | ------------------- | ----------------------------------- | ---------------------- |
+| PeriodicSyncWorker              | per `sync.interval` | sync master ON                      | wifi/charging optional |
+| SyncOnceWorker                  | one-shot            | app open / reboot / pull-to-refresh | network                |
+| FollowUpReminderWorker          | 15 min              | follow-ups exist                    | none                   |
+| DailySummaryWorker              | 24 h                | notif.daily_summary                 | none                   |
+| LeadScoreRecomputeWorker        | one-shot            | weights changed                     | none                   |
+| DailyBackupWorker               | 24 h                | backup.auto.enabled                 | storage available      |
+| UpdateCheckWorker               | 7 d                 | update.auto_check                   | network                |
+| DownloadAndInstallUpdateUseCase | one-shot            | user tap                            | network                |
 
 # Appendix D — Route map
 
-| Route | Screen |
-|---|---|
-| Main | MainScaffold (Calls + Inquiries + MyContacts) |
-| Settings | Settings master (§33) |
-| AutoSaveSettings | §34 |
-| RealTimeSettings | §35 |
-| LeadScoringSettings | §36 |
-| AutoTagRules | Part 04 §22 |
-| Backup | Part 05 §27 |
-| UpdateSettings | §37 |
-| UpdateAvailable | §38 |
-| DocsList | §39 |
-| DocsArticle/{slug} | §40 |
-| PermissionRationale | §41 |
-| PermissionDenied | §42 |
+| Route               | Screen                                        |
+| ------------------- | --------------------------------------------- |
+| Main                | MainScaffold (Calls + Inquiries + MyContacts) |
+| Settings            | Settings master (§33)                         |
+| AutoSaveSettings    | §34                                           |
+| RealTimeSettings    | §35                                           |
+| LeadScoringSettings | §36                                           |
+| AutoTagRules        | Part 04 §22                                   |
+| Backup              | Part 05 §27                                   |
+| UpdateSettings      | §37                                           |
+| UpdateAvailable     | §38                                           |
+| DocsList            | §39                                           |
+| DocsArticle/{slug}  | §40                                           |
+| PermissionRationale | §41                                           |
+| PermissionDenied    | §42                                           |
 
 # Appendix E — Theme tokens
 
-| Token | Light | Dark (v2.0) |
-|---|---|---|
-| bg | #E6E9EF | #1F2429 |
-| surface | #EEF1F6 | #232930 |
-| accent | #4F6BFF | #5C7BFF |
-| onAccent | #FFFFFF | #FFFFFF |
-| text | #1B2230 | #E6E9EF |
-| textMuted | #6B7585 | #98A2B3 |
-| divider | #D0D6E0 | #2C333B |
-| shadowLight | #FFFFFF | #2A3138 |
-| shadowDark | #B8C0CC | #14181C |
-| error | #D14343 | #E76A6A |
-| warn | #C68B16 | #E8B14A |
-| success | #2E8C57 | #4FB37C |
+| Token       | Light   | Dark (v2.0) |
+| ----------- | ------- | ----------- |
+| bg          | #E6E9EF | #1F2429     |
+| surface     | #EEF1F6 | #232930     |
+| accent      | #4F6BFF | #5C7BFF     |
+| onAccent    | #FFFFFF | #FFFFFF     |
+| text        | #1B2230 | #E6E9EF     |
+| textMuted   | #6B7585 | #98A2B3     |
+| divider     | #D0D6E0 | #2C333B     |
+| shadowLight | #FFFFFF | #2A3138     |
+| shadowDark  | #B8C0CC | #14181C     |
+| error       | #D14343 | #E76A6A     |
+| warn        | #C68B16 | #E8B14A     |
+| success     | #2E8C57 | #4FB37C     |
 
 # Appendix F — File path index for Part 06
 
-| Item | Path |
-|---|---|
-| SettingsViewModel | `ui/settings/SettingsViewModel.kt` |
-| AutoSaveSettingsViewModel | `ui/settings/AutoSaveSettingsViewModel.kt` |
-| RealTimeSettingsViewModel | `ui/settings/RealTimeSettingsViewModel.kt` |
-| LeadScoringSettingsViewModel | `ui/settings/LeadScoringSettingsViewModel.kt` |
-| UpdateSettingsViewModel | `ui/settings/UpdateSettingsViewModel.kt` |
-| UpdateAvailableViewModel | `ui/update/UpdateAvailableViewModel.kt` |
-| DocsViewModel | `ui/docs/DocsViewModel.kt` |
-| AssetDocsLoader | `data/docs/AssetDocsLoader.kt` |
-| MarkdownRenderer | `ui/components/MarkdownRenderer.kt` |
-| ResetAllDataUseCase | `domain/reset/ResetAllDataUseCase.kt` |
-| LeadScoreRecomputeWorker | `work/LeadScoreRecomputeWorker.kt` |
-| DailySummaryWorker | `work/DailySummaryWorker.kt` |
-| DailyBackupWorker | `work/DailyBackupWorker.kt` |
-| UpdateCheckWorker | `work/UpdateCheckWorker.kt` |
+| Item                            | Path                                               |
+| ------------------------------- | -------------------------------------------------- |
+| SettingsViewModel               | `ui/settings/SettingsViewModel.kt`                 |
+| AutoSaveSettingsViewModel       | `ui/settings/AutoSaveSettingsViewModel.kt`         |
+| RealTimeSettingsViewModel       | `ui/settings/RealTimeSettingsViewModel.kt`         |
+| LeadScoringSettingsViewModel    | `ui/settings/LeadScoringSettingsViewModel.kt`      |
+| UpdateSettingsViewModel         | `ui/settings/UpdateSettingsViewModel.kt`           |
+| UpdateAvailableViewModel        | `ui/update/UpdateAvailableViewModel.kt`            |
+| DocsViewModel                   | `ui/docs/DocsViewModel.kt`                         |
+| AssetDocsLoader                 | `data/docs/AssetDocsLoader.kt`                     |
+| MarkdownRenderer                | `ui/components/MarkdownRenderer.kt`                |
+| ResetAllDataUseCase             | `domain/reset/ResetAllDataUseCase.kt`              |
+| LeadScoreRecomputeWorker        | `work/LeadScoreRecomputeWorker.kt`                 |
+| DailySummaryWorker              | `work/DailySummaryWorker.kt`                       |
+| DailyBackupWorker               | `work/DailyBackupWorker.kt`                        |
+| UpdateCheckWorker               | `work/UpdateCheckWorker.kt`                        |
 | DownloadAndInstallUpdateUseCase | `domain/update/DownloadAndInstallUpdateUseCase.kt` |
-| UpdateInstaller | `domain/update/UpdateInstaller.kt` |
-| PermissionManager | `permission/PermissionManager.kt` |
-| RealTimeServiceController | `realtime/RealTimeServiceController.kt` |
-| ContactGroupManager | `data/contacts/ContactGroupManager.kt` |
-| AutoSaveNameBuilder | `domain/autosave/AutoSaveNameBuilder.kt` |
+| UpdateInstaller                 | `domain/update/UpdateInstaller.kt`                 |
+| PermissionManager               | `permission/PermissionManager.kt`                  |
+| RealTimeServiceController       | `realtime/RealTimeServiceController.kt`            |
+| ContactGroupManager             | `data/contacts/ContactGroupManager.kt`             |
+| AutoSaveNameBuilder             | `domain/autosave/AutoSaveNameBuilder.kt`           |
 
 # Appendix G — Ordered checklist for a from-scratch rebuild
 
 1. Build NeoTheme + tokens (Appendix E).
-2. Build Neo* components in §43 order; @Preview each.
+2. Build Neo\* components in §43 order; @Preview each.
 3. Build StandardPage + MainScaffold.
 4. Wire SettingsDataStore + key constants (Appendix B).
 5. Implement Settings master (§33) — all groups, no sub-screens yet.
@@ -2047,25 +2047,25 @@ Examples:
 
 # Appendix J — Performance budgets
 
-| Surface | Budget |
-|---|---|
-| Settings master first frame | < 80 ms |
-| AutoSaveSettings preview recompute per keystroke | < 4 ms |
-| LeadScoreRecomputeWorker @ 10k contacts | < 8 s, yields every 500 |
-| DocsList parse 16 articles | < 60 ms |
-| UpdateCheckWorker | < 2 s typical |
+| Surface                                          | Budget                  |
+| ------------------------------------------------ | ----------------------- |
+| Settings master first frame                      | < 80 ms                 |
+| AutoSaveSettings preview recompute per keystroke | < 4 ms                  |
+| LeadScoreRecomputeWorker @ 10k contacts          | < 8 s, yields every 500 |
+| DocsList parse 16 articles                       | < 60 ms                 |
+| UpdateCheckWorker                                | < 2 s typical           |
 
 # Appendix K — Telemetry events (privacy-safe; locally aggregated only)
 
-| Event | When | Payload |
-|---|---|---|
-| settings_toggle | any toggle flip | key, value |
-| autosave_preview | preview recompute | (no payload, count only) |
-| update_check | worker run | result (up_to_date/available/error) |
-| update_install | install attempt | result |
-| docs_open | article opened | slug |
-| docs_feedback | feedback tap | slug, helpful |
-| reset_data | reset complete | (no payload) |
+| Event            | When              | Payload                             |
+| ---------------- | ----------------- | ----------------------------------- |
+| settings_toggle  | any toggle flip   | key, value                          |
+| autosave_preview | preview recompute | (no payload, count only)            |
+| update_check     | worker run        | result (up_to_date/available/error) |
+| update_install   | install attempt   | result                              |
+| docs_open        | article opened    | slug                                |
+| docs_feedback    | feedback tap      | slug, helpful                       |
+| reset_data       | reset complete    | (no payload)                        |
 
 > Note: telemetry stays on-device unless the user opts in to share diagnostics in a future v1.1 setting.
 
@@ -2077,17 +2077,17 @@ Examples:
 
 # Appendix M — Error code reference
 
-| Code | Where | Copy |
-|---|---|---|
-| SYNC_E_NET | sync | No internet. |
-| SYNC_E_PERM | sync | Permissions are blocked. |
-| SYNC_E_DB | sync | Database is busy. Try again. |
-| UPD_E_NET | update | Couldn't reach update server. |
-| UPD_E_MANIFEST | update | Update server returned bad data. |
-| UPD_E_SHA | update | Checksum mismatch. |
-| UPD_E_INSTALL | update | Couldn't install. |
-| BACKUP_E_IO | backup | Couldn't write backup file. |
-| BACKUP_E_RESTORE | backup | Backup file is unreadable. |
+| Code             | Where  | Copy                             |
+| ---------------- | ------ | -------------------------------- |
+| SYNC_E_NET       | sync   | No internet.                     |
+| SYNC_E_PERM      | sync   | Permissions are blocked.         |
+| SYNC_E_DB        | sync   | Database is busy. Try again.     |
+| UPD_E_NET        | update | Couldn't reach update server.    |
+| UPD_E_MANIFEST   | update | Update server returned bad data. |
+| UPD_E_SHA        | update | Checksum mismatch.               |
+| UPD_E_INSTALL    | update | Couldn't install.                |
+| BACKUP_E_IO      | backup | Couldn't write backup file.      |
+| BACKUP_E_RESTORE | backup | Backup file is unreadable.       |
 
 # Appendix N — Final remarks
 

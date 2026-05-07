@@ -4,13 +4,13 @@ This is the equivalent of installing Node + cloning the repo + `npm install`. Yo
 
 ## What you need installed
 
-| Tool | Version | What it does | React/Next analogue |
-|------|---------|--------------|---------------------|
-| **JDK 17** | 17.x | Java runtime — Kotlin compiles to JVM bytecode | Node |
-| **Android Studio** | Ladybug (2024.2.x) or newer | The IDE. Bundles the Android SDK, emulator, debugger, profiler | VS Code + a bunch of extensions, all in one |
-| **Android SDK** | API 35 + API 26 platform | Compile target + min support | Browser baseline targets |
-| **Gradle** | 8.10.2 | Build tool — downloads deps, compiles, packages APK | Like `npm` + `webpack` rolled into one |
-| **A phone** (recommended) | Android 8+ | Real device for testing | A user's browser |
+| Tool                      | Version                     | What it does                                                   | React/Next analogue                         |
+| ------------------------- | --------------------------- | -------------------------------------------------------------- | ------------------------------------------- |
+| **JDK 17**                | 17.x                        | Java runtime — Kotlin compiles to JVM bytecode                 | Node                                        |
+| **Android Studio**        | Ladybug (2024.2.x) or newer | The IDE. Bundles the Android SDK, emulator, debugger, profiler | VS Code + a bunch of extensions, all in one |
+| **Android SDK**           | API 35 + API 26 platform    | Compile target + min support                                   | Browser baseline targets                    |
+| **Gradle**                | 8.10.2                      | Build tool — downloads deps, compiles, packages APK            | Like `npm` + `webpack` rolled into one      |
+| **A phone** (recommended) | Android 8+                  | Real device for testing                                        | A user's browser                            |
 
 You'll mostly interact with **Android Studio**. The rest is invoked under the hood.
 
@@ -28,6 +28,7 @@ java -version    # should print 17.x
 Download from https://developer.android.com/studio. Unzip, run `bin/studio.sh`. Pin to your dock.
 
 On first launch:
+
 1. It asks "Standard" or "Custom" install. Pick **Standard**.
 2. It downloads the Android SDK (~3 GB). Let it finish.
 3. It opens the welcome screen. Quit. We'll come back.
@@ -37,7 +38,7 @@ On first launch:
 Android Studio → **Open** → navigate to:
 
 ```
-/home/primathon/Documents/p_projet/a_APP/4. callVault
+/home/primathon/Documents/p_projet/a_APP/4. callNest
 ```
 
 Click the folder, then **OK**. (The folder name has a space and a dot — Android Studio handles it fine.)
@@ -51,7 +52,7 @@ This is the equivalent of `npm install` after `git clone`. ~500 MB downloaded.
 The Gradle wrapper jar isn't checked in (intentional). Generate it once:
 
 ```bash
-cd "/home/primathon/Documents/p_projet/a_APP/4. callVault"
+cd "/home/primathon/Documents/p_projet/a_APP/4. callNest"
 gradle wrapper --gradle-version 8.10.2
 ```
 
@@ -75,17 +76,19 @@ This will take **3–8 minutes** the first time. Subsequent builds are 30–90 s
 >
 > **`AndroidX dependencies, but the android.useAndroidX property is not enabled`**
 > A `gradle.properties` file at the project root is missing or doesn't set the AndroidX flag. Confirm it exists and has at minimum:
+>
 > ```properties
 > android.useAndroidX=true
 > android.enableJetifier=false
 > ```
+>
 > Then retry the build.
 >
 > **Gradle deprecation warning about a project name with `" "`, `/`, etc.**
-> Comes from running the *system* `gradle wrapper` command — harmless. Once `./gradlew` is used, you're on Gradle 8.10.2 and the warning goes away.
+> Comes from running the _system_ `gradle wrapper` command — harmless. Once `./gradlew` is used, you're on Gradle 8.10.2 and the warning goes away.
 >
 > **Other compile / KSP / Hilt errors**
-> Paste the full output to Claude — the `callvault-build-fixer` agent knows the common patterns.
+> Paste the full output to Claude — the `callNest-build-fixer` agent knows the common patterns.
 
 When it finishes:
 
@@ -95,13 +98,13 @@ ls -lh app/build/outputs/apk/debug/app-debug.apk
 
 You should see a ~20 MB APK. **You just built the app from source.** This is what you'll install on a phone.
 
-If the build fails: that's expected on a first try. Run the failing output through the `callvault-build-fixer` Claude agent — it knows the common KSP/Hilt/Room failure modes for this project.
+If the build fails: that's expected on a first try. Run the failing output through the `callNest-build-fixer` Claude agent — it knows the common KSP/Hilt/Room failure modes for this project.
 
 ## Step 6 — Get a phone or emulator
 
 ### Option A: Real phone (recommended)
 
-CallVault's whole job is reading the call log. An emulator has an empty call log, so most of the app will look broken.
+callNest's whole job is reading the call log. An emulator has an empty call log, so most of the app will look broken.
 
 1. On the phone: **Settings → About phone → tap Build number 7 times** → Developer options unlocks.
 2. **Settings → System → Developer options** → enable **USB debugging**.
@@ -126,12 +129,12 @@ You'll have a virtual phone running on your laptop. Install + launch from Androi
 
 ```bash
 ./gradlew installDebug
-adb shell am start -n com.callvault.app/.MainActivity
+adb shell am start -n com.callNest.app/.MainActivity
 ```
 
 The app should launch on your phone. You'll see the **Welcome** onboarding screen.
 
-If you see "App not installed", run `adb uninstall com.callvault.app` and retry.
+If you see "App not installed", run `adb uninstall com.callNest.app` and retry.
 
 ## You're set up.
 

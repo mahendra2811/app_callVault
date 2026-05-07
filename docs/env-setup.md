@@ -30,16 +30,18 @@ GOOGLE_OAUTH_WEB_CLIENT_ID=
 ## 1. Supabase — `SUPABASE_URL` and `SUPABASE_ANON_KEY`
 
 ### Create a project
+
 1. Go to https://supabase.com → **Sign in** (GitHub login is fastest).
 2. Click **New project**.
 3. Fill in:
-   - **Name**: `callvault` (anything you like)
+   - **Name**: `callNest` (anything you like)
    - **Database password**: generate and store in a password manager — you don't need it for the app, but you'll want it later for SQL access.
    - **Region**: pick the one closest to your users (for India: `Mumbai (ap-south-1)`).
    - **Plan**: Free.
 4. Click **Create new project**. Wait ~2 minutes for provisioning.
 
 ### Copy the keys
+
 1. In the project dashboard left sidebar → click the **gear icon** (Project settings) at the bottom.
 2. Click **API** (or **Data API** on newer dashboards).
 3. You'll see:
@@ -49,12 +51,15 @@ GOOGLE_OAUTH_WEB_CLIENT_ID=
      It's a long JWT starting with `eyJhbGciOi...`. **Use the `anon` key, NOT the `service_role` key.** The service_role key is a secret and must never go in a mobile app.
 
 ### Enable email auth
+
 1. Left sidebar → **Authentication** → **Providers**.
 2. **Email** is enabled by default. If you want to skip email confirmation during dev, click **Email** → toggle off **Confirm email** → Save. (Re-enable for production.)
 
 ### Run the device_tokens SQL
+
 1. Left sidebar → **SQL Editor** → **New query**.
 2. Paste this and click **Run**:
+
    ```sql
    create table public.device_tokens (
      id uuid primary key default gen_random_uuid(),
@@ -76,15 +81,17 @@ You're done with Supabase.
 ## 2. PostHog — `POSTHOG_API_KEY` and `POSTHOG_HOST`
 
 ### Create a project
+
 1. Go to https://posthog.com → **Get started — free**.
 2. Sign up (Google login is fastest).
 3. **IMPORTANT — choose region:**
    - **US Cloud** → host is `https://us.i.posthog.com`
    - **EU Cloud** → host is `https://eu.i.posthog.com`
-   For India users, US is fine; EU if you have GDPR concerns. **You can't change this later** without creating a new project, so pick deliberately.
-4. Project name: `CallVault`. Skip the onboarding wizard (or click through it — doesn't matter).
+     For India users, US is fine; EU if you have GDPR concerns. **You can't change this later** without creating a new project, so pick deliberately.
+4. Project name: `callNest`. Skip the onboarding wizard (or click through it — doesn't matter).
 
 ### Copy the keys
+
 1. Bottom-left → click your profile/project name → **Project settings**.
 2. Section **Project variables**:
    - **Project API Key** → copy into `POSTHOG_API_KEY`. Starts with `phc_`.
@@ -101,30 +108,35 @@ You're done with PostHog. Events will start appearing in **Activity → Live eve
 FCM doesn't use a `local.properties` value; it uses a JSON config file dropped into `app/`.
 
 ### Create a Firebase project
+
 1. Go to https://console.firebase.google.com → **Add project**.
-2. Name: `CallVault`. Continue.
+2. Name: `callNest`. Continue.
 3. **Disable Google Analytics** when prompted (you already have PostHog) — uncheck it. Continue.
 4. Wait for provisioning.
 
 ### Register the Android app
+
 1. In the project → click the **Android icon** ("Add app" → Android).
 2. Fill in:
-   - **Android package name**: `com.callvault.app`
-   - **App nickname**: `CallVault` (optional)
+   - **Android package name**: `com.callNest.app`
+   - **App nickname**: `callNest` (optional)
    - **Debug signing certificate SHA-1**: leave blank for now. (Required for Google sign-in later — when you activate it, run `./gradlew signingReport` and paste the debug SHA-1 here.)
 3. Click **Register app**.
 
 ### Optional: also register the debug variant
-The app uses `applicationIdSuffix = ".debug"` for debug builds, which means debug builds have package id `com.callvault.app.debug`. To get push working in debug builds too:
+
+The app uses `applicationIdSuffix = ".debug"` for debug builds, which means debug builds have package id `com.callNest.app.debug`. To get push working in debug builds too:
+
 1. In the same Firebase project → **Add app → Android** again.
-2. Package name: `com.callvault.app.debug`
+2. Package name: `com.callNest.app.debug`
 3. Same nickname + blank SHA-1.
 4. Click **Register app**.
 
 ### Download `google-services.json`
+
 1. After registration, Firebase prompts you to download `google-services.json`.
 2. Save it to: `<project-root>/app/google-services.json`
-   (so the path is `4. callVault/app/google-services.json`)
+   (so the path is `4. callNest/app/google-services.json`)
 3. The single file works for both production and `.debug` variants — Firebase merges both registrations into one JSON.
 4. **Do not commit this file** — add `app/google-services.json` to `.gitignore` if it isn't already.
 
@@ -141,7 +153,7 @@ Leave blank in `local.properties` until you're ready to activate Google sign-in.
 3. Top-left → **APIs & Services** → **Credentials**.
 4. Click **Create Credentials → OAuth client ID**.
 5. **Application type**: **Web application** (not Android — we use the Web client ID with Credential Manager).
-6. Name: `CallVault Web Client`. **Create**.
+6. Name: `callNest Web Client`. **Create**.
 7. Copy the **Client ID** (ends with `.apps.googleusercontent.com`) → paste into `GOOGLE_OAUTH_WEB_CLIENT_ID`.
 8. Open Supabase → **Authentication → Providers → Google** → enable, paste the same Web Client ID + the Client Secret from step 6 → Save.
 9. Then uncomment the Google sign-in body in `data/repository/AuthRepositoryImpl.kt` and the Google button in `ui/screen/auth/AuthScreen.kt`.
@@ -164,11 +176,11 @@ If any of those don't work, the app logs everything via Timber — filter Logcat
 
 ## Quick reference table
 
-| Key | Where to find it | Looks like |
-|---|---|---|
-| `SUPABASE_URL` | Supabase → Project settings → API → Project URL | `https://abcd...supabase.co` |
-| `SUPABASE_ANON_KEY` | Supabase → Project settings → API → `anon` `public` | `eyJhbGciOi...` (long JWT) |
-| `POSTHOG_API_KEY` | PostHog → Project settings → Project API Key | `phc_AbCdEf123...` |
-| `POSTHOG_HOST` | Region you chose at PostHog signup | `https://us.i.posthog.com` or `https://eu.i.posthog.com` |
-| `GOOGLE_OAUTH_WEB_CLIENT_ID` | Google Cloud → APIs & Services → Credentials → OAuth client (Web) | `1234-abc.apps.googleusercontent.com` |
-| `google-services.json` | Firebase Console → Project settings → Your apps → Android → Download | binary JSON file → `app/google-services.json` |
+| Key                          | Where to find it                                                     | Looks like                                               |
+| ---------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------- |
+| `SUPABASE_URL`               | Supabase → Project settings → API → Project URL                      | `https://abcd...supabase.co`                             |
+| `SUPABASE_ANON_KEY`          | Supabase → Project settings → API → `anon` `public`                  | `eyJhbGciOi...` (long JWT)                               |
+| `POSTHOG_API_KEY`            | PostHog → Project settings → Project API Key                         | `phc_AbCdEf123...`                                       |
+| `POSTHOG_HOST`               | Region you chose at PostHog signup                                   | `https://us.i.posthog.com` or `https://eu.i.posthog.com` |
+| `GOOGLE_OAUTH_WEB_CLIENT_ID` | Google Cloud → APIs & Services → Credentials → OAuth client (Web)    | `1234-abc.apps.googleusercontent.com`                    |
+| `google-services.json`       | Firebase Console → Project settings → Your apps → Android → Download | binary JSON file → `app/google-services.json`            |

@@ -21,11 +21,11 @@
 # --- kotlinx.serialization ---
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.AnnotationsKt
--keep,includedescriptorclasses class com.callvault.app.**$$serializer { *; }
--keepclassmembers class com.callvault.app.** {
+-keep,includedescriptorclasses class com.callNest.app.**$$serializer { *; }
+-keepclassmembers class com.callNest.app.** {
     *** Companion;
 }
--keepclasseswithmembers class com.callvault.app.** {
+-keepclasseswithmembers class com.callNest.app.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 
@@ -58,4 +58,4 @@
 -keep class androidx.compose.runtime.** { *; }
 
 # --- Project entities ---
--keep class com.callvault.app.data.local.entity.** { *; }
+-keep class com.callNest.app.data.local.entity.** { *; }

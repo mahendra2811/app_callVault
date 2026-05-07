@@ -1,8 +1,8 @@
-# CallVault — Architecture Overview
+# callNest — Architecture Overview
 
 ## Goals
 
-CallVault is a single-user, offline-first Android app for capturing every inbound/outbound call into a searchable inquiry CRM. It is sideloaded (no Play Store), targets Indian small-business operators handling 20–100 daily inquiry calls, and never leaves the device except to fetch self-update manifests.
+callNest is a single-user, offline-first Android app for capturing every inbound/outbound call into a searchable inquiry CRM. It is sideloaded (no Play Store), targets Indian small-business operators handling 20–100 daily inquiry calls, and never leaves the device except to fetch self-update manifests.
 
 ## Layering
 
@@ -26,14 +26,14 @@ CallVault is a single-user, offline-first Android app for capturing every inboun
 └──────────────────────────────────────────────────────────┘
 ```
 
-DI: Hilt across all three layers. Modules split into `AppModule`, `DatabaseModule`, `RepositoryModule`, `WorkerModule`. ViewModels are `@HiltViewModel`. Workers are `@HiltWorker` with `Configuration.Provider` wired in `CallVaultApp`.
+DI: Hilt across all three layers. Modules split into `AppModule`, `DatabaseModule`, `RepositoryModule`, `WorkerModule`. ViewModels are `@HiltViewModel`. Workers are `@HiltWorker` with `Configuration.Provider` wired in `callNestApp`.
 
 ## Data store
 
 - **Room v2** — 14 entities + 2 FTS4 tables (`call_fts`, `note_fts`). Cross-ref tables for `call_tag_cross_ref` and `rule_score_boosts`. Type converters minimal (primitives only). FTS rebuilt automatically by Room triggers; queries use prefix-match (`token*`) per §8.6.
 - **DataStore Preferences** — ~40 typed settings (sync, auto-save, real-time, lead scoring, backup, display, privacy, updates, onboarding flags).
 - **EncryptedSharedPreferences** — `backupPassphrase` only.
-- **Internal files** — backup blobs (`callvault-backup-YYYYMMDD-HHmm.cvb`) and downloaded APKs (`getExternalFilesDir(DOWNLOADS)`).
+- **Internal files** — backup blobs (`callNest-backup-YYYYMMDD-HHmm.cvb`) and downloaded APKs (`getExternalFilesDir(DOWNLOADS)`).
 
 ## Sync pipeline (§8.1)
 

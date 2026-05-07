@@ -1,8 +1,8 @@
-# CallVault APP-SPEC — Part 02
+# callNest APP-SPEC — Part 02
 
 ## Theme + Navigation + Splash + Onboarding
 
-> Audience: a UX engineer rebuilding the CallVault UI from scratch.
+> Audience: a UX engineer rebuilding the callNest UI from scratch.
 > Self-contained — every token, route, screen, and animation needed to
 > stand up the app's chrome (theme), wiring (navigation), entry point
 > (splash), and first-run flow (onboarding) is captured here.
@@ -14,7 +14,7 @@
 
 ## 7 — Theme: colors, typography, spacing, shapes, motion
 
-CallVault uses a single, locked **neumorphic** design language. There
+callNest uses a single, locked **neumorphic** design language. There
 is no dark mode. There is no dynamic color (Material You is explicitly
 disabled). Every screen is painted on a soft, near-white canvas with
 dual-shadow elevation and tightly bounded accent colors. The look is
@@ -23,7 +23,7 @@ this contract, or it does not ship.
 
 ### 7.1 Neumorphism principles
 
-The CallVault neumorphism is governed by five rules. Internalize
+The callNest neumorphism is governed by five rules. Internalize
 them; every visual decision falls out of them.
 
 **Rule 1 — One light source.**
@@ -31,12 +31,12 @@ There is exactly one virtual light in the world, and it sits at the
 top-left at 45° above the surface. Every shadow you draw must be
 consistent with that light. If you ever find yourself drawing a
 shadow on the top-left of a control, you are wrong: the top-left is
-the *highlight* side.
+the _highlight_ side.
 
 **Rule 2 — Base canvas is `#E8E8EC`.**
 The base canvas color is the floor of the design system. All
 elevation, both convex and concave, is computed relative to it. The
-canvas is *never* pure white and *never* pure gray; it is a blue-tinted
+canvas is _never_ pure white and _never_ pure gray; it is a blue-tinted
 near-white that gives the dual shadows enough contrast to read.
 
 **Rule 3 — Dual-shadow elevation.**
@@ -91,8 +91,8 @@ A concave control says "data goes in here".
 
 **Why dual-shadow, not Material elevation?**
 Material `Elevation` draws a single, downward, blurred shadow that
-implies a flat card hovering above a surface. CallVault's surfaces
-are not hovering; they are pressed *into* or *out of* the canvas.
+implies a flat card hovering above a surface. callNest's surfaces
+are not hovering; they are pressed _into_ or _out of_ the canvas.
 That illusion only works with dual shadows.
 
 ---
@@ -105,21 +105,21 @@ of truth — never use a raw hex literal in a composable.
 
 #### 7.2.1 Base + surface tokens
 
-| Token | Hex | Role | Where it is used | WCAG vs Base |
-|---|---|---|---|---|
-| `Base` | `#E8E8EC` | Canvas background | `Surface`, root scaffolds, splash post-system-splash | n/a (this *is* the base) |
-| `BasePressed` | `#E0E0E5` | Pressed-state for convex buttons / tappable cards | `NeoButton.pressed`, `NeoCard.onClick` press tint | 1.04:1 vs Base — barely darker, intentional |
-| `Light` | `#FFFFFF` | Top-left highlight shadow color | dual-shadow `Modifier.neoShadow(...)` light pass | 1.21:1 — used as shadow only, never as text bg |
-| `Dark` | `#A3B1C6` | Bottom-right lowlight shadow color | dual-shadow dark pass; outlines via `BorderSoft` | 2.18:1 |
-| `Raised` | `#EDEDF2` | Subtle elevated tint for cards that need to read clearly raised | `NeoCard` body, dialog surfaces | 1.04:1 |
-| `Inset` | `#DFDFE5` | Subtle inset tint for fields and tracks | `NeoTextField`, `NeoSlider` track, `NeoSearchBar` | 1.05:1 |
+| Token         | Hex       | Role                                                            | Where it is used                                     | WCAG vs Base                                   |
+| ------------- | --------- | --------------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------- |
+| `Base`        | `#E8E8EC` | Canvas background                                               | `Surface`, root scaffolds, splash post-system-splash | n/a (this _is_ the base)                       |
+| `BasePressed` | `#E0E0E5` | Pressed-state for convex buttons / tappable cards               | `NeoButton.pressed`, `NeoCard.onClick` press tint    | 1.04:1 vs Base — barely darker, intentional    |
+| `Light`       | `#FFFFFF` | Top-left highlight shadow color                                 | dual-shadow `Modifier.neoShadow(...)` light pass     | 1.21:1 — used as shadow only, never as text bg |
+| `Dark`        | `#A3B1C6` | Bottom-right lowlight shadow color                              | dual-shadow dark pass; outlines via `BorderSoft`     | 2.18:1                                         |
+| `Raised`      | `#EDEDF2` | Subtle elevated tint for cards that need to read clearly raised | `NeoCard` body, dialog surfaces                      | 1.04:1                                         |
+| `Inset`       | `#DFDFE5` | Subtle inset tint for fields and tracks                         | `NeoTextField`, `NeoSlider` track, `NeoSearchBar`    | 1.05:1                                         |
 
 #### 7.2.2 Text tokens
 
-| Token | Hex | Role | Where it is used | WCAG vs Base |
-|---|---|---|---|---|
-| `OnBase` | `#2A3441` | Primary text | headlines, body, list primary lines | 12.6:1 — AAA |
-| `OnBaseMuted` | `#5C6A7A` | Secondary text / icons | subtitles, helper labels, secondary list lines | 5.4:1 — AA |
+| Token          | Hex       | Role                                         | Where it is used                                 | WCAG vs Base          |
+| -------------- | --------- | -------------------------------------------- | ------------------------------------------------ | --------------------- |
+| `OnBase`       | `#2A3441` | Primary text                                 | headlines, body, list primary lines              | 12.6:1 — AAA          |
+| `OnBaseMuted`  | `#5C6A7A` | Secondary text / icons                       | subtitles, helper labels, secondary list lines   | 5.4:1 — AA            |
 | `OnBaseSubtle` | `#8492A3` | Tertiary text — captions, timestamps, helper | timestamps, "N items" counters, empty-state body | 3.1:1 — AA Large only |
 
 `OnBaseSubtle` is **never** used for body text. It is restricted to
@@ -133,14 +133,14 @@ decoration. A blue chip means "this is a call". A violet chip means
 "this is an inquiry". Mixing accents purely for visual variety is
 forbidden.
 
-| Token | Hex | Role | Where it is used | WCAG vs Base |
-|---|---|---|---|---|
-| `AccentBlue` | `#4F7CFF` | Primary brand accent | primary buttons, Calls category, splash ring sweep | 4.7:1 — AA |
-| `AccentTeal` | `#1FB5A8` | Backup / restore / cloud category | Backup tab tint, splash gradient start | 3.1:1 — AA Large |
-| `AccentAmber` | `#E0A82E` | Stats / charts / warning-leaning | Stats tab, lead-score "warm" band | 2.6:1 — Large only |
-| `AccentRose` | `#E5536B` | Tags / destructive-leaning | tag chips, delete confirmations, follow-up "missed" | 3.5:1 — AA Large |
-| `AccentViolet` | `#8266E5` | Inquiries category | Inquiries tab, auto-saved inquiry chip | 3.9:1 — AA Large |
-| `AccentGreen` | `#34A853` | Success / Home category | Home tab, splash gradient end, "All caught up" |  3.4:1 — AA Large |
+| Token          | Hex       | Role                              | Where it is used                                    | WCAG vs Base       |
+| -------------- | --------- | --------------------------------- | --------------------------------------------------- | ------------------ |
+| `AccentBlue`   | `#4F7CFF` | Primary brand accent              | primary buttons, Calls category, splash ring sweep  | 4.7:1 — AA         |
+| `AccentTeal`   | `#1FB5A8` | Backup / restore / cloud category | Backup tab tint, splash gradient start              | 3.1:1 — AA Large   |
+| `AccentAmber`  | `#E0A82E` | Stats / charts / warning-leaning  | Stats tab, lead-score "warm" band                   | 2.6:1 — Large only |
+| `AccentRose`   | `#E5536B` | Tags / destructive-leaning        | tag chips, delete confirmations, follow-up "missed" | 3.5:1 — AA Large   |
+| `AccentViolet` | `#8266E5` | Inquiries category                | Inquiries tab, auto-saved inquiry chip              | 3.9:1 — AA Large   |
+| `AccentGreen`  | `#34A853` | Success / Home category           | Home tab, splash gradient end, "All caught up"      | 3.4:1 — AA Large   |
 
 Accents below WCAG AA on body text are still safe because the spec
 **never uses raw accents for body text**. Accents render on chips,
@@ -149,12 +149,12 @@ WCAG Large threshold (3.0:1) is what applies.
 
 #### 7.2.4 Borders + toggles
 
-| Token | Source | Hex equivalent | Role |
-|---|---|---|---|
-| `BorderSoft` | `Dark.copy(alpha=0.18)` | rgba(163,177,198,0.18) | Card / dialog / toggle outlines |
-| `BorderAccent` | `AccentBlue.copy(alpha=0.20)` | rgba(79,124,255,0.20) | Primary card outlines (e.g., today's totals) |
-| `ToggleOn` | — | `#34C759` | iOS-green track for switched-on toggles |
-| `ToggleOff` | — | `#C7C7CC` | Cool gray for switched-off toggle tracks |
+| Token          | Source                        | Hex equivalent         | Role                                         |
+| -------------- | ----------------------------- | ---------------------- | -------------------------------------------- |
+| `BorderSoft`   | `Dark.copy(alpha=0.18)`       | rgba(163,177,198,0.18) | Card / dialog / toggle outlines              |
+| `BorderAccent` | `AccentBlue.copy(alpha=0.20)` | rgba(79,124,255,0.20)  | Primary card outlines (e.g., today's totals) |
+| `ToggleOn`     | —                             | `#34C759`              | iOS-green track for switched-on toggles      |
+| `ToggleOff`    | —                             | `#C7C7CC`              | Cool gray for switched-off toggle tracks     |
 
 #### 7.2.5 Category icon tints
 
@@ -162,36 +162,36 @@ The five top-level categories have a permanent tint. These are
 **aliases** of the accent palette, not new colors — but the alias
 matters because it pins meaning to color.
 
-| Token | Aliases | Used by |
-|---|---|---|
-| `IconCallsTint` | `AccentBlue` | Calls tab icon, CallDetail header, "call" in mixed lists |
-| `IconInquiriesTint` | `AccentViolet` | Inquiries tab icon, auto-saved inquiry chip |
-| `IconStatsTint` | `AccentAmber` | Stats tab icon, chart axes labels |
-| `IconBackupTint` | `AccentTeal` | Backup tab icon, restore progress |
-| `IconTagsTint` | `AccentRose` | Tag chip icons, AutoTagRules screen |
-| `IconHomeTint` | `AccentGreen` | Home tab icon, "today" totals |
+| Token               | Aliases        | Used by                                                  |
+| ------------------- | -------------- | -------------------------------------------------------- |
+| `IconCallsTint`     | `AccentBlue`   | Calls tab icon, CallDetail header, "call" in mixed lists |
+| `IconInquiriesTint` | `AccentViolet` | Inquiries tab icon, auto-saved inquiry chip              |
+| `IconStatsTint`     | `AccentAmber`  | Stats tab icon, chart axes labels                        |
+| `IconBackupTint`    | `AccentTeal`   | Backup tab icon, restore progress                        |
+| `IconTagsTint`      | `AccentRose`   | Tag chip icons, AutoTagRules screen                      |
+| `IconHomeTint`      | `AccentGreen`  | Home tab icon, "today" totals                            |
 
 #### 7.2.6 Phase I additions
 
-| Token | Hex | Role |
-|---|---|---|
-| `TabBgHome` | `#EAF5EE` | Home tab full-screen background tint |
-| `TabBgCalls` | `#E7EEFB` | Calls tab full-screen background tint |
-| `TabBgInquiries` | `#EEEAF8` | Inquiries tab full-screen background tint |
-| `TabBgMore` | `#FAF3E5` | More tab full-screen background tint |
-| `TabBgStats` | `#FAF3E5` | Stats screen background tint |
-| `HeaderGradHomeStart` | `#C4E5CF` | Home top header gradient start |
-| `HeaderGradHomeEnd` | `#EAF5EE` | Home top header gradient end |
-| `HeaderGradCallsStart` | `#BCD2F4` | Calls top header gradient start |
-| `HeaderGradCallsEnd` | `#E7EEFB` | Calls top header gradient end |
-| `HeaderGradInquiriesStart` | `#D2C7F1` | Inquiries top header gradient start |
-| `HeaderGradInquiriesEnd` | `#EEEAF8` | Inquiries top header gradient end |
-| `HeaderGradMoreStart` | `#F0DCA4` | More top header gradient start |
-| `HeaderGradMoreEnd` | `#FAF3E5` | More top header gradient end |
-| `HeaderGradStatsStart` | `#F0DCA4` | Stats top header gradient start |
-| `HeaderGradStatsEnd` | `#FAF3E5` | Stats top header gradient end |
-| `SplashGradStart` | `#0E5C4F` | Splash + Onboarding p1 vertical gradient top |
-| `SplashGradEnd` | `#34A853` | Splash + Onboarding p1 vertical gradient bottom |
+| Token                      | Hex       | Role                                            |
+| -------------------------- | --------- | ----------------------------------------------- |
+| `TabBgHome`                | `#EAF5EE` | Home tab full-screen background tint            |
+| `TabBgCalls`               | `#E7EEFB` | Calls tab full-screen background tint           |
+| `TabBgInquiries`           | `#EEEAF8` | Inquiries tab full-screen background tint       |
+| `TabBgMore`                | `#FAF3E5` | More tab full-screen background tint            |
+| `TabBgStats`               | `#FAF3E5` | Stats screen background tint                    |
+| `HeaderGradHomeStart`      | `#C4E5CF` | Home top header gradient start                  |
+| `HeaderGradHomeEnd`        | `#EAF5EE` | Home top header gradient end                    |
+| `HeaderGradCallsStart`     | `#BCD2F4` | Calls top header gradient start                 |
+| `HeaderGradCallsEnd`       | `#E7EEFB` | Calls top header gradient end                   |
+| `HeaderGradInquiriesStart` | `#D2C7F1` | Inquiries top header gradient start             |
+| `HeaderGradInquiriesEnd`   | `#EEEAF8` | Inquiries top header gradient end               |
+| `HeaderGradMoreStart`      | `#F0DCA4` | More top header gradient start                  |
+| `HeaderGradMoreEnd`        | `#FAF3E5` | More top header gradient end                    |
+| `HeaderGradStatsStart`     | `#F0DCA4` | Stats top header gradient start                 |
+| `HeaderGradStatsEnd`       | `#FAF3E5` | Stats top header gradient end                   |
+| `SplashGradStart`          | `#0E5C4F` | Splash + Onboarding p1 vertical gradient top    |
+| `SplashGradEnd`            | `#34A853` | Splash + Onboarding p1 vertical gradient bottom |
 
 ---
 
@@ -202,13 +202,13 @@ a top header that fades from a stronger version of that tint into
 the tab background. The result is that the app feels "themed by
 tab" without any chrome change.
 
-| Tab | Background tint | Header gradient (top → bottom) |
-|---|---|---|
-| Home | `TabBgHome` `#EAF5EE` | `HeaderGradHomeStart` → `HeaderGradHomeEnd` |
-| Calls | `TabBgCalls` `#E7EEFB` | `HeaderGradCallsStart` → `HeaderGradCallsEnd` |
-| Inquiries | `TabBgInquiries` `#EEEAF8` | `HeaderGradInquiriesStart` → `HeaderGradInquiriesEnd` |
-| More | `TabBgMore` `#FAF3E5` | `HeaderGradMoreStart` → `HeaderGradMoreEnd` |
-| Stats (deep) | `TabBgStats` `#FAF3E5` | `HeaderGradStatsStart` → `HeaderGradStatsEnd` |
+| Tab          | Background tint            | Header gradient (top → bottom)                        |
+| ------------ | -------------------------- | ----------------------------------------------------- |
+| Home         | `TabBgHome` `#EAF5EE`      | `HeaderGradHomeStart` → `HeaderGradHomeEnd`           |
+| Calls        | `TabBgCalls` `#E7EEFB`     | `HeaderGradCallsStart` → `HeaderGradCallsEnd`         |
+| Inquiries    | `TabBgInquiries` `#EEEAF8` | `HeaderGradInquiriesStart` → `HeaderGradInquiriesEnd` |
+| More         | `TabBgMore` `#FAF3E5`      | `HeaderGradMoreStart` → `HeaderGradMoreEnd`           |
+| Stats (deep) | `TabBgStats` `#FAF3E5`     | `HeaderGradStatsStart` → `HeaderGradStatsEnd`         |
 
 The header gradient is exactly **160dp** tall, fades top-to-bottom
 into the tab background, and is rendered with
@@ -216,7 +216,7 @@ into the tab background, and is rendered with
 
 The neumorphic dual-shadow on cards still uses `Light` and `Dark` —
 it does not compensate for the tinted background. This is
-intentional: the tint is an *under-paint*, not a new canvas.
+intentional: the tint is an _under-paint_, not a new canvas.
 
 ---
 
@@ -232,7 +232,7 @@ intentional: the tint is an *under-paint*, not a new canvas.
 ```
 
 The splash gradient is the only place the app uses heavy color.
-It matches the CallVault logo (a teal-to-green disc), and it
+It matches the callNest logo (a teal-to-green disc), and it
 appears in two locations only:
 
 1. The Compose splash screen.
@@ -241,7 +241,7 @@ appears in two locations only:
 Both renders use `Brush.verticalGradient(0f to SplashGradStart, 1f to SplashGradEnd)` with `tileMode = TileMode.Clamp`.
 
 The system splash (Android 12+ `windowSplashScreenBackground`) is
-set to a single solid color `#0E5C4F` — the gradient *start*. This
+set to a single solid color `#0E5C4F` — the gradient _start_. This
 ensures no perceptible color jump when the system splash hands off
 to the Compose splash.
 
@@ -249,7 +249,7 @@ to the Compose splash.
 
 ### 7.5 Typography scale
 
-CallVault uses **Inter** as the primary type family with
+callNest uses **Inter** as the primary type family with
 **system-default sans** as the fallback. Inter is bundled as an
 asset variable font; if it fails to load (rare, but possible on
 older devices with disk corruption), the system font handles it
@@ -260,23 +260,23 @@ The scale is Material 3's 15-style scale, restricted and tuned
 for the neumorphic canvas. **All sizes in `sp`, all line heights
 in `sp`, all letter spacing in `sp`** unless noted.
 
-| Style | Size | Weight | Line height | Letter spacing | Sample | Where used |
-|---|---|---|---|---|---|---|
-| `displayLarge` | 57 | Light (300) | 64 | -0.25 | "callVault" | not used in product (reserved) |
-| `displayMedium` | 45 | Regular (400) | 52 | 0 | "Welcome" | reserved |
-| `displaySmall` | 36 | Regular (400) | 44 | 0 | "187" big-number | Stats hero numbers |
-| `headlineLarge` | 32 | SemiBold (600) | 40 | 0 | "Today's calls" | dialog hero, error pages |
-| `headlineMedium` | 28 | SemiBold (600) | 36 | 0 | "All caught up." | onboarding p5 done state |
-| `headlineSmall` | 24 | SemiBold (600) | 32 | 0 | "Built for busy founders." | onboarding p2 title, page hero |
-| `titleLarge` | 22 | SemiBold (600) | 28 | 0 | "Inquiries" | page header titles, AppBar fallback |
-| `titleMedium` | 16 | Medium (500) | 24 | 0.15 | "Auto-save settings" | section headers, dialog titles |
-| `titleSmall` | 14 | Medium (500) | 20 | 0.1 | "Pro tip" | card headers, list-section labels |
-| `bodyLarge` | 16 | Regular (400) | 24 | 0.5 | "Never lose an inquiry call again." | onboarding subtext, primary body |
-| `bodyMedium` | 14 | Regular (400) | 20 | 0.25 | "Captures every call from your log." | list body, card body, primary list line |
-| `bodySmall` | 12 | Regular (400) | 16 | 0.4 | "Yesterday · 4:13 PM" | timestamps, captions, helper |
-| `labelLarge` | 14 | Medium (500) | 20 | 0.1 | "Continue" | NeoButton labels, FAB labels |
-| `labelMedium` | 12 | Medium (500) | 16 | 0.5 | "12 NEW" | chip text, badge counts |
-| `labelSmall` | 11 | Medium (500) | 16 | 0.5 | "BETA" | tiny tags, beta flags |
+| Style            | Size | Weight         | Line height | Letter spacing | Sample                               | Where used                              |
+| ---------------- | ---- | -------------- | ----------- | -------------- | ------------------------------------ | --------------------------------------- |
+| `displayLarge`   | 57   | Light (300)    | 64          | -0.25          | "callNest"                           | not used in product (reserved)          |
+| `displayMedium`  | 45   | Regular (400)  | 52          | 0              | "Welcome"                            | reserved                                |
+| `displaySmall`   | 36   | Regular (400)  | 44          | 0              | "187" big-number                     | Stats hero numbers                      |
+| `headlineLarge`  | 32   | SemiBold (600) | 40          | 0              | "Today's calls"                      | dialog hero, error pages                |
+| `headlineMedium` | 28   | SemiBold (600) | 36          | 0              | "All caught up."                     | onboarding p5 done state                |
+| `headlineSmall`  | 24   | SemiBold (600) | 32          | 0              | "Built for busy founders."           | onboarding p2 title, page hero          |
+| `titleLarge`     | 22   | SemiBold (600) | 28          | 0              | "Inquiries"                          | page header titles, AppBar fallback     |
+| `titleMedium`    | 16   | Medium (500)   | 24          | 0.15           | "Auto-save settings"                 | section headers, dialog titles          |
+| `titleSmall`     | 14   | Medium (500)   | 20          | 0.1            | "Pro tip"                            | card headers, list-section labels       |
+| `bodyLarge`      | 16   | Regular (400)  | 24          | 0.5            | "Never lose an inquiry call again."  | onboarding subtext, primary body        |
+| `bodyMedium`     | 14   | Regular (400)  | 20          | 0.25           | "Captures every call from your log." | list body, card body, primary list line |
+| `bodySmall`      | 12   | Regular (400)  | 16          | 0.4            | "Yesterday · 4:13 PM"                | timestamps, captions, helper            |
+| `labelLarge`     | 14   | Medium (500)   | 20          | 0.1            | "Continue"                           | NeoButton labels, FAB labels            |
+| `labelMedium`    | 12   | Medium (500)   | 16          | 0.5            | "12 NEW"                             | chip text, badge counts                 |
+| `labelSmall`     | 11   | Medium (500)   | 16          | 0.5            | "BETA"                               | tiny tags, beta flags                   |
 
 **Default text color**: `OnBase`. Composables that need a softer
 look pass `OnBaseMuted` explicitly via `LocalContentColor`. The
@@ -294,22 +294,22 @@ exception to "no emoji" is the tab labels and the
 Spacing is a 4dp grid with named tokens. Composables never use
 raw `dp` literals for padding — they always reference these.
 
-| Token | Value | Use |
-|---|---|---|
-| `Xs` | 4dp | Inside-chip padding, icon-to-label gap in dense lists |
-| `Sm` | 8dp | Default between-element gap inside a card |
-| `Md` | 12dp | Card content padding (vertical), button content padding |
-| `Lg` | 16dp | Card content padding (horizontal), default page horizontal pad |
-| `Xl` | 20dp | Section-internal gap (between header and body) |
-| `Xxl` | 24dp | Between-card gap, dialog content padding |
-| `Xxxl` | 32dp | Between-section gap on long pages |
-| `PageHorizontal` | 16dp | Outer horizontal pad for every page |
-| `PageTopHeader` | 24dp | Pad below `NeoPageHeader` before first content |
-| `SectionGap` | 24dp | Between two semantic sections within one page |
-| `DialogContent` | 20dp | Inner pad of `NeoDialog` body |
-| `DialogMaxWidth` | 360dp | Hard cap for dialog width on tablets |
-| `BottomNavHeight` | 80dp | Height of the neumorphic bottom nav |
-| `TopBarHeight` | 56dp | Standard `TopAppBar` height (when present) |
+| Token             | Value | Use                                                            |
+| ----------------- | ----- | -------------------------------------------------------------- |
+| `Xs`              | 4dp   | Inside-chip padding, icon-to-label gap in dense lists          |
+| `Sm`              | 8dp   | Default between-element gap inside a card                      |
+| `Md`              | 12dp  | Card content padding (vertical), button content padding        |
+| `Lg`              | 16dp  | Card content padding (horizontal), default page horizontal pad |
+| `Xl`              | 20dp  | Section-internal gap (between header and body)                 |
+| `Xxl`             | 24dp  | Between-card gap, dialog content padding                       |
+| `Xxxl`            | 32dp  | Between-section gap on long pages                              |
+| `PageHorizontal`  | 16dp  | Outer horizontal pad for every page                            |
+| `PageTopHeader`   | 24dp  | Pad below `NeoPageHeader` before first content                 |
+| `SectionGap`      | 24dp  | Between two semantic sections within one page                  |
+| `DialogContent`   | 20dp  | Inner pad of `NeoDialog` body                                  |
+| `DialogMaxWidth`  | 360dp | Hard cap for dialog width on tablets                           |
+| `BottomNavHeight` | 80dp  | Height of the neumorphic bottom nav                            |
+| `TopBarHeight`    | 56dp  | Standard `TopAppBar` height (when present)                     |
 
 `PageHorizontal` is the only horizontal pad applied at the page
 root. Cards are full-width within that pad and add their own
@@ -323,28 +323,28 @@ window-insets API).
 
 ### 7.7 Shape tokens
 
-CallVault uses six corner radii. Every shape is a
+callNest uses six corner radii. Every shape is a
 `RoundedCornerShape` except FAB (`CircleShape`) and the chips
 (`RoundedCornerShape(50)` — fully pilled).
 
-| Radius | Used by |
-|---|---|
-| 4dp | progress-bar tracks, micro-chips on dense lists |
-| 8dp | text fields, search bar, small icon buttons, list item ripples |
-| 12dp | buttons (`NeoButton`), tag chips, secondary cards |
-| 16dp | primary cards (`NeoCard`), bottom-sheet content blocks |
-| 20dp | dialogs (`NeoDialog`) |
-| 24dp | bottom-sheet **top corners only** (bottom corners 0) |
+| Radius | Used by                                                        |
+| ------ | -------------------------------------------------------------- |
+| 4dp    | progress-bar tracks, micro-chips on dense lists                |
+| 8dp    | text fields, search bar, small icon buttons, list item ripples |
+| 12dp   | buttons (`NeoButton`), tag chips, secondary cards              |
+| 16dp   | primary cards (`NeoCard`), bottom-sheet content blocks         |
+| 20dp   | dialogs (`NeoDialog`)                                          |
+| 24dp   | bottom-sheet **top corners only** (bottom corners 0)           |
 
-| Shape | Spec | Where |
-|---|---|---|
-| `NeoCardShape` | `RoundedCornerShape(16dp)` | All cards |
-| `NeoButtonShape` | `RoundedCornerShape(12dp)` | All buttons |
-| `NeoFabShape` | `CircleShape` | FABs |
-| `NeoSheetShape` | `RoundedCornerShape(topStart=24dp, topEnd=24dp, bottomStart=0, bottomEnd=0)` | Modal bottom sheets |
-| `NeoDialogShape` | `RoundedCornerShape(20dp)` | Dialogs |
-| `NeoChipShape` | `RoundedCornerShape(50)` | Tag/category chips |
-| `NeoFieldShape` | `RoundedCornerShape(8dp)` | Text fields, search bar |
+| Shape            | Spec                                                                         | Where                   |
+| ---------------- | ---------------------------------------------------------------------------- | ----------------------- |
+| `NeoCardShape`   | `RoundedCornerShape(16dp)`                                                   | All cards               |
+| `NeoButtonShape` | `RoundedCornerShape(12dp)`                                                   | All buttons             |
+| `NeoFabShape`    | `CircleShape`                                                                | FABs                    |
+| `NeoSheetShape`  | `RoundedCornerShape(topStart=24dp, topEnd=24dp, bottomStart=0, bottomEnd=0)` | Modal bottom sheets     |
+| `NeoDialogShape` | `RoundedCornerShape(20dp)`                                                   | Dialogs                 |
+| `NeoChipShape`   | `RoundedCornerShape(50)`                                                     | Tag/category chips      |
+| `NeoFieldShape`  | `RoundedCornerShape(8dp)`                                                    | Text fields, search bar |
 
 The 4dp track is special-cased inside `NeoProgressBar` — it does
 not have its own named shape because no other component shares it.
@@ -364,18 +364,18 @@ parameters. There are seven levels:
 Each level holds **two** shadow specs — light and dark — with
 offset, blur, and alpha.
 
-| Level | Light offset | Light blur | Light alpha | Dark offset | Dark blur | Dark alpha |
-|---|---|---|---|---|---|---|
-| `ConvexSmall` | (-2,-2) | 4dp | 1.0 | (2,2) | 4dp | 0.20 |
-| `ConvexMedium` | (-4,-4) | 10dp | 1.0 | (4,4) | 10dp | 0.25 |
-| `ConvexLarge` | (-8,-8) | 20dp | 1.0 | (8,8) | 20dp | 0.30 |
-| `ConcaveSmall` | (2,2) | 4dp | 0.20 | (-2,-2) | 4dp | 1.0 |
-| `ConcaveMedium` | (4,4) | 10dp | 0.25 | (-4,-4) | 10dp | 1.0 |
-| `ConcaveLarge` | (8,8) | 20dp | 0.30 | (-8,-8) | 20dp | 1.0 |
-| `Flat` | (0,0) | 0dp | 0 | (0,0) | 0dp | 0 |
+| Level           | Light offset | Light blur | Light alpha | Dark offset | Dark blur | Dark alpha |
+| --------------- | ------------ | ---------- | ----------- | ----------- | --------- | ---------- |
+| `ConvexSmall`   | (-2,-2)      | 4dp        | 1.0         | (2,2)       | 4dp       | 0.20       |
+| `ConvexMedium`  | (-4,-4)      | 10dp       | 1.0         | (4,4)       | 10dp      | 0.25       |
+| `ConvexLarge`   | (-8,-8)      | 20dp       | 1.0         | (8,8)       | 20dp      | 0.30       |
+| `ConcaveSmall`  | (2,2)        | 4dp        | 0.20        | (-2,-2)     | 4dp       | 1.0        |
+| `ConcaveMedium` | (4,4)        | 10dp       | 0.25        | (-4,-4)     | 10dp      | 1.0        |
+| `ConcaveLarge`  | (8,8)        | 20dp       | 0.30        | (-8,-8)     | 20dp      | 1.0        |
+| `Flat`          | (0,0)        | 0dp        | 0           | (0,0)       | 0dp       | 0          |
 
 Notice that **concave is convex with the offsets flipped**. A
-concave control is, optically, a hole pressed *into* the canvas:
+concave control is, optically, a hole pressed _into_ the canvas:
 the highlight is on the bottom-right (where light bounces back up
 out of the well) and the shadow is on the top-left (where the
 upper rim casts down into the well).
@@ -411,36 +411,36 @@ Convex (raised)              Concave (inset)
 
 ### 7.9 Motion tokens
 
-CallVault has a small motion vocabulary. Every animation in the
+callNest has a small motion vocabulary. Every animation in the
 app must be expressible in these primitives.
 
-| Token | Primitive | Spec | Where used |
-|---|---|---|---|
-| `PressSpring` | `spring` | `stiffness = 700f`, `dampingRatio = 0.8f` | NeoButton press scale, NeoCard tap scale |
-| `ShowHide` | `tween` | `durationMillis = 200`, `easing = FastOutSlowInEasing` | snackbar, sheet, dialog enter/exit |
-| `RingSweep` | `tween` | `durationMillis = 1200`, `easing = FastOutSlowInEasing` | splash ring 0° → 360° |
+| Token                 | Primitive            | Spec                                                          | Where used                                 |
+| --------------------- | -------------------- | ------------------------------------------------------------- | ------------------------------------------ |
+| `PressSpring`         | `spring`             | `stiffness = 700f`, `dampingRatio = 0.8f`                     | NeoButton press scale, NeoCard tap scale   |
+| `ShowHide`            | `tween`              | `durationMillis = 200`, `easing = FastOutSlowInEasing`        | snackbar, sheet, dialog enter/exit         |
+| `RingSweep`           | `tween`              | `durationMillis = 1200`, `easing = FastOutSlowInEasing`       | splash ring 0° → 360°                      |
 | `IndeterminateStripe` | `infiniteTransition` | `durationMillis = 1200`, `RepeatMode.Restart`, `LinearEasing` | indeterminate progress, first-sync spinner |
-| `PageEnter` | `tween` | `durationMillis = 300`, `easing = FastOutSlowInEasing` | NavHost composable enter |
-| `PageExit` | `tween` | `durationMillis = 300`, `easing = FastOutLinearInEasing` | NavHost composable exit |
-| `CrossFade` | `tween` | `durationMillis = 220` | empty-state ↔ list state crossfade |
-| `Typewriter` | scheduled | `50ms` per character | splash wordmark |
+| `PageEnter`           | `tween`              | `durationMillis = 300`, `easing = FastOutSlowInEasing`        | NavHost composable enter                   |
+| `PageExit`            | `tween`              | `durationMillis = 300`, `easing = FastOutLinearInEasing`      | NavHost composable exit                    |
+| `CrossFade`           | `tween`              | `durationMillis = 220`                                        | empty-state ↔ list state crossfade         |
+| `Typewriter`          | scheduled            | `50ms` per character                                          | splash wordmark                            |
 
 **Per-screen transition table.**
 
-| Transition | Duration | Easing | Notes |
-|---|---|---|---|
-| Splash → Main | 300ms | `FastOutSlowInEasing` | crossfade only (no slide); avoids "the app is moving" feeling |
-| Splash → Onboarding | 300ms | `FastOutSlowInEasing` | crossfade |
-| Splash → PermissionRationale | 300ms | `FastOutSlowInEasing` | crossfade |
-| Onboarding p_n → p_(n+1) | 300ms | slide + fade | slide direction follows reading order; fade handles overlap |
-| Onboarding p5 → Main | 400ms | `FastOutSlowInEasing` | longer crossfade — the only transition that earns it |
-| Main tab ↔ Main tab | 0ms | none | tab switches are instant; bottom-nav indicator does the motion |
-| Main tab → deep (e.g., CallDetail) | 300ms | slide-from-right + fade | standard push |
-| deep → Main | 300ms | slide-to-right + fade | standard pop |
-| any → dialog | 200ms | scale 0.92 → 1.0 + fade | `ShowHide` |
-| any → bottom sheet | 250ms | translate Y from below + fade | system motion |
-| in-tab back | 300ms | slide + fade | matches push |
-| Home → UpdateAvailable (deep link) | 0ms | none | deep link is the entry; no animation |
+| Transition                         | Duration | Easing                        | Notes                                                          |
+| ---------------------------------- | -------- | ----------------------------- | -------------------------------------------------------------- |
+| Splash → Main                      | 300ms    | `FastOutSlowInEasing`         | crossfade only (no slide); avoids "the app is moving" feeling  |
+| Splash → Onboarding                | 300ms    | `FastOutSlowInEasing`         | crossfade                                                      |
+| Splash → PermissionRationale       | 300ms    | `FastOutSlowInEasing`         | crossfade                                                      |
+| Onboarding p*n → p*(n+1)           | 300ms    | slide + fade                  | slide direction follows reading order; fade handles overlap    |
+| Onboarding p5 → Main               | 400ms    | `FastOutSlowInEasing`         | longer crossfade — the only transition that earns it           |
+| Main tab ↔ Main tab                | 0ms      | none                          | tab switches are instant; bottom-nav indicator does the motion |
+| Main tab → deep (e.g., CallDetail) | 300ms    | slide-from-right + fade       | standard push                                                  |
+| deep → Main                        | 300ms    | slide-to-right + fade         | standard pop                                                   |
+| any → dialog                       | 200ms    | scale 0.92 → 1.0 + fade       | `ShowHide`                                                     |
+| any → bottom sheet                 | 250ms    | translate Y from below + fade | system motion                                                  |
+| in-tab back                        | 300ms    | slide + fade                  | matches push                                                   |
+| Home → UpdateAvailable (deep link) | 0ms      | none                          | deep link is the entry; no animation                           |
 
 The motion system is intentionally narrow. A new screen must use
 one of these — no bespoke transitions.
@@ -454,7 +454,7 @@ drawables** (`res/drawable/ic_*.xml`) for branded glyphs and the
 six category icons. **Bitmaps** (`res/drawable/cv_logo.png`) only
 for the wordmark/logo on splash + onboarding p1.
 
-**Tinting rule.** A category icon is *always* tinted with its
+**Tinting rule.** A category icon is _always_ tinted with its
 category color (the `Icon*Tint` aliases in §7.2.5). A system icon
 in body text uses `OnBaseMuted`. A system icon inside a primary
 button uses the button's `contentColor` (which is `Light` on a
@@ -484,14 +484,14 @@ Emoji are **never** used in:
 
 **Why this policy.** Emoji rendering varies across Android
 manufacturer fonts. A heart on Samsung looks nothing like a heart
-on Pixel. We only allow emoji where the *category* is the message,
-not the *glyph itself*.
+on Pixel. We only allow emoji where the _category_ is the message,
+not the _glyph itself_.
 
 ---
 
 ### 7.11 Shadow modifier internals
 
-Dual-shadow rendering is implemented as `Modifier.neoShadow(level: NeoElevation, shape: Shape)`. It is the only path to a CallVault shadow — `Modifier.shadow(...)` from Compose is forbidden because its single-shadow output cannot be made convex+concave.
+Dual-shadow rendering is implemented as `Modifier.neoShadow(level: NeoElevation, shape: Shape)`. It is the only path to a callNest shadow — `Modifier.shadow(...)` from Compose is forbidden because its single-shadow output cannot be made convex+concave.
 
 **Implementation outline.**
 
@@ -501,7 +501,7 @@ Dual-shadow rendering is implemented as `Modifier.neoShadow(level: NeoElevation,
 3. It draws the `shape`'s outline twice — once translated by the
    light offset with the light color, once by the dark offset
    with the dark color.
-4. The base canvas is painted *between* the two shadow passes by
+4. The base canvas is painted _between_ the two shadow passes by
    the parent `Surface`/`Background`, so the shadow blurs blend
    into the canvas, not into each other.
 
@@ -529,14 +529,14 @@ shape outline, not on a bitmap snapshot.
 
 ## 8 — Navigation graph
 
-CallVault has a **two-level NavHost**: a root NavHost owned by
+callNest has a **two-level NavHost**: a root NavHost owned by
 `MainActivity` whose graph is the set of top-level destinations
 (Splash, Onboarding, Main, deep screens), and a nested NavHost
 owned by `MainScaffold` whose graph is the four tabs.
 
 ### 8.1 Top-level NavHost
 
-- **Owner**: `MainActivity` via `setContent { CallVaultApp() }`.
+- **Owner**: `MainActivity` via `setContent { callNestApp() }`.
 - **NavController**: `rememberNavController()` provided as
   `LocalRootNav` `CompositionLocal`.
 - **Start destination**: `Destinations.Splash.route`.
@@ -545,33 +545,33 @@ owned by `MainScaffold` whose graph is the four tabs.
 
 **Route registry — every entry from `Destinations.kt`:**
 
-| Destination | Route | Args | Source |
-|---|---|---|---|
-| `Main` | `main` | — | tabbed surface |
-| `Splash` | `splash` | — | cold start only |
-| `Onboarding` | `onboarding` | — | first launch |
-| `Calls` | `calls` | — | (legacy direct route, in tabs now) |
-| `PermissionRationale` | `permission_rationale` | — | gate when critical perm missing |
-| `PermissionDenied` | `permission_denied` | — | gate when perm permanently denied |
-| `CallDetail` | `call_detail/{normalizedNumber}` | URI-encoded String | tap on call list |
-| `Search` | `search` | — | full-screen search overlay |
-| `FilterPresets` | `filter_presets` | — | filter manager |
-| `MyContacts` | `my_contacts` | — | system contacts (non-inquiry) |
-| `Inquiries` | `inquiries` | — | auto-saved inquiry bucket (also a tab) |
-| `AutoSaveSettings` | `settings/auto_save` | — | nested under Settings |
-| `AutoTagRules` | `auto_tag_rules` | — | rules manager |
-| `RuleEditor` | `auto_tag_rules/edit/{ruleId}` | Long, `-1` = new | edit rule |
-| `LeadScoringSettings` | `settings/lead_scoring` | — | nested |
-| `RealTimeSettings` | `settings/real_time` | — | nested |
-| `Export` | `export` | — | wizard |
-| `Backup` | `backup` | — | landing |
-| `UpdateAvailable` | `update` | — | manifest match |
-| `UpdateSettings` | `settings/updates` | — | nested |
-| `Settings` | `settings` | — | master |
-| `DocsList` | `docs` | — | FAQ list |
-| `DocsArticle` | `docs/{articleId}` | URI-encoded String | one article |
-| `Home` | `home` | — | tab route (also routable directly) |
-| `More` | `more` | — | tab route |
+| Destination           | Route                            | Args               | Source                                 |
+| --------------------- | -------------------------------- | ------------------ | -------------------------------------- |
+| `Main`                | `main`                           | —                  | tabbed surface                         |
+| `Splash`              | `splash`                         | —                  | cold start only                        |
+| `Onboarding`          | `onboarding`                     | —                  | first launch                           |
+| `Calls`               | `calls`                          | —                  | (legacy direct route, in tabs now)     |
+| `PermissionRationale` | `permission_rationale`           | —                  | gate when critical perm missing        |
+| `PermissionDenied`    | `permission_denied`              | —                  | gate when perm permanently denied      |
+| `CallDetail`          | `call_detail/{normalizedNumber}` | URI-encoded String | tap on call list                       |
+| `Search`              | `search`                         | —                  | full-screen search overlay             |
+| `FilterPresets`       | `filter_presets`                 | —                  | filter manager                         |
+| `MyContacts`          | `my_contacts`                    | —                  | system contacts (non-inquiry)          |
+| `Inquiries`           | `inquiries`                      | —                  | auto-saved inquiry bucket (also a tab) |
+| `AutoSaveSettings`    | `settings/auto_save`             | —                  | nested under Settings                  |
+| `AutoTagRules`        | `auto_tag_rules`                 | —                  | rules manager                          |
+| `RuleEditor`          | `auto_tag_rules/edit/{ruleId}`   | Long, `-1` = new   | edit rule                              |
+| `LeadScoringSettings` | `settings/lead_scoring`          | —                  | nested                                 |
+| `RealTimeSettings`    | `settings/real_time`             | —                  | nested                                 |
+| `Export`              | `export`                         | —                  | wizard                                 |
+| `Backup`              | `backup`                         | —                  | landing                                |
+| `UpdateAvailable`     | `update`                         | —                  | manifest match                         |
+| `UpdateSettings`      | `settings/updates`               | —                  | nested                                 |
+| `Settings`            | `settings`                       | —                  | master                                 |
+| `DocsList`            | `docs`                           | —                  | FAQ list                               |
+| `DocsArticle`         | `docs/{articleId}`               | URI-encoded String | one article                            |
+| `Home`                | `home`                           | —                  | tab route (also routable directly)     |
+| `More`                | `more`                           | —                  | tab route                              |
 
 `Calls`, `Home`, `Inquiries`, `More` exist at the top level **only
 as legacy aliases**. The canonical mount-point for those four is
@@ -666,7 +666,7 @@ Effects:
 
 ### 8.6 Back-stack rules
 
-CallVault does *not* follow Android's default back-stack semantics
+callNest does _not_ follow Android's default back-stack semantics
 for tabs. Instead:
 
 **Rule A — Hardware back from any deep screen → Home tab.**
@@ -698,7 +698,7 @@ stacks (e.g., AutoTagRules → RuleEditor) — those pop normally.
 
 The app responds to one deep link signal: an `Intent` extra
 `route=update_available` on `MainActivity`. On first composition
-of `CallVaultApp`, an effect inspects the intent:
+of `callNestApp`, an effect inspects the intent:
 
 ```kotlin
 LaunchedEffect(intent) {
@@ -716,11 +716,11 @@ notification.
 
 ### 8.8 Route argument formats
 
-| Destination | Arg | Type | Encoding | Example |
-|---|---|---|---|---|
-| `CallDetail` | `normalizedNumber` | String | `Uri.encode(...)` | `call_detail/%2B919876543210` |
-| `RuleEditor` | `ruleId` | Long | raw, `-1` for new | `auto_tag_rules/edit/-1` |
-| `DocsArticle` | `articleId` | String | `Uri.encode(...)` | `docs/auto-save-howto` |
+| Destination   | Arg                | Type   | Encoding          | Example                       |
+| ------------- | ------------------ | ------ | ----------------- | ----------------------------- |
+| `CallDetail`  | `normalizedNumber` | String | `Uri.encode(...)` | `call_detail/%2B919876543210` |
+| `RuleEditor`  | `ruleId`           | Long   | raw, `-1` for new | `auto_tag_rules/edit/-1`      |
+| `DocsArticle` | `articleId`        | String | `Uri.encode(...)` | `docs/auto-save-howto`        |
 
 Decoding:
 
@@ -733,27 +733,27 @@ Approximate origin-tab map (the tab the user was on when they
 opened a deep screen — used purely for analytics-of-the-mind, not
 behaviorally; behavior is governed by §8.6 Rule A):
 
-| Destination | Typical origin tab |
-|---|---|
-| `CallDetail` | Calls / Home / Inquiries |
-| `Search` | Calls / Inquiries |
-| `FilterPresets` | Calls |
-| `MyContacts` | More |
-| `Inquiries` (deep) | Home |
-| `AutoSaveSettings` | More → Settings |
-| `AutoTagRules` | More → Settings |
-| `RuleEditor` | AutoTagRules |
-| `LeadScoringSettings` | More → Settings |
-| `RealTimeSettings` | More → Settings |
-| `Export` | More |
-| `Backup` | More |
-| `UpdateAvailable` | More / notification |
-| `UpdateSettings` | More → Settings |
-| `Settings` | More |
-| `DocsList` | More |
-| `DocsArticle` | DocsList |
-| `PermissionRationale` | Splash gate |
-| `PermissionDenied` | PermissionRationale |
+| Destination           | Typical origin tab       |
+| --------------------- | ------------------------ |
+| `CallDetail`          | Calls / Home / Inquiries |
+| `Search`              | Calls / Inquiries        |
+| `FilterPresets`       | Calls                    |
+| `MyContacts`          | More                     |
+| `Inquiries` (deep)    | Home                     |
+| `AutoSaveSettings`    | More → Settings          |
+| `AutoTagRules`        | More → Settings          |
+| `RuleEditor`          | AutoTagRules             |
+| `LeadScoringSettings` | More → Settings          |
+| `RealTimeSettings`    | More → Settings          |
+| `Export`              | More                     |
+| `Backup`              | More                     |
+| `UpdateAvailable`     | More / notification      |
+| `UpdateSettings`      | More → Settings          |
+| `Settings`            | More                     |
+| `DocsList`            | More                     |
+| `DocsArticle`         | DocsList                 |
+| `PermissionRationale` | Splash gate              |
+| `PermissionDenied`    | PermissionRationale      |
 
 ### 8.10 ASCII navigation graph
 
@@ -807,7 +807,7 @@ behaviorally; behavior is governed by §8.6 Rule A):
 
 Mask cold-start latency, brand the app, and gate routing. The
 splash is the only place the user ever sees the wordmark animate
-in. After this screen, the app is *itself*; the splash never
+in. After this screen, the app is _itself_; the splash never
 re-appears within a session.
 
 ### 9.2 Entry points
@@ -846,7 +846,7 @@ None. The splash auto-advances after **1500ms total**.
 2. **Centered concave disc** — a 160dp circle painted with
    `Base` and `ConcaveLarge` elevation, holding the
    `cv_logo` bitmap centered (96dp logo inside the 160dp well).
-3. **Wordmark "callVault"** — typewriter-animated, white,
+3. **Wordmark "callNest"** — typewriter-animated, white,
    `headlineMedium` weight, positioned 24dp below the disc.
 
 ### 9.7 Optional display elements
@@ -859,7 +859,7 @@ N/A — splash is the empty state by definition.
 
 ### 9.9 Loading state
 
-The splash *is* the loading state. There is no spinner; the
+The splash _is_ the loading state. There is no spinner; the
 implicit wait is 1500ms regardless of how fast the app is ready.
 We choose readiness perception over actual readiness here.
 
@@ -879,22 +879,22 @@ and the user sees a launcher icon, not us.
   `ActivityManager.isLowRamDevice()`, the ring-sweep stage is
   skipped (the ring is drawn instantly). The wordmark still
   types in.
-- **RTL handling**: the wordmark is the brand name "callVault"
+- **RTL handling**: the wordmark is the brand name "callNest"
   and is rendered LTR regardless of locale — it is not
   translatable.
 - **Screen rotation**: the splash is `screenOrientation="portrait"`
   via the manifest activity attribute. Rotation is impossible
   during splash.
 - **Accessibility services overlap (TalkBack, Switch Access)**:
-  the splash is announced as "callVault loading"; accessibility
+  the splash is announced as "callNest loading"; accessibility
   services do not interrupt the auto-advance.
 
 ### 9.12 Copy table
 
-| String resource | English | Notes |
-|---|---|---|
-| `cv_splash_brand` | callVault | LTR, never translated |
-| `cv_splash_logo_letter` | C | legacy — used by older logo letter render path; kept for back-compat |
+| String resource         | English  | Notes                                                                |
+| ----------------------- | -------- | -------------------------------------------------------------------- |
+| `cv_splash_brand`       | callNest | LTR, never translated                                                |
+| `cv_splash_logo_letter` | C        | legacy — used by older logo letter render path; kept for back-compat |
 
 ### 9.13 ASCII wireframe (full-screen)
 
@@ -914,7 +914,7 @@ and the user sees a launcher icon, not us.
 |                 \           /               |
 |                  '---------'                |
 |                                             |
-|                  callVault                  |
+|                  callNest                  |
 |              (white, typewriter)            |
 |                                             |
 |                                             |
@@ -925,7 +925,7 @@ and the user sees a launcher icon, not us.
 
 ### 9.14 Accessibility
 
-- `Modifier.semantics { contentDescription = "callVault loading" }` on the root.
+- `Modifier.semantics { contentDescription = "callNest loading" }` on the root.
 - Disc + wordmark are merged into a single semantics node so
   TalkBack reads the brand once, not twice.
 - Contrast: white wordmark on `#0E5C4F` → 12.4:1 (AAA). White
@@ -936,14 +936,14 @@ and the user sees a launcher icon, not us.
   cannot get "stuck" on splash.
 - Reduced-motion: if `Settings.Global.ANIMATOR_DURATION_SCALE`
   is 0, all three stages collapse to instant render and
-  `onFinished` still fires after 1500ms (the *route* is what's
+  `onFinished` still fires after 1500ms (the _route_ is what's
   important, not the animation).
 
 ### 9.15 Performance
 
 - First frame must paint within **200ms** of `Activity.onCreate`.
   This is enforced by:
-  - No I/O in `onCreate` other than DataStore *reads-by-Flow*
+  - No I/O in `onCreate` other than DataStore _reads-by-Flow_
     that compose into state.
   - The system splash background color (`#0E5C4F`) is identical
     to the Compose splash gradient start, so the "frame zero"
@@ -955,13 +955,13 @@ and the user sees a launcher icon, not us.
 
 ### 9.16 Animation timeline (millisecond-by-millisecond)
 
-| Range | Stage | What happens |
-|---|---|---|
-| 0–200ms | system splash carries | Android shows `windowSplashScreenBackground = #0E5C4F` with launcher icon. Compose has not yet laid out. |
-| 200–500ms | Compose splash takes over | Gradient paints. Disc enters with `spring(stiffness=600, damping=0.7)` from scale `0.85` to `1.0`. Logo bitmap fades from 0 to 1 over 300ms. |
-| 500–800ms | ring sweep | A `Canvas.drawArc` ring at radius = disc radius + 6dp, color `AccentBlue`, stroke 4dp, sweeps from 0° to 360° using `RingSweep` (1200ms tween — the 800ms→1700ms portion gets clipped to the 1500ms total; we crossfade the ring out at 1400ms). |
-| 800–1200ms | wordmark types in | "callVault" appears one character at a time at `Typewriter` cadence (50ms × 9 chars = 450ms). |
-| 1200–1500ms | settle | Everything holds. At 1500ms, `onFinished(decision)` fires. |
+| Range       | Stage                     | What happens                                                                                                                                                                                                                                     |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0–200ms     | system splash carries     | Android shows `windowSplashScreenBackground = #0E5C4F` with launcher icon. Compose has not yet laid out.                                                                                                                                         |
+| 200–500ms   | Compose splash takes over | Gradient paints. Disc enters with `spring(stiffness=600, damping=0.7)` from scale `0.85` to `1.0`. Logo bitmap fades from 0 to 1 over 300ms.                                                                                                     |
+| 500–800ms   | ring sweep                | A `Canvas.drawArc` ring at radius = disc radius + 6dp, color `AccentBlue`, stroke 4dp, sweeps from 0° to 360° using `RingSweep` (1200ms tween — the 800ms→1700ms portion gets clipped to the 1500ms total; we crossfade the ring out at 1400ms). |
+| 800–1200ms  | wordmark types in         | "callNest" appears one character at a time at `Typewriter` cadence (50ms × 9 chars = 450ms).                                                                                                                                                     |
+| 1200–1500ms | settle                    | Everything holds. At 1500ms, `onFinished(decision)` fires.                                                                                                                                                                                       |
 
 Implementation note: the ring's full sweep is 1200ms but the
 splash budget is 1500ms; the ring is rendered with a deliberate
@@ -990,7 +990,7 @@ permission grant time and the OEM detour.
 
 ### 10.3 Orchestrator file path
 
-`app/src/main/java/com/callvault/app/ui/screen/onboarding/OnboardingScreen.kt`.
+`app/src/main/java/com/callNest/app/ui/screen/onboarding/OnboardingScreen.kt`.
 Each page is its own file in the same package:
 
 - `OnboardingWelcomePage.kt`
@@ -1074,7 +1074,7 @@ None — pure render.
    height.
 3. White headline "Never lose an inquiry call again."
    (`headlineMedium`, max 2 lines, center-aligned).
-4. White-85% subtext one line "CallVault catches every call so
+4. White-85% subtext one line "callNest catches every call so
    you never miss a lead." (`bodyLarge`, single line, ellipsize).
 5. `NeoButton` primary variant labeled "Continue", anchored 32dp
    from the bottom safe-area inset.
@@ -1106,11 +1106,11 @@ N/A.
 
 ### 11.12 Copy table
 
-| ID | English |
-|---|---|
-| `cv_onb_welcome_title` | Never lose an inquiry call again. |
-| `cv_onb_welcome_subtitle` | CallVault catches every call so you never miss a lead. |
-| `cv_onb_welcome_continue` | Continue |
+| ID                        | English                                               |
+| ------------------------- | ----------------------------------------------------- |
+| `cv_onb_welcome_title`    | Never lose an inquiry call again.                     |
+| `cv_onb_welcome_subtitle` | callNest catches every call so you never miss a lead. |
+| `cv_onb_welcome_continue` | Continue                                              |
 
 ### 11.13 ASCII wireframe
 
@@ -1126,7 +1126,7 @@ N/A.
 |   Never lose an inquiry          |
 |        call again.               |
 |                                  |
-|  CallVault catches every call    |
+|  callNest catches every call    |
 |  so you never miss a lead.       |
 |                                  |
 |                                  |
@@ -1211,24 +1211,24 @@ N/A.
 
 ### 12.12 Copy table
 
-| ID | English |
-|---|---|
-| `cv_onb_features_title` | Built for busy founders. |
-| `cv_onb_features_calls_title` | Captures every call |
-| `cv_onb_features_calls_body` | We log every inbound and outbound call from your phone log automatically. |
-| `cv_onb_features_inquiries_title` | Auto-saves inquiries |
-| `cv_onb_features_inquiries_body` | Unsaved numbers go straight into a dedicated contact group, tagged for follow-up. |
-| `cv_onb_features_stats_title` | Lead scoring + exports |
-| `cv_onb_features_stats_body` | Score every lead 0–100 and export to Excel, CSV, or PDF in one tap. |
-| `cv_onb_features_continue` | Continue |
+| ID                                | English                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------- |
+| `cv_onb_features_title`           | Built for busy founders.                                                          |
+| `cv_onb_features_calls_title`     | Captures every call                                                               |
+| `cv_onb_features_calls_body`      | We log every inbound and outbound call from your phone log automatically.         |
+| `cv_onb_features_inquiries_title` | Auto-saves inquiries                                                              |
+| `cv_onb_features_inquiries_body`  | Unsaved numbers go straight into a dedicated contact group, tagged for follow-up. |
+| `cv_onb_features_stats_title`     | Lead scoring + exports                                                            |
+| `cv_onb_features_stats_body`      | Score every lead 0–100 and export to Excel, CSV, or PDF in one tap.               |
+| `cv_onb_features_continue`        | Continue                                                                          |
 
 ### 12.13 Card data table
 
-| Card | Icon | Tint | Title id | Body id |
-|---|---|---|---|---|
-| 1 | `ic_call_log_capture` | `IconCallsTint` | `cv_onb_features_calls_title` | `cv_onb_features_calls_body` |
-| 2 | `ic_inquiry_inbox` | `IconInquiriesTint` | `cv_onb_features_inquiries_title` | `cv_onb_features_inquiries_body` |
-| 3 | `ic_stats_sparkline` | `IconStatsTint` | `cv_onb_features_stats_title` | `cv_onb_features_stats_body` |
+| Card | Icon                  | Tint                | Title id                          | Body id                          |
+| ---- | --------------------- | ------------------- | --------------------------------- | -------------------------------- |
+| 1    | `ic_call_log_capture` | `IconCallsTint`     | `cv_onb_features_calls_title`     | `cv_onb_features_calls_body`     |
+| 2    | `ic_inquiry_inbox`    | `IconInquiriesTint` | `cv_onb_features_inquiries_title` | `cv_onb_features_inquiries_body` |
+| 3    | `ic_stats_sparkline`  | `IconStatsTint`     | `cv_onb_features_stats_title`     | `cv_onb_features_stats_body`     |
 
 ### 12.14 ASCII wireframe
 
@@ -1273,7 +1273,7 @@ N/A.
 ### 13.1 Purpose
 
 Earn the four critical permissions in one batch. Frame each as a
-*reason*, not a *capability*.
+_reason_, not a _capability_.
 
 ### 13.2 Entry points
 
@@ -1297,7 +1297,7 @@ Tap `Grant`. The system dialog handles the rest.
 1. White background.
 2. Title `headlineSmall` "Two taps and you're set.".
 3. Subtitle `bodyMedium`: "Everything stays on your device.
-   CallVault never uploads your data."
+   callNest never uploads your data."
 4. List of 4 permission rows, each:
    - 32dp tinted icon
    - Permission display name (`titleSmall`)
@@ -1307,12 +1307,12 @@ Tap `Grant`. The system dialog handles the rest.
 
 ### 13.7 Permission rows
 
-| Icon | Display name | Reason |
-|---|---|---|
-| `ic_call_log` | Call log access | So we can list every inbound and outbound call. |
-| `ic_contacts` | Contacts (read) | So we know which calls are from saved leads. |
-| `ic_contacts_write` | Contacts (write) | So we can auto-save unsaved inquiries to a group. |
-| `ic_phone_state` | Phone state | So the floating bubble + post-call popup can fire in real time. |
+| Icon                | Display name     | Reason                                                          |
+| ------------------- | ---------------- | --------------------------------------------------------------- |
+| `ic_call_log`       | Call log access  | So we can list every inbound and outbound call.                 |
+| `ic_contacts`       | Contacts (read)  | So we know which calls are from saved leads.                    |
+| `ic_contacts_write` | Contacts (write) | So we can auto-save unsaved inquiries to a group.               |
+| `ic_phone_state`    | Phone state      | So the floating bubble + post-call popup can fire in real time. |
 
 ### 13.8 Permission state machine
 
@@ -1356,20 +1356,20 @@ All N/A — this is a request flow, not a data flow.
 
 ### 13.11 Copy table
 
-| ID | English |
-|---|---|
-| `cv_onb_perm_title` | Two taps and you're set. |
-| `cv_onb_perm_subtitle` | Everything stays on your device. CallVault never uploads your data. |
-| `cv_onb_perm_calllog_name` | Call log access |
-| `cv_onb_perm_calllog_reason` | So we can list every inbound and outbound call. |
-| `cv_onb_perm_contacts_read_name` | Contacts (read) |
-| `cv_onb_perm_contacts_read_reason` | So we know which calls are from saved leads. |
-| `cv_onb_perm_contacts_write_name` | Contacts (write) |
-| `cv_onb_perm_contacts_write_reason` | So we can auto-save unsaved inquiries to a group. |
-| `cv_onb_perm_phone_state_name` | Phone state |
-| `cv_onb_perm_phone_state_reason` | So the floating bubble and post-call popup can fire in real time. |
-| `cv_onb_perm_grant` | Grant permissions |
-| `cv_onb_perm_why` | Why this matters |
+| ID                                  | English                                                            |
+| ----------------------------------- | ------------------------------------------------------------------ |
+| `cv_onb_perm_title`                 | Two taps and you're set.                                           |
+| `cv_onb_perm_subtitle`              | Everything stays on your device. callNest never uploads your data. |
+| `cv_onb_perm_calllog_name`          | Call log access                                                    |
+| `cv_onb_perm_calllog_reason`        | So we can list every inbound and outbound call.                    |
+| `cv_onb_perm_contacts_read_name`    | Contacts (read)                                                    |
+| `cv_onb_perm_contacts_read_reason`  | So we know which calls are from saved leads.                       |
+| `cv_onb_perm_contacts_write_name`   | Contacts (write)                                                   |
+| `cv_onb_perm_contacts_write_reason` | So we can auto-save unsaved inquiries to a group.                  |
+| `cv_onb_perm_phone_state_name`      | Phone state                                                        |
+| `cv_onb_perm_phone_state_reason`    | So the floating bubble and post-call popup can fire in real time.  |
+| `cv_onb_perm_grant`                 | Grant permissions                                                  |
+| `cv_onb_perm_why`                   | Why this matters                                                   |
 
 ### 13.12 ASCII wireframe
 
@@ -1380,7 +1380,7 @@ All N/A — this is a request flow, not a data flow.
 |  Two taps and you're set.        |
 |                                  |
 |  Everything stays on your        |
-|  device. CallVault never         |
+|  device. callNest never         |
 |  uploads your data.              |
 |                                  |
 |  [icon] Call log access          |
@@ -1435,9 +1435,9 @@ optional deep-link launch).
 
 ### 14.6 Mandatory display elements
 
-1. Vendor-specific title, e.g. "Keep CallVault running on your
+1. Vendor-specific title, e.g. "Keep callNest running on your
    Xiaomi.".
-2. Subtitle: "Your phone may stop CallVault when you're not
+2. Subtitle: "Your phone may stop callNest when you're not
    looking. Two settings keep it on.".
 3. Numbered instruction list (3–5 bullets, vendor-specific).
 4. `Open settings` `NeoButton` primary that fires the vendor
@@ -1448,33 +1448,33 @@ optional deep-link launch).
 
 ### 14.7 OEM detection table
 
-| `Build.MANUFACTURER` (lowercased contains) | Vendor key | Display name |
-|---|---|---|
-| `xiaomi` / `redmi` / `poco` | `xiaomi` | Xiaomi / Redmi / POCO |
-| `oppo` | `oppo` | Oppo |
-| `vivo` | `vivo` | Vivo |
-| `realme` | `realme` | Realme |
-| `samsung` | `samsung` | Samsung |
-| `oneplus` | `oneplus` | OnePlus |
-| `honor` | `honor` | Honor |
-| `huawei` | `huawei` | Huawei |
-| anything else | `other` | Other |
+| `Build.MANUFACTURER` (lowercased contains) | Vendor key | Display name          |
+| ------------------------------------------ | ---------- | --------------------- |
+| `xiaomi` / `redmi` / `poco`                | `xiaomi`   | Xiaomi / Redmi / POCO |
+| `oppo`                                     | `oppo`     | Oppo                  |
+| `vivo`                                     | `vivo`     | Vivo                  |
+| `realme`                                   | `realme`   | Realme                |
+| `samsung`                                  | `samsung`  | Samsung               |
+| `oneplus`                                  | `oneplus`  | OnePlus               |
+| `honor`                                    | `honor`    | Honor                 |
+| `huawei`                                   | `huawei`   | Huawei                |
+| anything else                              | `other`    | Other                 |
 
 ### 14.8 Vendor intent components
 
 Each vendor has a primary intent. If it fails (`ActivityNotFoundException`), fall through to the next.
 
-| Vendor | Primary `ComponentName` |
-|---|---|
-| `xiaomi` | `com.miui.securitycenter` / `.permission.AutoStartManagementActivity` |
-| `oppo` | `com.coloros.safecenter` / `.permission.startup.StartupAppListActivity` |
-| `vivo` | `com.vivo.permissionmanager` / `.activity.BgStartUpManagerActivity` |
-| `realme` | `com.coloros.safecenter` / `.permission.startup.StartupAppListActivity` |
-| `samsung` | `com.samsung.android.lool` / `.battery.ui.BatteryActivity` |
+| Vendor    | Primary `ComponentName`                                                 |
+| --------- | ----------------------------------------------------------------------- |
+| `xiaomi`  | `com.miui.securitycenter` / `.permission.AutoStartManagementActivity`   |
+| `oppo`    | `com.coloros.safecenter` / `.permission.startup.StartupAppListActivity` |
+| `vivo`    | `com.vivo.permissionmanager` / `.activity.BgStartUpManagerActivity`     |
+| `realme`  | `com.coloros.safecenter` / `.permission.startup.StartupAppListActivity` |
+| `samsung` | `com.samsung.android.lool` / `.battery.ui.BatteryActivity`              |
 | `oneplus` | `com.oneplus.security` / `.chainlaunch.view.ChainLaunchAppListActivity` |
-| `honor` | `com.huawei.systemmanager` / `.optimize.process.ProtectActivity` |
-| `huawei` | `com.huawei.systemmanager` / `.optimize.process.ProtectActivity` |
-| `other` | (none — go straight to fallback) |
+| `honor`   | `com.huawei.systemmanager` / `.optimize.process.ProtectActivity`        |
+| `huawei`  | `com.huawei.systemmanager` / `.optimize.process.ProtectActivity`        |
+| `other`   | (none — go straight to fallback)                                        |
 
 ### 14.9 Fallback chain
 
@@ -1482,11 +1482,11 @@ Each vendor has a primary intent. If it fails (`ActivityNotFoundException`), fal
 1. Try vendor intent (above).
 2. If ActivityNotFoundException ->
    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-   with data = "package:com.callvault.app".
+   with data = "package:com.callNest.app".
 3. If still ActivityNotFoundException ->
    Settings.ACTION_BATTERY_SAVER_SETTINGS.
 4. If still nothing -> show snackbar "Couldn't find the right
-   settings on your device. Long-press the CallVault icon and
+   settings on your device. Long-press the callNest icon and
    tap 'App info'.".
 ```
 
@@ -1494,73 +1494,73 @@ Each vendor has a primary intent. If it fails (`ActivityNotFoundException`), fal
 
 #### Xiaomi (3–4 bullets)
 
-1. Tap **Autostart** and toggle CallVault **on**.
+1. Tap **Autostart** and toggle callNest **on**.
 2. Go back; open **Battery saver**.
-3. Find CallVault → **No restrictions**.
+3. Find callNest → **No restrictions**.
 4. (MIUI 14+) Tap **Other permissions** → enable **Display popup
    while running in background**.
 
 #### Oppo
 
-1. Tap **Allow Auto-Launch** and turn on CallVault.
+1. Tap **Allow Auto-Launch** and turn on callNest.
 2. Go back; open **Power Manager** → **Battery Optimization**.
-3. Find CallVault → **Don't optimize**.
-4. (ColorOS 13+) Tap **Floating windows** → enable for CallVault.
+3. Find callNest → **Don't optimize**.
+4. (ColorOS 13+) Tap **Floating windows** → enable for callNest.
 
 #### Vivo
 
-1. Tap **High background power consumption** → enable CallVault.
+1. Tap **High background power consumption** → enable callNest.
 2. Open **Battery** → **Background power consumption** →
-   CallVault → **Allow**.
+   callNest → **Allow**.
 3. (FunTouch 13+) Open **Permissions** → enable **Display over
    other apps**.
 
 #### Realme
 
-1. Tap **Auto Launch** → enable CallVault.
-2. Open **Battery** → **App battery management** → CallVault →
+1. Tap **Auto Launch** → enable callNest.
+2. Open **Battery** → **App battery management** → callNest →
    **Allow**.
-3. (Realme UI 4+) Enable **Floating windows** for CallVault.
+3. (Realme UI 4+) Enable **Floating windows** for callNest.
 
 #### Samsung
 
 1. Tap **Battery** → **Background usage limits**.
-2. Add CallVault to **Never sleeping apps**.
+2. Add callNest to **Never sleeping apps**.
 3. Open **App info** → **Battery** → **Unrestricted**.
 
 #### OnePlus
 
-1. Tap **Battery** → **Battery optimization** → CallVault →
+1. Tap **Battery** → **Battery optimization** → callNest →
    **Don't optimize**.
-2. Open **Advanced Optimization** → enable for CallVault.
+2. Open **Advanced Optimization** → enable for callNest.
 
 #### Honor
 
-1. Tap **Protected apps** and enable CallVault.
+1. Tap **Protected apps** and enable callNest.
 2. Open **Battery** → **Launch** → enable all three toggles for
-   CallVault.
+   callNest.
 
 #### Huawei
 
-1. Tap **Protected apps** and enable CallVault.
-2. Open **App launch** → CallVault → enable **Auto-launch**,
+1. Tap **Protected apps** and enable callNest.
+2. Open **App launch** → callNest → enable **Auto-launch**,
    **Secondary launch**, **Run in background**.
 
 #### Other
 
-1. Open **App info** for CallVault.
+1. Open **App info** for callNest.
 2. Open **Battery** → set to **Unrestricted**.
 3. (If available) Open **Advanced** → enable **Allow background
    activity**.
 
 ### 14.11 Copy table (per page)
 
-| ID | English |
-|---|---|
-| `cv_onb_battery_title` | Keep CallVault running on your %s. |
-| `cv_onb_battery_subtitle` | Your phone may stop CallVault when you're not looking. Two settings keep it on. |
-| `cv_onb_battery_open` | Open settings |
-| `cv_onb_battery_done` | I've done this |
+| ID                        | English                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| `cv_onb_battery_title`    | Keep callNest running on your %s.                                              |
+| `cv_onb_battery_subtitle` | Your phone may stop callNest when you're not looking. Two settings keep it on. |
+| `cv_onb_battery_open`     | Open settings                                                                  |
+| `cv_onb_battery_done`     | I've done this                                                                 |
 
 `%s` is filled with the display name from §14.7.
 
@@ -1578,16 +1578,16 @@ Each vendor has a primary intent. If it fails (`ActivityNotFoundException`), fal
 +----------------------------------+
 | < Back        · · · · ·          |
 |                                  |
-|  Keep CallVault running          |
+|  Keep callNest running          |
 |  on your Xiaomi.                 |
 |                                  |
-|  Your phone may stop CallVault   |
+|  Your phone may stop callNest   |
 |  when you're not looking. Two    |
 |  settings keep it on.            |
 |                                  |
 |  1. Tap Autostart and toggle...  |
 |  2. Go back; open Battery...     |
-|  3. Find CallVault → No restr... |
+|  3. Find callNest → No restr... |
 |  4. (MIUI 14+) Tap Other perm... |
 |                                  |
 |     [   Open settings   ]        |
@@ -1649,7 +1649,7 @@ sealed interface SyncProgress {
    - **Determinate**: linear `NeoProgressBar` + body "Found N of
      M calls so far…".
    - **Done**: green checkmark inside concave well + body "All
-     caught up. Welcome to CallVault.".
+     caught up. Welcome to callNest.".
    - **Error**: red exclamation inside concave well + body
      "We couldn't finish the first import." + secondary body
      `error.localizedMessage` truncated to 2 lines.
@@ -1668,7 +1668,7 @@ under the progress bar in `Determinate` state if `total > 500`.
 
 A user with zero calls in their log: emits `Done` immediately
 with `current = 0`. Body becomes "Your call log is empty for
-now. CallVault will start capturing as calls come in.".
+now. callNest will start capturing as calls come in.".
 
 ### 15.9 Loading state
 
@@ -1701,20 +1701,20 @@ The whole page is a loading state for as long as the bus is in
 
 ### 15.12 Copy table
 
-| ID | English |
-|---|---|
-| `cv_onb_sync_title` | First import. |
-| `cv_onb_sync_indet_body` | Reading your call log… |
-| `cv_onb_sync_det_body_fmt` | Found %1$d of %2$d calls so far… |
-| `cv_onb_sync_bg_caption` | We'll keep syncing in the background. |
-| `cv_onb_sync_done_body` | All caught up. Welcome to CallVault. |
-| `cv_onb_sync_done_empty_body` | Your call log is empty for now. CallVault will start capturing as calls come in. |
-| `cv_onb_sync_error_title` | We couldn't finish the first import. |
-| `cv_onb_sync_error_perm` | Couldn't read your call log. Tap to grant permission. |
-| `cv_onb_sync_error_storage` | Your phone is low on storage. Free some space and tap Retry. |
-| `cv_onb_sync_retry` | Retry |
-| `cv_onb_sync_skip` | Skip for now |
-| `cv_onb_sync_continue` | Continue |
+| ID                            | English                                                                         |
+| ----------------------------- | ------------------------------------------------------------------------------- |
+| `cv_onb_sync_title`           | First import.                                                                   |
+| `cv_onb_sync_indet_body`      | Reading your call log…                                                          |
+| `cv_onb_sync_det_body_fmt`    | Found %1$d of %2$d calls so far…                                                |
+| `cv_onb_sync_bg_caption`      | We'll keep syncing in the background.                                           |
+| `cv_onb_sync_done_body`       | All caught up. Welcome to callNest.                                             |
+| `cv_onb_sync_done_empty_body` | Your call log is empty for now. callNest will start capturing as calls come in. |
+| `cv_onb_sync_error_title`     | We couldn't finish the first import.                                            |
+| `cv_onb_sync_error_perm`      | Couldn't read your call log. Tap to grant permission.                           |
+| `cv_onb_sync_error_storage`   | Your phone is low on storage. Free some space and tap Retry.                    |
+| `cv_onb_sync_retry`           | Retry                                                                           |
+| `cv_onb_sync_skip`            | Skip for now                                                                    |
+| `cv_onb_sync_continue`        | Continue                                                                        |
 
 ### 15.13 ASCII wireframe (Determinate)
 
@@ -1754,7 +1754,7 @@ The whole page is a loading state for as long as the bus is in
 |        +-----------------+       |
 |                                  |
 |  All caught up. Welcome          |
-|  to CallVault.                   |
+|  to callNest.                   |
 |                                  |
 |         [   Continue   ]         |
 +----------------------------------+
@@ -1816,6 +1816,6 @@ the page after a process kill resumes from the last persisted
 
 ---
 
-*End of Part 02 — Theme + Navigation + Splash + Onboarding.*
-*Next: Part 03 covers Main scaffold, bottom navigation, and the
-four tab home pages (§§ 16–22).*
+_End of Part 02 — Theme + Navigation + Splash + Onboarding._
+_Next: Part 03 covers Main scaffold, bottom navigation, and the
+four tab home pages (§§ 16–22)._

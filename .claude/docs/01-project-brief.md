@@ -2,14 +2,14 @@
 
 ## Product
 
-CallVault is an offline-first Android app that turns a phone's call history into a lightweight inquiry CRM. The target user is an Indian small-business owner receiving roughly 20-100 inquiry calls per day.
+callNest is an offline-first Android app that turns a phone's call history into a lightweight inquiry CRM. The target user is an Indian small-business owner receiving roughly 20-100 inquiry calls per day.
 
 Core jobs:
 
 - Import calls from `CallLog.Calls`.
 - Normalize phone numbers, resolve contacts, SIM slot, carrier, and call metadata.
 - Separate true contacts from unsaved inquiries.
-- Auto-save unsaved inquiry numbers into a "CallVault Inquiries" contact group.
+- Auto-save unsaved inquiry numbers into a "callNest Inquiries" contact group.
 - Let users tag, note, bookmark, follow up, search, filter, and export calls.
 - Compute lead scores from frequency, duration, recency, saved/contact state, follow-ups, tags, and rule boosts.
 - Show real-time in-call bubble and post-call popup when permissions allow.
@@ -22,7 +22,7 @@ Version in `app/build.gradle.kts`: `1.0.0`, `versionCode = 1`.
 
 `CHANGELOG.md` says 13 sprints are shipped, with full v1 feature coverage and known limitations. The app has 245 Kotlin files under `app/src/main`, 15 in-app docs articles, 3 unit tests, and no landed instrumentation tests.
 
-Known caveat: `CallVaultNavHost` still contains a `FilterPresets` placeholder route and comments in a few files mention older sprint placeholders even though later code exists. Trust code behavior over stale comments.
+Known caveat: `callNestNavHost` still contains a `FilterPresets` placeholder route and comments in a few files mention older sprint placeholders even though later code exists. Trust code behavior over stale comments.
 
 ## Locked Tech Stack
 
@@ -55,7 +55,7 @@ Do not silently upgrade major versions. If a dependency must change, document th
 
 ## Privacy And Distribution
 
-CallVault is sideloaded. It declares `REQUEST_INSTALL_PACKAGES` for self-update install flows and uses a FileProvider for APK handoff.
+callNest is sideloaded. It declares `REQUEST_INSTALL_PACKAGES` for self-update install flows and uses a FileProvider for APK handoff.
 
 Do not add:
 
@@ -98,4 +98,3 @@ Main manifest permissions:
 - Updates/network: `REQUEST_INSTALL_PACKAGES`, `INTERNET`, `ACCESS_NETWORK_STATE`
 
 Critical runtime permissions are handled through `PermissionManager` and onboarding/rationale screens.
-

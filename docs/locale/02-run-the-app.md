@@ -20,7 +20,7 @@ Like Storybook, but built-in.
 
 1. Open any Kotlin file in Android Studio that has `@Preview`. For example:
    ```
-   app/src/main/java/com/callvault/app/ui/components/neo/NeoButton.kt
+   app/src/main/java/com/callNest/app/ui/components/neo/NeoButton.kt
    ```
 2. Click the **split view** icon at the top-right of the editor (looks like two stacked rectangles).
 3. The right pane renders the previews. **Save the file (Ctrl+S)** to re-render. Less than 1 second per cycle.
@@ -41,22 +41,25 @@ Closest equivalent to React Fast Refresh.
 
 1. First, do one full install: click ▶️ in Android Studio, or run:
    ```bash
-   ./gradlew installDebug && adb shell am start -n com.callvault.app/.MainActivity
+   ./gradlew installDebug && adb shell am start -n com.callNest.app/.MainActivity
    ```
 2. The app is now running on your phone. Don't close Android Studio.
 3. In the toolbar, find the **Live Edit toggle** (looks like a little flame) and turn it on.
 4. Edit any `@Composable` function. Save. **Changes push to the phone in 1–3 seconds.**
 
 What Live Edit handles:
+
 - ✅ Composable bodies, `Modifier` chains, text, colors, sizes
 - ✅ Adding/removing UI inside a Composable
 
 What needs Apply Changes (Ctrl+Alt+Shift+R):
+
 - New top-level functions
 - Non-Composable Kotlin code (ViewModels, repositories)
 - Resource changes (`strings.xml`)
 
 What needs a full reinstall:
+
 - Manifest edits (new permissions, new components)
 - Hilt module changes
 - Room schema changes (entities/DAOs)
@@ -69,7 +72,7 @@ If Live Edit ever stops working, a full reinstall fixes it.
 
 ```bash
 ./gradlew installDebug
-adb shell am start -n com.callvault.app/.MainActivity
+adb shell am start -n com.callNest.app/.MainActivity
 ```
 
 Or just click ▶️ in Android Studio (one button does both).
@@ -106,14 +109,14 @@ adb pull /sdcard/cv-rec.mp4 ~/
 
 Mapping to what you'd actually do:
 
-| Step | React/Next would be… | In CallVault you do… |
-|------|----------------------|----------------------|
-| Find the file | `app/(tabs)/calls/page.tsx` | `app/src/main/java/com/callvault/app/ui/screen/calls/CallsScreen.kt` |
-| Add a button | `<Button onClick={refresh}>Refresh</Button>` | `NeoIconButton(icon = Icons.Default.Refresh, contentDescription = ..., onClick = onRefresh)` |
-| Hook up state | `const refresh = useCallback(...)` | Add `onRefresh: () -> Unit` param, call from `CallsViewModel.refresh()` |
-| Add the string | `"Refresh"` inline | Add `<string name="cv_calls_refresh">Refresh</string>` to `res/values/strings.xml`, use `stringResource(R.string.cv_calls_refresh)` |
-| See it | Save → browser reloads | Save → Live Edit pushes to phone in ~2s |
-| Test | Click button in browser | Click button on phone |
+| Step           | React/Next would be…                         | In callNest you do…                                                                                                                 |
+| -------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Find the file  | `app/(tabs)/calls/page.tsx`                  | `app/src/main/java/com/callNest/app/ui/screen/calls/CallsScreen.kt`                                                                 |
+| Add a button   | `<Button onClick={refresh}>Refresh</Button>` | `NeoIconButton(icon = Icons.Default.Refresh, contentDescription = ..., onClick = onRefresh)`                                        |
+| Hook up state  | `const refresh = useCallback(...)`           | Add `onRefresh: () -> Unit` param, call from `CallsViewModel.refresh()`                                                             |
+| Add the string | `"Refresh"` inline                           | Add `<string name="cv_calls_refresh">Refresh</string>` to `res/values/strings.xml`, use `stringResource(R.string.cv_calls_refresh)` |
+| See it         | Save → browser reloads                       | Save → Live Edit pushes to phone in ~2s                                                                                             |
+| Test           | Click button in browser                      | Click button on phone                                                                                                               |
 
 ## Common gotchas
 
@@ -124,8 +127,9 @@ The phone might be locked or the app crashed. Check Logcat for errors. Tap the a
 ### "INSTALL_FAILED_UPDATE_INCOMPATIBLE"
 
 Existing install has a different signature.
+
 ```bash
-adb uninstall com.callvault.app
+adb uninstall com.callNest.app
 ./gradlew installDebug
 ```
 

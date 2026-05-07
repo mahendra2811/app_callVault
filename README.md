@@ -1,4 +1,4 @@
-# CallVault
+# callNest
 
 Local-first Android call-log enrichment app. Sideloaded only — no Play Store,
 no Google Play Services, no telemetry.
@@ -46,7 +46,7 @@ Without `keystore.properties`, the release variant builds unsigned.
 
 ## Sprint progress
 
-- **Sprint 0 — Foundation**: Gradle, manifest, Hilt app, theme, Neo* component
+- **Sprint 0 — Foundation**: Gradle, manifest, Hilt app, theme, Neo\* component
   library. Stub services/receivers ship empty so the manifest resolves.
 - **Sprint 1 — Data Layer & Sync**: Room v1 schema (13 entities incl. FTS),
   9 DAOs, all repositories, `SettingsDataStore` covering every key from
@@ -63,7 +63,7 @@ Without `keystore.properties`, the release variant builds unsigned.
   `OnboardingViewModel` driving the flow, `SyncProgressBus` (singleton)
   publishing `SyncProgress.Started/Progress/Done/Error` from
   `SyncCallLogUseCase`, `PermissionRationaleScreen` + `PermissionDeniedScreen`
-  guards, `CallVaultNavHost` routing onboarding → rationale → calls based on
+  guards, `callNestNavHost` routing onboarding → rationale → calls based on
   DataStore + live permission state. `MainActivity` now hosts the NavHost.
 - **Sprint 3 — Calls List, Detail, Filters & Search**: full Calls screen
   (`CallsScreen` + `CallsViewModel`) with sticky date headers, optional
@@ -102,7 +102,6 @@ Without `keystore.properties`, the release variant builds unsigned.
   `AutoSaveSettings` reachable from the Calls overflow menu.
 - Upcoming: Sprint 6 (auto-tag rules + lead-scoring UI).
 
-
 ### Sprint 6 — Auto-Tag Rules & Lead Scoring
 
 - Room schema bumped to v2; `rule_score_boosts` table tracks per-(call, rule)
@@ -135,7 +134,7 @@ Without `keystore.properties`, the release variant builds unsigned.
   overlay-permission status row; toggles route through
   `RealTimeServiceController` to start/stop the service. Reachable from the
   Calls overflow menu via the new route `settings/real_time`.
-- App startup (`CallVaultApp.onCreate`) and `BootCompletedReceiver` both
+- App startup (`callNestApp.onCreate`) and `BootCompletedReceiver` both
   invoke `RealTimeServiceController.evaluateAndApply()` once onboarding has
   been completed.
 - `NoteDao.attachOrphans` re-parents in-call bubble notes
@@ -151,7 +150,7 @@ Without `keystore.properties`, the release variant builds unsigned.
   `VcardExporter` (vCard 3.0 plain text).
 - `BackupManager` (data/backup) wraps `JsonExporter` with `EncryptionHelper`
   (AES-256-GCM, PBKDF2-derived key, 120k iterations) and writes
-  `callvault-backup-YYYYMMDD-HHmm.cvb`. Restore is a single Room
+  `callNest-backup-YYYYMMDD-HHmm.cvb`. Restore is a single Room
   transaction that wipes seven user-data tables before re-inserting.
 - `DailyBackupWorker` (`@HiltWorker`) runs daily, reads passphrase from
   `SecurePrefs`, and rotates older `.cvb` files in Downloads beyond the
@@ -164,5 +163,5 @@ Without `keystore.properties`, the release variant builds unsigned.
   `DestinationStep`) and `ui/screen/backup/BackupScreen.kt` (manual
   backup, restore, passphrase status, auto-backup toggle, retention
   slider). New routes `Destinations.Export` and `Destinations.Backup`
-  added to `CallVaultNavHost`. Calls overflow menu gains "Export" and
+  added to `callNestNavHost`. Calls overflow menu gains "Export" and
   "Backup & restore" entries.

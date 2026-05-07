@@ -13,11 +13,11 @@ Every spawn prompt should:
 5. **Forbid `./gradlew`, `gradle`, network commands.** The user runs builds.
 6. **Require a terse report** (≤ 250 words): files written, files modified, deviations, next-step hint.
 
-## Template — `callvault-android-engineer`
+## Template — `callNest-android-engineer`
 
 ```
-Implement <feature> for CallVault. Project root:
-"/home/primathon/Documents/p_projet/a_APP/4. callVault/" (quote — space + dot).
+Implement <feature> for callNest. Project root:
+"/home/primathon/Documents/p_projet/a_APP/4. callNest/" (quote — space + dot).
 
 Read CLAUDE.md, then read MAX 8 files (list them). Spec sections to consult by
 offset/limit only:
@@ -41,11 +41,11 @@ Report (≤ 250 words): files by directory, navigation routes added, deviations,
 what's ready for the next sprint.
 ```
 
-## Template — `callvault-ui-builder`
+## Template — `callNest-ui-builder`
 
 ```
-Build <screen / component> for CallVault. Project root:
-"/home/primathon/Documents/p_projet/a_APP/4. callVault/".
+Build <screen / component> for callNest. Project root:
+"/home/primathon/Documents/p_projet/a_APP/4. callNest/".
 
 Read CLAUDE.md and `.claude/docs/05-ai-working-guide.md`. Then read existing
 sibling screens in ui/screen/<area>/ for convention. MAX 6 reads.
@@ -68,11 +68,11 @@ Report (≤ 200 words): composables added, previews added, strings added,
 accessibility items hit.
 ```
 
-## Template — `callvault-test-writer`
+## Template — `callNest-test-writer`
 
 ```
-Write tests for <ViewModel | use case | DAO> in CallVault. Project root:
-"/home/primathon/Documents/p_projet/a_APP/4. callVault/".
+Write tests for <ViewModel | use case | DAO> in callNest. Project root:
+"/home/primathon/Documents/p_projet/a_APP/4. callNest/".
 
 Read the production file under test, the spec section behind it (§<NN>), and
 1–2 existing tests for convention. MAX 6 reads.
@@ -93,18 +93,18 @@ Report (≤ 200 words): test files added, test count, cases hit, anything skippe
 because the API didn't expose it.
 ```
 
-## Template — `callvault-build-fixer`
+## Template — `callNest-build-fixer`
 
 ```
-Triage CallVault build errors. Project root:
-"/home/primathon/Documents/p_projet/a_APP/4. callVault/".
+Triage callNest build errors. Project root:
+"/home/primathon/Documents/p_projet/a_APP/4. callNest/".
 
 Build output (paste below):
 <<<
 <full ./gradlew assembleDebug output>
 >>>
 
-Read CLAUDE.md and `.claude/agents/callvault-build-fixer.md`. Walk errors
+Read CLAUDE.md and `.claude/agents/callNest-build-fixer.md`. Walk errors
 top-down, fix one at a time. Read offending files (max 6).
 
 DO NOT run gradle yourself — wait for the user to re-build after each fix.
@@ -115,11 +115,11 @@ Report (≤ 200 words): errors fixed (with line refs), files changed,
 DECISIONS.md additions, errors that remain.
 ```
 
-## Template — `callvault-doc-writer`
+## Template — `callNest-doc-writer`
 
 ```
-Update CallVault docs for <event — feature shipped / sprint closed / release>.
-Project root: "/home/primathon/Documents/p_projet/a_APP/4. callVault/".
+Update callNest docs for <event — feature shipped / sprint closed / release>.
+Project root: "/home/primathon/Documents/p_projet/a_APP/4. callNest/".
 
 Read CLAUDE.md. Read CHANGELOG.md and DECISIONS.md tail to avoid duplicates.
 Verify the feature exists with grep before documenting it.
@@ -137,13 +137,13 @@ Report (≤ 150 words): files updated, lines added/removed, anything you couldn'
 verify in code (flag it).
 ```
 
-## Template — `callvault-spec-reviewer`
+## Template — `callNest-spec-reviewer`
 
 ```
-Audit CallVault for production readiness. Project root:
-"/home/primathon/Documents/p_projet/a_APP/4. callVault/".
+Audit callNest for production readiness. Project root:
+"/home/primathon/Documents/p_projet/a_APP/4. callNest/".
 
-Spec: /home/primathon/Downloads/callvault_mega_prompt.md (locked).
+Spec: /home/primathon/Downloads/callNest_mega_prompt.md (locked).
 
 Read CLAUDE.md, then audit every spec section §3.1–§3.25 plus the §0 quality
 bar. Cross-check DECISIONS.md so intentional deferrals don't get re-flagged.
@@ -164,11 +164,11 @@ Save the report to audit-<YYYY-MM-DD>.md in the project root.
 For a typical "add a feature" cycle:
 
 ```
-1. callvault-android-engineer  → scaffolds files, wires the graph
-2. callvault-ui-builder        → polishes the UI / states / accessibility
-3. callvault-test-writer       → unit + DAO coverage
-4. callvault-build-fixer       → user runs ./gradlew, agent fixes errors
-5. callvault-doc-writer        → CHANGELOG / DECISIONS / in-app doc
+1. callNest-android-engineer  → scaffolds files, wires the graph
+2. callNest-ui-builder        → polishes the UI / states / accessibility
+3. callNest-test-writer       → unit + DAO coverage
+4. callNest-build-fixer       → user runs ./gradlew, agent fixes errors
+5. callNest-doc-writer        → CHANGELOG / DECISIONS / in-app doc
 ```
 
 Run them sequentially. Don't run the engineer + UI builder in parallel — they'll touch overlapping files.

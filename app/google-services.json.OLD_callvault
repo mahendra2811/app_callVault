@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "614370090805",
+    "project_id": "callvault-d0f2c",
+    "storage_bucket": "callvault-d0f2c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614370090805:android:e43b84b0a49a9c21f0b67c",
+        "android_client_info": {
+          "package_name": "com.callvault.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNProCrTL7slxEa1H977RYQp5UZ3T9nRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614370090805:android:5fd30a3fdb0d1a46f0b67c",
+        "android_client_info": {
+          "package_name": "com.callvault.app.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNProCrTL7slxEa1H977RYQp5UZ3T9nRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

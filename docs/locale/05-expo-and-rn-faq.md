@@ -4,37 +4,37 @@ If you've shipped React Native + Expo apps, this is the file that answers "wait,
 
 ## Can I use Expo Go to run this app?
 
-**No.** Expo Go only runs apps written in React Native + Expo SDK. CallVault is native Kotlin + Jetpack Compose. They are different runtimes:
+**No.** Expo Go only runs apps written in React Native + Expo SDK. callNest is native Kotlin + Jetpack Compose. They are different runtimes:
 
-| | Expo / React Native | CallVault (this project) |
-|--|--|--|
-| Source language | JavaScript / TypeScript | Kotlin |
-| UI framework | React Native — renders native views via a JS bridge | Jetpack Compose — compiles directly to Android UI |
-| Entry point | A JS bundle (`index.js`) | An APK with compiled JVM bytecode |
-| Bundler | Metro | Gradle + Compose compiler plugin |
-| Hot reload | Metro pushes a new JS bundle over your LAN | Android Studio Live Edit pushes JVM bytecode over ADB |
-| What's on the phone | Expo Go app (or a custom dev client) downloads your bundle | A signed APK installed via ADB |
+|                     | Expo / React Native                                        | callNest (this project)                               |
+| ------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
+| Source language     | JavaScript / TypeScript                                    | Kotlin                                                |
+| UI framework        | React Native — renders native views via a JS bridge        | Jetpack Compose — compiles directly to Android UI     |
+| Entry point         | A JS bundle (`index.js`)                                   | An APK with compiled JVM bytecode                     |
+| Bundler             | Metro                                                      | Gradle + Compose compiler plugin                      |
+| Hot reload          | Metro pushes a new JS bundle over your LAN                 | Android Studio Live Edit pushes JVM bytecode over ADB |
+| What's on the phone | Expo Go app (or a custom dev client) downloads your bundle | A signed APK installed via ADB                        |
 
 Expo Go has no Kotlin runtime in it. It can't load a `.apk` and would have nothing to do with one. The wire formats are completely different.
 
 ## What does this project use instead of Expo / Metro / RN?
 
-| Expo concept | CallVault concept |
-|--|--|
-| `expo start` (Metro dev server) | **Compose Previews** in Android Studio + **Live Edit** for the running app |
-| Expo Go | **Android Studio + a phone with USB debugging** |
-| `expo build` | `./gradlew assembleDebug` (debug) or `./gradlew assembleRelease` (signed) |
-| EAS Build | Local Gradle build only (no managed cloud build for native projects in this repo) |
-| `app.json` / `app.config.js` | `app/build.gradle.kts` + `AndroidManifest.xml` |
-| `expo-secure-store` | `EncryptedSharedPreferences` (already in use as `SecurePrefs`) |
-| `expo-sqlite` | **Room** (Google's typed SQLite ORM) |
-| `AsyncStorage` | **DataStore Preferences** |
-| `expo-router` | **Compose Navigation** (`androidx.navigation.compose`) |
-| `expo-notifications` | `NotificationManagerCompat` + `AlarmManager.setExact...` (used by `FollowUpAlarmReceiver`) |
-| `expo-task-manager` / background fetch | **WorkManager** (`CallSyncWorker`, `DailyBackupWorker`, `UpdateCheckWorker`) |
-| `react-native-permissions` | `PermissionManager.kt` + Compose `rememberLauncherForActivityResult` |
-| Reanimated / Moti | Compose's built-in animation APIs (`animate*AsState`, `Animatable`, `updateTransition`) |
-| RN bridge | None — Compose talks directly to the platform via Kotlin/Java interop |
+| Expo concept                           | callNest concept                                                                           |
+| -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `expo start` (Metro dev server)        | **Compose Previews** in Android Studio + **Live Edit** for the running app                 |
+| Expo Go                                | **Android Studio + a phone with USB debugging**                                            |
+| `expo build`                           | `./gradlew assembleDebug` (debug) or `./gradlew assembleRelease` (signed)                  |
+| EAS Build                              | Local Gradle build only (no managed cloud build for native projects in this repo)          |
+| `app.json` / `app.config.js`           | `app/build.gradle.kts` + `AndroidManifest.xml`                                             |
+| `expo-secure-store`                    | `EncryptedSharedPreferences` (already in use as `SecurePrefs`)                             |
+| `expo-sqlite`                          | **Room** (Google's typed SQLite ORM)                                                       |
+| `AsyncStorage`                         | **DataStore Preferences**                                                                  |
+| `expo-router`                          | **Compose Navigation** (`androidx.navigation.compose`)                                     |
+| `expo-notifications`                   | `NotificationManagerCompat` + `AlarmManager.setExact...` (used by `FollowUpAlarmReceiver`) |
+| `expo-task-manager` / background fetch | **WorkManager** (`CallSyncWorker`, `DailyBackupWorker`, `UpdateCheckWorker`)               |
+| `react-native-permissions`             | `PermissionManager.kt` + Compose `rememberLauncherForActivityResult`                       |
+| Reanimated / Moti                      | Compose's built-in animation APIs (`animate*AsState`, `Animatable`, `updateTransition`)    |
+| RN bridge                              | None — Compose talks directly to the platform via Kotlin/Java interop                      |
 
 ## What's the closest workflow to "Expo Go on my phone, edit, see changes"?
 
@@ -44,7 +44,7 @@ Three things stacked together get you 90% of that feel.
 
 Like Storybook with hot reload. **No phone needed.**
 
-- Open any `.kt` file with `@Preview` (every Neo* component has one).
+- Open any `.kt` file with `@Preview` (every Neo\* component has one).
 - Click split-view in Android Studio.
 - Edit → save → re-renders in <1 second.
 
@@ -62,10 +62,11 @@ adb connect <phone-ip>:<connect-port>
 
 # First install:
 ./gradlew installDebug
-adb shell am start -n com.callvault.app/.MainActivity
+adb shell am start -n com.callNest.app/.MainActivity
 ```
 
 Now in Android Studio:
+
 - Toggle **Live Edit** in the toolbar (small flame icon).
 - Edit a Composable → save → 1–3 seconds → phone updates.
 - The phone stays on your desk; no cable.
@@ -75,6 +76,7 @@ This is the closest thing to scanning a QR code and getting hot reload over Wi-F
 ### 3. Adb-over-Wi-Fi for the rebuild loop — for non-Compose changes
 
 Live Edit can't push:
+
 - ViewModel / repository changes (Kotlin code outside `@Composable`)
 - Manifest / permission changes
 - Hilt graph / Room schema changes
@@ -112,28 +114,29 @@ If you really wanted a JS layer, the project to look at is **Kotlin Multiplatfor
 
 ## What about `expo-dev-client` or the bare workflow?
 
-Same core problem. Even "bare" Expo means a React Native runtime in the APK. CallVault has no RN runtime. You'd be embedding RN inside this Android app just to get JS-side fast refresh — a lot of complexity for a workflow problem that Compose Previews + Live Edit + wireless ADB already solves.
+Same core problem. Even "bare" Expo means a React Native runtime in the APK. callNest has no RN runtime. You'd be embedding RN inside this Android app just to get JS-side fast refresh — a lot of complexity for a workflow problem that Compose Previews + Live Edit + wireless ADB already solves.
 
 ## Habits to unlearn
 
-| RN/Expo habit | What to do here instead |
-|--|--|
-| `console.log("x", obj)` | `Timber.d("x %s", obj)` (or `Timber.d("x ${obj}")`) |
-| `console.error(err)` | `Timber.e(err, "context")` |
-| Reach for `useState` | `var x by remember { mutableStateOf(...) }` |
-| Reach for `useEffect` | `LaunchedEffect(key) { ... }` |
-| Use a `<View style={...}>` | `Box(modifier = Modifier...)` |
-| Use a `<Text>` | `Text("...")` (built-in Compose) |
-| Add an npm package | Edit `gradle/libs.versions.toml` + `app/build.gradle.kts` + Gradle sync |
-| Reach for `react-navigation` | Compose Navigation — already wired in `ui/navigation/` |
-| Use `react-query` / SWR | A `Flow<T>` from a repository, collected via `collectAsStateWithLifecycle()` |
-| Throw together a quick Modal | `ModalBottomSheet` + `NeoBottomSheet` wrapper |
-| `if (Platform.OS === 'android')` | Always Android. No platform branches needed. |
-| Look for the "Reload" shake gesture | Android Studio's "Apply Changes" button or a full ▶️ |
+| RN/Expo habit                       | What to do here instead                                                      |
+| ----------------------------------- | ---------------------------------------------------------------------------- |
+| `console.log("x", obj)`             | `Timber.d("x %s", obj)` (or `Timber.d("x ${obj}")`)                          |
+| `console.error(err)`                | `Timber.e(err, "context")`                                                   |
+| Reach for `useState`                | `var x by remember { mutableStateOf(...) }`                                  |
+| Reach for `useEffect`               | `LaunchedEffect(key) { ... }`                                                |
+| Use a `<View style={...}>`          | `Box(modifier = Modifier...)`                                                |
+| Use a `<Text>`                      | `Text("...")` (built-in Compose)                                             |
+| Add an npm package                  | Edit `gradle/libs.versions.toml` + `app/build.gradle.kts` + Gradle sync      |
+| Reach for `react-navigation`        | Compose Navigation — already wired in `ui/navigation/`                       |
+| Use `react-query` / SWR             | A `Flow<T>` from a repository, collected via `collectAsStateWithLifecycle()` |
+| Throw together a quick Modal        | `ModalBottomSheet` + `NeoBottomSheet` wrapper                                |
+| `if (Platform.OS === 'android')`    | Always Android. No platform branches needed.                                 |
+| Look for the "Reload" shake gesture | Android Studio's "Apply Changes" button or a full ▶️                         |
 
 ## What about Flipper / Reactotron equivalents?
 
 Built into Android Studio. See `docs/locale/03-debugging.md`:
+
 - **Layout Inspector** ≈ React DevTools.
 - **Database Inspector** ≈ Flipper Database plugin (for Room).
 - **Network Inspector** ≈ Flipper Network plugin (rarely needed in this offline-first app).
@@ -148,4 +151,4 @@ Built into Android Studio. See `docs/locale/03-debugging.md`:
 - ✅ **Live Edit + wireless ADB** = your Expo-Go-on-phone equivalent.
 - ✅ Both work after one Android Studio install. Nothing extra needed.
 
-Once you internalize that the phone-with-USB-debugging *is* the dev environment (not a deploy target), the workflow stops feeling alien.
+Once you internalize that the phone-with-USB-debugging _is_ the dev environment (not a deploy target), the workflow stops feeling alien.

@@ -1,13 +1,13 @@
 # APP-SPEC Part 01 — Foundation
 
-> Living document. Source of truth for CallVault v1.0.0 foundations.
-> Last revised: 2026-04-30. Owner: CallVault core.
+> Living document. Source of truth for callNest v1.0.0 foundations.
+> Last revised: 2026-04-30. Owner: callNest core.
 
-This is **Part 01** of the multi-part CallVault APP-SPEC. It covers conventions, project overview, the locked tech stack, the domain glossary, the Android permissions inventory, the data model (Room + DataStore + SecurePrefs), and the canonical algorithms.
+This is **Part 01** of the multi-part callNest APP-SPEC. It covers conventions, project overview, the locked tech stack, the domain glossary, the Android permissions inventory, the data model (Room + DataStore + SecurePrefs), and the canonical algorithms.
 
 Cross-references:
 
-- Part 02 — UI surfaces, screens, navigation, design system, Neo* components.
+- Part 02 — UI surfaces, screens, navigation, design system, Neo\* components.
 - Part 03 — Sync pipeline, real-time service, workers, schedules.
 - Part 04 — Auto-tag rules, lead scoring, stats, insights.
 - Part 05 — Export, backup, restore, self-update.
@@ -22,16 +22,16 @@ Cross-references:
 
 The following glyphs are used throughout the APP-SPEC. They are not decoration — each one carries meaning, and reviewers must read them.
 
-| Glyph | Meaning |
-|-------|---------|
-| `[L]` | **Locked** decision. Do not relitigate without writing a new entry in `DECISIONS.md`. |
-| `[D]` | **Deferred** to a later milestone. Tracked in `TODO.md`. |
-| `[F]` | **Fallback** taken because the preferred path was not viable. Documented in `DECISIONS.md`. |
-| `[P0]`–`[P3]` | Priority. P0 blocks a release; P3 is nice-to-have. |
-| `[v1]` / `[v1.1]` / `[v2]` | Target version for the item. |
-| `§` | Section reference inside this APP-SPEC. `§3.4` means section 3.4 of the relevant Part. |
-| `→` | "Resolves to" / "produces". |
-| `±` | Bidirectional tolerance (e.g. ±60s window). |
+| Glyph                      | Meaning                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| `[L]`                      | **Locked** decision. Do not relitigate without writing a new entry in `DECISIONS.md`.       |
+| `[D]`                      | **Deferred** to a later milestone. Tracked in `TODO.md`.                                    |
+| `[F]`                      | **Fallback** taken because the preferred path was not viable. Documented in `DECISIONS.md`. |
+| `[P0]`–`[P3]`              | Priority. P0 blocks a release; P3 is nice-to-have.                                          |
+| `[v1]` / `[v1.1]` / `[v2]` | Target version for the item.                                                                |
+| `§`                        | Section reference inside this APP-SPEC. `§3.4` means section 3.4 of the relevant Part.      |
+| `→`                        | "Resolves to" / "produces".                                                                 |
+| `±`                        | Bidirectional tolerance (e.g. ±60s window).                                                 |
 
 ### 0.2 Section numbering
 
@@ -64,11 +64,11 @@ The APP-SPEC follows the app version. APP-SPEC for `v1.0.0` corresponds to the c
 
 Three versions are visible across the project:
 
-| Version | Where | What it means |
-|---------|-------|---------------|
-| `versionName` | `app/build.gradle.kts` | Marketing string shown in Settings → About. |
-| `versionCode` | `app/build.gradle.kts` | Integer used by self-update comparisons. |
-| `db version` | `CallVaultDatabase.kt` | Room schema version, separate from app version. |
+| Version       | Where                  | What it means                                   |
+| ------------- | ---------------------- | ----------------------------------------------- |
+| `versionName` | `app/build.gradle.kts` | Marketing string shown in Settings → About.     |
+| `versionCode` | `app/build.gradle.kts` | Integer used by self-update comparisons.        |
+| `db version`  | `callNestDatabase.kt`  | Room schema version, separate from app version. |
 
 `versionName` is bumped with every user-visible release. `versionCode` is monotonically increasing. `db version` only bumps when a Room migration is added.
 
@@ -76,7 +76,7 @@ Three versions are visible across the project:
 
 The APP-SPEC is structured to be read in two passes:
 
-**Pass 1 — orientation**: read §1 of each Part, top to bottom. This gives you a complete mental model of CallVault in roughly 30 minutes.
+**Pass 1 — orientation**: read §1 of each Part, top to bottom. This gives you a complete mental model of callNest in roughly 30 minutes.
 
 **Pass 2 — implementation**: when picking up a feature, read the relevant deep section (e.g. Part 03 §6 "Sync pipeline") plus any cross-referenced glossary entries in this Part's §3.
 
@@ -97,13 +97,13 @@ This Part deliberately excludes:
 
 ## 1 — Project overview
 
-### 1.1 What CallVault is
+### 1.1 What callNest is
 
-CallVault is an **offline-first Android app** that turns the device's call history into a lightweight inquiry CRM. It captures every call from `CallLog.Calls`, normalizes and enriches each row, separates real contacts from unsaved inquiries, and gives the user a fast surface to **tag, note, bookmark, follow up, search, filter, and export** their calls.
+callNest is an **offline-first Android app** that turns the device's call history into a lightweight inquiry CRM. It captures every call from `CallLog.Calls`, normalizes and enriches each row, separates real contacts from unsaved inquiries, and gives the user a fast surface to **tag, note, bookmark, follow up, search, filter, and export** their calls.
 
-The product is targeted, not generic. Generic call-log apps focus on display; CallVault focuses on **conversion**: turning a flood of inquiry calls into a triaged, scored, actionable pipeline. This shapes every design decision — the lead score, the auto-save flow, the floating bubble, the post-call popup, and the two-bucket My Contacts / Inquiries split all exist to serve the conversion job.
+The product is targeted, not generic. Generic call-log apps focus on display; callNest focuses on **conversion**: turning a flood of inquiry calls into a triaged, scored, actionable pipeline. This shapes every design decision — the lead score, the auto-save flow, the floating bubble, the post-call popup, and the two-bucket My Contacts / Inquiries split all exist to serve the conversion job.
 
-CallVault is **sideloaded**, **GMS-free**, and **single-device**. There is no cloud sync, no account, no telemetry, no analytics, and no Play Store presence. The single allowed outbound network call is a self-update manifest poll. This posture is non-negotiable for v1 — see §1.6.
+callNest is **sideloaded**, **GMS-free**, and **single-device**. There is no cloud sync, no account, no telemetry, no analytics, and no Play Store presence. The single allowed outbound network call is a self-update manifest poll. This posture is non-negotiable for v1 — see §1.6.
 
 ### 1.2 Target user persona — Indian small-business owner
 
@@ -111,15 +111,15 @@ The primary persona is a **30–55 year-old Indian small-business owner** runnin
 
 #### 1.2.1 Day in the life
 
-- **8:30 AM** — first call of the day comes in while the owner is still finishing chai. It's an unsaved number; CallVault's floating bubble surfaces *"new inquiry"* and lets the owner jot one word: *furniture*. The post-call popup offers `Customer / Inquiry / Spam` quick-tag chips; the owner taps `Inquiry` and dismisses.
-- **10:00 AM** — at the shop. Picks up the phone, opens CallVault. The Calls list shows a pinned section: *Unsaved inquiries — last 7 days* with 14 entries. He swipes-right on three of them to bookmark; one of them gets a follow-up scheduled for *tomorrow 11 AM*.
-- **12:30 PM** — he searches for *"sofa"* in CallVault. FTS hits a note he wrote two weeks ago against a number, plus three calls whose `geocodedLocation` matches "Sofakart Pvt Ltd". He calls one back.
-- **3:00 PM** — opens *My Contacts* tab. His phone Contacts now has 200+ auto-saved entries named `callVault-s1 +91...`. Three of them got renamed to real names yesterday — CallVault's lenient bucketing has already moved them out of the Inquiries bucket. He never has to think about it.
-- **6:30 PM** — quick check on Stats. *Hot leads: 4*. He opens the lead-score 90+ filter, sees all four, calls each one once. Two convert. He tags them `Closed-won` and adds a markdown note with the order details.
-- **8:00 PM** — wraps up. Tomorrow's `Today` follow-up tab has 6 entries cued for 11 AM, 12 PM, and 3 PM. CallVault's exact-alarm follow-up reminders fire even when the phone is in Doze.
-- **2:00 AM** — `DailyBackupWorker` runs while he sleeps. An encrypted `.cvb` file lands in `Downloads/CallVault/`. Optionally, `BackupDriveWorker` uploads the same encrypted blob to his own Google Drive (off by default; see Part 05).
+- **8:30 AM** — first call of the day comes in while the owner is still finishing chai. It's an unsaved number; callNest's floating bubble surfaces _"new inquiry"_ and lets the owner jot one word: _furniture_. The post-call popup offers `Customer / Inquiry / Spam` quick-tag chips; the owner taps `Inquiry` and dismisses.
+- **10:00 AM** — at the shop. Picks up the phone, opens callNest. The Calls list shows a pinned section: _Unsaved inquiries — last 7 days_ with 14 entries. He swipes-right on three of them to bookmark; one of them gets a follow-up scheduled for _tomorrow 11 AM_.
+- **12:30 PM** — he searches for _"sofa"_ in callNest. FTS hits a note he wrote two weeks ago against a number, plus three calls whose `geocodedLocation` matches "Sofakart Pvt Ltd". He calls one back.
+- **3:00 PM** — opens _My Contacts_ tab. His phone Contacts now has 200+ auto-saved entries named `callNest-s1 +91...`. Three of them got renamed to real names yesterday — callNest's lenient bucketing has already moved them out of the Inquiries bucket. He never has to think about it.
+- **6:30 PM** — quick check on Stats. _Hot leads: 4_. He opens the lead-score 90+ filter, sees all four, calls each one once. Two convert. He tags them `Closed-won` and adds a markdown note with the order details.
+- **8:00 PM** — wraps up. Tomorrow's `Today` follow-up tab has 6 entries cued for 11 AM, 12 PM, and 3 PM. callNest's exact-alarm follow-up reminders fire even when the phone is in Doze.
+- **2:00 AM** — `DailyBackupWorker` runs while he sleeps. An encrypted `.cvb` file lands in `Downloads/callNest/`. Optionally, `BackupDriveWorker` uploads the same encrypted blob to his own Google Drive (off by default; see Part 05).
 
-The persona is technical-curious but not technical. He sideloads APKs that someone in a WhatsApp business group sends him. He is wary of "bills" inside apps, distrusts cloud apps that ask for OTP, and is happy to grant battery / overlay / autostart settings if you tell him *exactly which buttons to press*. CallVault's UX leans into all of this.
+The persona is technical-curious but not technical. He sideloads APKs that someone in a WhatsApp business group sends him. He is wary of "bills" inside apps, distrusts cloud apps that ask for OTP, and is happy to grant battery / overlay / autostart settings if you tell him _exactly which buttons to press_. callNest's UX leans into all of this.
 
 ### 1.3 Top 5 user jobs
 
@@ -128,7 +128,7 @@ The product is justified entirely by these five jobs. Anything that does not ser
 1. **"Make sure I never lose an inquiry."** Every call is captured, even if it landed during a meeting, even if the number is unknown, even if the phone was off when they called.
 2. **"Tell me which inquiry to call back first."** The lead score (§6.3) ranks numbers by frequency × duration × recency, plus tag and follow-up boosts.
 3. **"Help me remember who this person was."** Notes with markdown, edit history, and bubble notes typed mid-call.
-4. **"Keep my real contacts and my inquiry pile separate."** Auto-save into a `CallVault Inquiries` group; lenient bucketing flips an entry to *My Contact* when the user renames it.
+4. **"Keep my real contacts and my inquiry pile separate."** Auto-save into a `callNest Inquiries` group; lenient bucketing flips an entry to _My Contact_ when the user renames it.
 5. **"Let me hand a daily/weekly/monthly report to my accountant or my partner."** Export to Excel / CSV / PDF with a wizard that chooses range, scope, columns, and destination.
 
 ### 1.4 Non-goals (locked)
@@ -137,16 +137,16 @@ These are intentionally **not** in v1. Each is locked; reopening requires a new 
 
 - `[L]` **No call recording.** Legally fraught in India; technically blocked on most modern Android versions without rooting; not worth it.
 - `[L]` **No WhatsApp integration.** No reading of WhatsApp messages, no scraping of WhatsApp call logs, no tagging WhatsApp inquiries. The OS does not expose WhatsApp call history to third-party apps without root.
-- `[L]` **No cloud sync v1.** Backup only. The optional Google Drive *backup* upload added 2026-05-02 (see `DECISIONS.md`) is **not** sync — it is a one-way encrypted-blob upload of the same `.cvb` already on the device.
+- `[L]` **No cloud sync v1.** Backup only. The optional Google Drive _backup_ upload added 2026-05-02 (see `DECISIONS.md`) is **not** sync — it is a one-way encrypted-blob upload of the same `.cvb` already on the device.
 - `[L]` **No multi-user / multi-device.** Single phone, single owner. No "team" concept.
 - `[L]` **No multi-language.** English-only UI in v1. All strings live in `res/values/strings.xml`; localization is a future port, not a parallel track.
 - `[L]` **No dark mode v1.** Neumorphism leans on a tinted-light surface; a faithful dark-mode neumorphism is a design problem, not a code problem, and is deferred to v2.
 - `[L]` **No crash reporting / no analytics.** Privacy posture forbids it. See §1.6.
-- `[L]` **No "default dialer" mode.** Using `RoleManager.ROLE_DIALER` would unlock things (real-time call number on API 31+, call-screening) but requires Play Store distribution to clear policy. Sideloaded apps cannot become default dialer cleanly. CallVault works *around* this constraint.
+- `[L]` **No "default dialer" mode.** Using `RoleManager.ROLE_DIALER` would unlock things (real-time call number on API 31+, call-screening) but requires Play Store distribution to clear policy. Sideloaded apps cannot become default dialer cleanly. callNest works _around_ this constraint.
 
 ### 1.5 Distribution model
 
-CallVault is **sideloaded only**. There is no Play Store listing, no AppGallery listing, no F-Droid listing for v1.
+callNest is **sideloaded only**. There is no Play Store listing, no AppGallery listing, no F-Droid listing for v1.
 
 The release pipeline is:
 
@@ -157,13 +157,13 @@ The release pipeline is:
    - Install the first APK manually (one-time, via WhatsApp share / web link / USB).
    - Or get a notification from the in-app `UpdateCheckWorker` that polls the manifest weekly.
 
-The in-app update flow uses `DownloadManager` for the download, verifies SHA-256 before launching the system installer, and hands off to the system via `FileProvider` + `ACTION_VIEW`. From API 26+ the user must additionally have granted "Install unknown apps" for CallVault — the install screen handles that gate.
+The in-app update flow uses `DownloadManager` for the download, verifies SHA-256 before launching the system installer, and hands off to the system via `FileProvider` + `ACTION_VIEW`. From API 26+ the user must additionally have granted "Install unknown apps" for callNest — the install screen handles that gate.
 
 There is no auto-install. The user always sees the system installer dialog. This is both a platform constraint and a design choice.
 
 ### 1.6 Privacy posture
 
-CallVault is built around a hard privacy stance. From `data_extraction_rules.xml` to the manifest's network whitelist, nothing leaves the device unless the user took an explicit action.
+callNest is built around a hard privacy stance. From `data_extraction_rules.xml` to the manifest's network whitelist, nothing leaves the device unless the user took an explicit action.
 
 - **No Firebase, no Crashlytics, no GA, no Mixpanel, no Sentry, no third-party SDK that phones home.** Adding any of these requires a new top-level `DECISIONS.md` entry signed by the maintainer.
 - **No silent telemetry.** Timber logs go to logcat only.
@@ -177,15 +177,15 @@ CallVault is built around a hard privacy stance. From `data_extraction_rules.xml
 
 These are non-aspirational targets. Each one has a measurable definition. Builds that regress any of them block release.
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Cold start to first frame | **< 1.5 s** on a Pixel 4a-class device | Macrobenchmark (deferred), or visual inspection on debug build. |
-| Filter sheet apply → list updates | **< 300 ms** for a 5,000-call DB | Wallclock from `onApplyFilter` to first emission of the new list. |
-| FTS search query → first result row | **< 100 ms** for a 5,000-call DB | Wallclock from `onQueryChange` (after debounce) to first emission. |
-| Sync pipeline end-to-end | **< 2 s** for 100 new calls | `SyncProgressBus` start → completion timestamp delta. |
-| Release APK size | **< 25 MB** | `ls -l app-release.apk`. |
-| Memory footprint at idle | **< 80 MB** RSS | adb shell `dumpsys meminfo`. |
-| ANR rate | **0** | Visual on device + logcat ANR markers. |
+| Metric                              | Target                                 | Measurement                                                        |
+| ----------------------------------- | -------------------------------------- | ------------------------------------------------------------------ |
+| Cold start to first frame           | **< 1.5 s** on a Pixel 4a-class device | Macrobenchmark (deferred), or visual inspection on debug build.    |
+| Filter sheet apply → list updates   | **< 300 ms** for a 5,000-call DB       | Wallclock from `onApplyFilter` to first emission of the new list.  |
+| FTS search query → first result row | **< 100 ms** for a 5,000-call DB       | Wallclock from `onQueryChange` (after debounce) to first emission. |
+| Sync pipeline end-to-end            | **< 2 s** for 100 new calls            | `SyncProgressBus` start → completion timestamp delta.              |
+| Release APK size                    | **< 25 MB**                            | `ls -l app-release.apk`.                                           |
+| Memory footprint at idle            | **< 80 MB** RSS                        | adb shell `dumpsys meminfo`.                                       |
+| ANR rate                            | **0**                                  | Visual on device + logcat ANR markers.                             |
 
 Lead-score recompute is allowed up to 1 s for a 5,000-call DB; backup encryption is allowed up to 8 s for the same database size (PBKDF2 dominates).
 
@@ -197,17 +197,17 @@ This is the canonical dependency table. Versions are **pinned exactly**. Do not 
 
 ### 2.1 Core toolchain
 
-| Component | Version | Role |
-|-----------|---------|------|
-| Kotlin | **2.0.21** | Project language. K2 compiler. |
-| Android Gradle Plugin (AGP) | **8.7.3** | Build system. |
-| Gradle | **8.10.2** | Build runner. |
-| compileSdk | **35** | Android 15 APIs available at compile time. |
-| targetSdk | **35** | Behavior changes for Android 15 opted in. |
-| minSdk | **26** | Android 8.0 floor. Drops < 5% of Indian market in 2026. |
-| JVM target | **17** | Toolchain JDK. |
-| KSP | **2.0.21-1.0.27** | Symbol processing for Hilt + Room. |
-| `kotlin-stdlib` | bundled with 2.0.21 | Standard library. |
+| Component                   | Version             | Role                                                    |
+| --------------------------- | ------------------- | ------------------------------------------------------- |
+| Kotlin                      | **2.0.21**          | Project language. K2 compiler.                          |
+| Android Gradle Plugin (AGP) | **8.7.3**           | Build system.                                           |
+| Gradle                      | **8.10.2**          | Build runner.                                           |
+| compileSdk                  | **35**              | Android 15 APIs available at compile time.              |
+| targetSdk                   | **35**              | Behavior changes for Android 15 opted in.               |
+| minSdk                      | **26**              | Android 8.0 floor. Drops < 5% of Indian market in 2026. |
+| JVM target                  | **17**              | Toolchain JDK.                                          |
+| KSP                         | **2.0.21-1.0.27**   | Symbol processing for Hilt + Room.                      |
+| `kotlin-stdlib`             | bundled with 2.0.21 | Standard library.                                       |
 
 `minSdk = 26` is locked because:
 
@@ -221,76 +221,76 @@ This is the canonical dependency table. Versions are **pinned exactly**. Do not 
 
 ### 2.2 UI
 
-| Library | Version | Role |
-|---------|---------|------|
-| Compose BOM | **2024.12.01** | Single-source Compose version graph. |
-| Compose Material 3 | from BOM | Material 3 components, restyled with Neo* wrappers. |
-| Compose Navigation | **2.8.5** | Single-Activity routing. |
-| Compose Foundation | from BOM | LazyColumn, gestures. |
-| Compose UI / Tooling | from BOM | `@Preview`, `Modifier`, `LayoutInspector`. |
-| `androidx.activity:activity-compose` | 1.9.3 | `setContent`, `BackHandler`. |
-| `androidx.lifecycle:lifecycle-viewmodel-compose` | 2.8.7 | `viewModel()` factory. |
-| `androidx.lifecycle:lifecycle-runtime-compose` | 2.8.7 | `collectAsStateWithLifecycle`. |
-| `androidx.core:core-splashscreen` | **1.0.1** | API 31+ splash compatibility on 26+. |
-| Coil | **3.0.4** (`io.coil-kt.coil3:coil-compose`) | Image loading (avatar, doc images). |
-| Vico | **2.0.0-beta.4** (`compose-m3` + `compose` + `core`) | Stats charts (limited use; most charts are hand-rolled Canvas). |
+| Library                                          | Version                                              | Role                                                            |
+| ------------------------------------------------ | ---------------------------------------------------- | --------------------------------------------------------------- |
+| Compose BOM                                      | **2024.12.01**                                       | Single-source Compose version graph.                            |
+| Compose Material 3                               | from BOM                                             | Material 3 components, restyled with Neo\* wrappers.            |
+| Compose Navigation                               | **2.8.5**                                            | Single-Activity routing.                                        |
+| Compose Foundation                               | from BOM                                             | LazyColumn, gestures.                                           |
+| Compose UI / Tooling                             | from BOM                                             | `@Preview`, `Modifier`, `LayoutInspector`.                      |
+| `androidx.activity:activity-compose`             | 1.9.3                                                | `setContent`, `BackHandler`.                                    |
+| `androidx.lifecycle:lifecycle-viewmodel-compose` | 2.8.7                                                | `viewModel()` factory.                                          |
+| `androidx.lifecycle:lifecycle-runtime-compose`   | 2.8.7                                                | `collectAsStateWithLifecycle`.                                  |
+| `androidx.core:core-splashscreen`                | **1.0.1**                                            | API 31+ splash compatibility on 26+.                            |
+| Coil                                             | **3.0.4** (`io.coil-kt.coil3:coil-compose`)          | Image loading (avatar, doc images).                             |
+| Vico                                             | **2.0.0-beta.4** (`compose-m3` + `compose` + `core`) | Stats charts (limited use; most charts are hand-rolled Canvas). |
 
 ### 2.3 DI / persistence / async
 
-| Library | Version | Role |
-|---------|---------|------|
-| Hilt | **2.53.1** (KSP) | Dependency injection. |
-| `androidx.hilt:hilt-work` | 1.2.0 | `@HiltWorker` + `@AssistedInject` for WorkManager. |
-| Room runtime | **2.6.1** | SQLite ORM. |
-| Room compiler | **2.6.1** (KSP) | Generated DAOs. |
-| Room ktx | 2.6.1 | Coroutines + `withTransaction`. |
-| DataStore Preferences | **1.1.1** | Typed prefs (~40 keys). |
-| WorkManager | **2.10.0** | Periodic + one-time background work. |
-| `androidx.security:security-crypto` | 1.1.0-alpha06 | `EncryptedSharedPreferences` for `SecurePrefs`. |
-| kotlinx coroutines | **1.9.0** | Structured concurrency. |
-| kotlinx serialization | **1.7.3** | JSON for export, rules, manifest. |
-| kotlinx datetime | **0.6.1** | Calendar / instant arithmetic for sync, follow-ups. |
-| `androidx.lifecycle:lifecycle-service` | 2.8.7 | `LifecycleService` for `CallEnrichmentService`. |
-| `androidx.savedstate:savedstate` | 1.2.1 | Transitive for the lifecycle bits. |
+| Library                                | Version          | Role                                                |
+| -------------------------------------- | ---------------- | --------------------------------------------------- |
+| Hilt                                   | **2.53.1** (KSP) | Dependency injection.                               |
+| `androidx.hilt:hilt-work`              | 1.2.0            | `@HiltWorker` + `@AssistedInject` for WorkManager.  |
+| Room runtime                           | **2.6.1**        | SQLite ORM.                                         |
+| Room compiler                          | **2.6.1** (KSP)  | Generated DAOs.                                     |
+| Room ktx                               | 2.6.1            | Coroutines + `withTransaction`.                     |
+| DataStore Preferences                  | **1.1.1**        | Typed prefs (~40 keys).                             |
+| WorkManager                            | **2.10.0**       | Periodic + one-time background work.                |
+| `androidx.security:security-crypto`    | 1.1.0-alpha06    | `EncryptedSharedPreferences` for `SecurePrefs`.     |
+| kotlinx coroutines                     | **1.9.0**        | Structured concurrency.                             |
+| kotlinx serialization                  | **1.7.3**        | JSON for export, rules, manifest.                   |
+| kotlinx datetime                       | **0.6.1**        | Calendar / instant arithmetic for sync, follow-ups. |
+| `androidx.lifecycle:lifecycle-service` | 2.8.7            | `LifecycleService` for `CallEnrichmentService`.     |
+| `androidx.savedstate:savedstate`       | 1.2.1            | Transitive for the lifecycle bits.                  |
 
 ### 2.4 Telephony / contacts / phone numbers
 
-| Library | Version | Role |
-|---------|---------|------|
+| Library                                  | Version     | Role                                                 |
+| ---------------------------------------- | ----------- | ---------------------------------------------------- |
 | `io.michaelrocks:libphonenumber-android` | **8.13.50** | Phone normalization to E.164 with default region IN. |
 
 The Michael-Rocks port of Google's libphonenumber is preferred over the official `com.googlecode.libphonenumber:libphonenumber` because it ships pre-compiled metadata as Android assets — half the size, faster cold-start.
 
 ### 2.5 Export / encryption
 
-| Library | Version | Role |
-|---------|---------|------|
-| Apache POI ooxml-lite | **5.2.5** | Excel multi-sheet export. |
-| iText core | **8.0.5** | PDF export. |
-| Tink | **1.15.0** | (Catalogued but unused in v1; backup uses raw JCA — see `DECISIONS.md`.) |
+| Library               | Version    | Role                                                                     |
+| --------------------- | ---------- | ------------------------------------------------------------------------ |
+| Apache POI ooxml-lite | **5.2.5**  | Excel multi-sheet export.                                                |
+| iText core            | **8.0.5**  | PDF export.                                                              |
+| Tink                  | **1.15.0** | (Catalogued but unused in v1; backup uses raw JCA — see `DECISIONS.md`.) |
 
 ### 2.6 Auth (optional Drive backup)
 
-| Library | Version | Role |
-|---------|---------|------|
+| Library | Version                           | Role                                              |
+| ------- | --------------------------------- | ------------------------------------------------- |
 | AppAuth | **0.11.1** (`net.openid:appauth`) | OAuth 2.0 for Google Drive without Play Services. |
-| OkHttp | **4.12.0** | Drive REST + update manifest fetch. |
+| OkHttp  | **4.12.0**                        | Drive REST + update manifest fetch.               |
 
 ### 2.7 Logging
 
-| Library | Version | Role |
-|---------|---------|------|
-| Timber | **5.0.1** | Logging façade. Planted in `CallVaultApp.onCreate` (debug only). |
+| Library | Version   | Role                                                            |
+| ------- | --------- | --------------------------------------------------------------- |
+| Timber  | **5.0.1** | Logging façade. Planted in `callNestApp.onCreate` (debug only). |
 
 ### 2.8 Test stack
 
-| Library | Version | Role |
-|---------|---------|------|
-| JUnit5 (`org.junit.jupiter:junit-jupiter`) | **5.11.4** | Unit test runner. |
-| Turbine | **1.2.0** | Flow assertions. |
-| MockK | **1.13.13** | Kotlin-friendly mocking. |
-| `androidx.test.ext:junit` | 1.2.1 | Instrumentation test runner (scaffolded only). |
-| `androidx.room:room-testing` | 2.6.1 | DAO tests, migration tests. |
+| Library                                    | Version     | Role                                           |
+| ------------------------------------------ | ----------- | ---------------------------------------------- |
+| JUnit5 (`org.junit.jupiter:junit-jupiter`) | **5.11.4**  | Unit test runner.                              |
+| Turbine                                    | **1.2.0**   | Flow assertions.                               |
+| MockK                                      | **1.13.13** | Kotlin-friendly mocking.                       |
+| `androidx.test.ext:junit`                  | 1.2.1       | Instrumentation test runner (scaffolded only). |
+| `androidx.room:room-testing`               | 2.6.1       | DAO tests, migration tests.                    |
 
 ### 2.9 Why these and not others
 
@@ -311,9 +311,9 @@ This section is the source of truth for vocabulary. Every term that appears in c
 
 A single row from `CallLog.Calls`, mirrored to Room as `CallEntity`. Identified by `systemId`, which is `CallLog._ID`. Multiple calls can share the same `normalizedNumber` — that's the whole point of the lead score (a number with many calls is a hot lead).
 
-`CallEntity` carries the system-provided fields plus CallVault-only fields: `isBookmarked`, `bookmarkReason`, `followUpDate`, `followUpTime`, `followUpDone`, `archived`, `leadScore`, `leadScoreManualOverride`, `tagIds` (denormalized cache, refreshed by `CallTagCrossRef`).
+`CallEntity` carries the system-provided fields plus callNest-only fields: `isBookmarked`, `bookmarkReason`, `followUpDate`, `followUpTime`, `followUpDone`, `archived`, `leadScore`, `leadScoreManualOverride`, `tagIds` (denormalized cache, refreshed by `CallTagCrossRef`).
 
-The system row is treated as immutable input: CallVault never deletes from `CallLog.Calls`, never modifies it, and never tries to write to it. CallVault's view is a faithful mirror plus enrichment.
+The system row is treated as immutable input: callNest never deletes from `CallLog.Calls`, never modifies it, and never tries to write to it. callNest's view is a faithful mirror plus enrichment.
 
 Examples:
 
@@ -329,15 +329,15 @@ Calls without a parseable number get an empty string `""` plus the `isPrivate=tr
 
 Worked examples:
 
-| Raw input | Default region IN | E.164 output |
-|-----------|-------------------|--------------|
-| `9876543210` | IN | `+919876543210` |
-| `+919876543210` | IN | `+919876543210` |
-| `09876543210` | IN | `+919876543210` |
-| `+1 (415) 555-2671` | IN | `+14155552671` |
-| `911234567890` | IN | `+911234567890` |
-| `*86` | IN | `""` (unparseable, treated as private) |
-| `Unknown` | IN | `""` |
+| Raw input           | Default region IN | E.164 output                           |
+| ------------------- | ----------------- | -------------------------------------- |
+| `9876543210`        | IN                | `+919876543210`                        |
+| `+919876543210`     | IN                | `+919876543210`                        |
+| `09876543210`       | IN                | `+919876543210`                        |
+| `+1 (415) 555-2671` | IN                | `+14155552671`                         |
+| `911234567890`      | IN                | `+911234567890`                        |
+| `*86`               | IN                | `""` (unparseable, treated as private) |
+| `Unknown`           | IN                | `""`                                   |
 
 ### 3.3 Raw number
 
@@ -359,32 +359,32 @@ When the device is single-SIM, `simSlot` is always `0`. When the lookup fails (p
 
 ### 3.6 Inquiry
 
-An unsaved-number call. The user receives many inquiries per day — capturing them is CallVault's primary job. A row is an inquiry while `isInSystemContacts=false`. Once the user (or auto-save) writes the number to system Contacts, `isInSystemContacts=true` flips on next sync.
+An unsaved-number call. The user receives many inquiries per day — capturing them is callNest's primary job. A row is an inquiry while `isInSystemContacts=false`. Once the user (or auto-save) writes the number to system Contacts, `isInSystemContacts=true` flips on next sync.
 
 ### 3.7 Auto-saved contact
 
-An inquiry written to system Contacts by CallVault using the auto-save name format. Tracked via `ContactMetaEntity.isAutoSaved=true`. Lives in the configured contact group (default *CallVault Inquiries*), with the configured `ACCOUNT_TYPE`/`ACCOUNT_NAME`. See §6.5 for the format and §3.10 for the group manager.
+An inquiry written to system Contacts by callNest using the auto-save name format. Tracked via `ContactMetaEntity.isAutoSaved=true`. Lives in the configured contact group (default _callNest Inquiries_), with the configured `ACCOUNT_TYPE`/`ACCOUNT_NAME`. See §6.5 for the format and §3.10 for the group manager.
 
-When the user later renames an auto-saved contact in the system Contacts app, lenient bucketing (§6.6) flips `isAutoSaved` back to `false` on next sync — without requiring the user to do anything in CallVault.
+When the user later renames an auto-saved contact in the system Contacts app, lenient bucketing (§6.6) flips `isAutoSaved` back to `false` on next sync — without requiring the user to do anything in callNest.
 
 ### 3.8 My Contacts (bucket)
 
 Top-level UX bucket for "real" contacts. SQL predicate: `isInSystemContacts=true AND isAutoSaved=false`. Two ways a row enters this bucket:
 
-1. The user manually saved the number outside CallVault, before or after first installing the app.
-2. The user renamed a CallVault-auto-saved contact, and lenient bucketing detected the rename.
+1. The user manually saved the number outside callNest, before or after first installing the app.
+2. The user renamed a callNest-auto-saved contact, and lenient bucketing detected the rename.
 
 ### 3.9 Inquiries (bucket)
 
-Top-level UX bucket for auto-saved-but-not-yet-renamed inquiries. SQL predicate: `isAutoSaved=true`. The user converts an inquiry to a real contact by renaming it (either inside CallVault's `MyContactsScreen` "Convert" flow, or outside, in the system Contacts app).
+Top-level UX bucket for auto-saved-but-not-yet-renamed inquiries. SQL predicate: `isAutoSaved=true`. The user converts an inquiry to a real contact by renaming it (either inside callNest's `MyContactsScreen` "Convert" flow, or outside, in the system Contacts app).
 
 ### 3.10 Lenient bucketing
 
-The rule per §6.6: if the user opens the system Contacts app and renames an auto-saved entry, `isAutoSaved` flips to `false` on the next sync. The contact moves from *Inquiries* to *My Contacts* automatically. The detection compares the live system display name against a regex compiled from the **current** auto-save settings, not the historical settings — see `DECISIONS.md` (Sprint 5).
+The rule per §6.6: if the user opens the system Contacts app and renames an auto-saved entry, `isAutoSaved` flips to `false` on the next sync. The contact moves from _Inquiries_ to _My Contacts_ automatically. The detection compares the live system display name against a regex compiled from the **current** auto-save settings, not the historical settings — see `DECISIONS.md` (Sprint 5).
 
 ### 3.11 Auto-save name format
 
-Locked format: `{prefix}{simTag} {fullNormalizedPhone}{suffix}`. Configurable in Settings → Auto-Save. Defaults: `prefix="callVault-"`, `simTagFormat="s{n}"`, `suffix=""`. Worked examples in §6.5.
+Locked format: `{prefix}{simTag} {fullNormalizedPhone}{suffix}`. Configurable in Settings → Auto-Save. Defaults: `prefix="callNest-"`, `simTagFormat="s{n}"`, `suffix=""`. Worked examples in §6.5.
 
 ### 3.12 Auto-save pattern matcher
 
@@ -509,7 +509,7 @@ Destructive: wipes user-data tables and reinserts from a `.cvb` file. Wrapped in
   "stable": {
     "version": "1.0.1",
     "versionCode": 2,
-    "apkUrl": "https://example.com/callvault-1.0.1.apk",
+    "apkUrl": "https://example.com/callNest-1.0.1.apk",
     "sha256": "abcd...ef",
     "minSupported": 1,
     "releaseNotes": "Bug fixes and stability improvements."
@@ -530,7 +530,7 @@ User dismissal of an update for a specific `versionCode`. Stored in `SkippedUpda
 
 Light source top-left, base `#E8E8EC`. Dual-shadow rendering via `Modifier.neoShadow(elevation, shape)`. Convex (raised), Concave (sunken), Flat. See Part 02 for the design system reference.
 
-### 3.44 Neo* component
+### 3.44 Neo\* component
 
 Any Compose composable in `ui/components/neo/`. Wraps Material 3 internals with neumorphic styling. Examples: `NeoButton`, `NeoCard`, `NeoChip`, `NeoTabBar`, `NeoBottomSheet`, `NeoTextField`.
 
@@ -590,7 +590,7 @@ The persisted shape of a saved filter preset. Carries: date range, call types, S
 
 ## 4 — Permissions inventory
 
-Every permission CallVault requests, grouped by criticality. For each: manifest line, why CallVault needs it, when requested, what's blocked if denied, fallback, user-facing rationale string.
+Every permission callNest requests, grouped by criticality. For each: manifest line, why callNest needs it, when requested, what's blocked if denied, fallback, user-facing rationale string.
 
 ### 4.1 Critical permissions
 
@@ -602,11 +602,11 @@ These are required runtime permissions. Without all of them, the Calls screen wi
 <uses-permission android:name="android.permission.READ_CALL_LOG" />
 ```
 
-- **Why CallVault needs it.** It's the entire input to the sync pipeline. Without `READ_CALL_LOG`, `CallLogReader.readSince()` returns nothing.
+- **Why callNest needs it.** It's the entire input to the sync pipeline. Without `READ_CALL_LOG`, `CallLogReader.readSince()` returns nothing.
 - **When requested.** Onboarding page 3 (Permissions). Re-requested on Calls screen entry if denied.
 - **What's blocked if denied.** Everything. The entire app is built on call log data.
 - **Fallback.** None — denied → `permission_denied` route.
-- **Rationale string.** `R.string.perm_rationale_call_log` — *"CallVault reads your call log to capture inquiries. Without this, the app can't show any calls."*
+- **Rationale string.** `R.string.perm_rationale_call_log` — _"callNest reads your call log to capture inquiries. Without this, the app can't show any calls."_
 
 #### 4.1.2 `READ_PHONE_STATE`
 
@@ -614,11 +614,11 @@ These are required runtime permissions. Without all of them, the Calls screen wi
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 ```
 
-- **Why CallVault needs it.** SIM-slot resolution via `SubscriptionManager`, in-call state monitoring via `TelephonyCallback`.
+- **Why callNest needs it.** SIM-slot resolution via `SubscriptionManager`, in-call state monitoring via `TelephonyCallback`.
 - **When requested.** Onboarding page 3, alongside call-log.
 - **What's blocked if denied.** SIM-slot column in `CallEntity` is null. Real-time bubble cannot detect call state on its own.
 - **Fallback.** App still works; SIM-slot filters will all match no calls; real-time toggles get disabled with a help link.
-- **Rationale string.** `R.string.perm_rationale_phone_state` — *"CallVault reads phone state to know which SIM took the call and to show in-call helpers."*
+- **Rationale string.** `R.string.perm_rationale_phone_state` — _"callNest reads phone state to know which SIM took the call and to show in-call helpers."_
 
 #### 4.1.3 `READ_CONTACTS`
 
@@ -626,11 +626,11 @@ These are required runtime permissions. Without all of them, the Calls screen wi
 <uses-permission android:name="android.permission.READ_CONTACTS" />
 ```
 
-- **Why CallVault needs it.** Resolve display name for known numbers; detect `isInSystemContacts`; lenient bucketing reads live display names.
+- **Why callNest needs it.** Resolve display name for known numbers; detect `isInSystemContacts`; lenient bucketing reads live display names.
 - **When requested.** Onboarding page 3.
 - **What's blocked if denied.** Calls show numbers only, no names. My Contacts bucket cannot be derived. Lenient bucketing cannot run.
 - **Fallback.** App functions in degraded mode — numbers only, no name resolution. Banner suggests granting.
-- **Rationale string.** `R.string.perm_rationale_read_contacts` — *"CallVault reads contacts to show names instead of numbers."*
+- **Rationale string.** `R.string.perm_rationale_read_contacts` — _"callNest reads contacts to show names instead of numbers."_
 
 #### 4.1.4 `WRITE_CONTACTS`
 
@@ -638,11 +638,11 @@ These are required runtime permissions. Without all of them, the Calls screen wi
 <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 ```
 
-- **Why CallVault needs it.** Auto-save inquiries into the *CallVault Inquiries* group; the BulkSaveContactsUseCase action.
+- **Why callNest needs it.** Auto-save inquiries into the _callNest Inquiries_ group; the BulkSaveContactsUseCase action.
 - **When requested.** Onboarding page 3.
 - **What's blocked if denied.** Auto-save toggle disabled in settings. Bulk-save action greyed out.
 - **Fallback.** App fully functions without auto-save. The user is asked to grant the permission only when they enable auto-save.
-- **Rationale string.** `R.string.perm_rationale_write_contacts` — *"CallVault auto-saves inquiry numbers to a separate contact group so your address book stays organized."*
+- **Rationale string.** `R.string.perm_rationale_write_contacts` — _"callNest auto-saves inquiry numbers to a separate contact group so your address book stays organized."_
 
 ### 4.2 Special-grant permissions
 
@@ -654,11 +654,11 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 ```
 
-- **Why CallVault needs it.** The floating bubble + post-call popup are `WindowManager` overlays of type `TYPE_APPLICATION_OVERLAY`.
+- **Why callNest needs it.** The floating bubble + post-call popup are `WindowManager` overlays of type `TYPE_APPLICATION_OVERLAY`.
 - **When requested.** Onboarding page 4 ("Real-time helpers"); also when the user toggles bubble or popup in Real-Time Settings.
 - **What's blocked if denied.** Real-time toggles disabled. Service does not start (`RealTimeServiceController` short-circuits).
 - **Fallback.** App functions without real-time. Calls list and detail still work.
-- **Rationale string.** `R.string.perm_rationale_overlay` — *"To show the in-call bubble and post-call popup, CallVault needs to draw over other apps. Tap Open Settings, then enable 'Allow over other apps'."*
+- **Rationale string.** `R.string.perm_rationale_overlay` — _"To show the in-call bubble and post-call popup, callNest needs to draw over other apps. Tap Open Settings, then enable 'Allow over other apps'."_
 
 #### 4.2.2 `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM`
 
@@ -667,11 +667,11 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 ```
 
-- **Why CallVault needs it.** Follow-up reminders fire at exact times via `AlarmManager.setExactAndAllowWhileIdle`. The 5-minute sync interval also relies on exact alarms (PeriodicWorkRequest minimum is 15 min).
+- **Why callNest needs it.** Follow-up reminders fire at exact times via `AlarmManager.setExactAndAllowWhileIdle`. The 5-minute sync interval also relies on exact alarms (PeriodicWorkRequest minimum is 15 min).
 - **When requested.** First time the user creates a follow-up; or selects 5 min sync interval.
 - **What's blocked if denied.** Exact alarms downgrade to inexact (`setAndAllowWhileIdle`). Reminders may fire 0–15 min late depending on Doze. 5-min sync falls back to 15-min.
 - **Fallback.** App stores `exactAlarmFallbackUsed=true` in DataStore and shows an info chip on the Follow-Ups screen.
-- **Rationale string.** `R.string.perm_rationale_exact_alarm` — *"For follow-up reminders to fire on time, CallVault needs the 'Alarms & reminders' permission."*
+- **Rationale string.** `R.string.perm_rationale_exact_alarm` — _"For follow-up reminders to fire on time, callNest needs the 'Alarms & reminders' permission."_
 
 ### 4.3 Notifications
 
@@ -681,11 +681,11 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 ```
 
-- **Why CallVault needs it.** Foreground-service notification, follow-up reminders, daily summary, sync progress, update available, daily backup result.
+- **Why callNest needs it.** Foreground-service notification, follow-up reminders, daily summary, sync progress, update available, daily backup result.
 - **When requested.** Onboarding page 3 on API 33+. On older APIs the permission is implicitly granted.
 - **What's blocked if denied.** Foreground service still runs but its notification is invisible. Reminders fire silently.
 - **Fallback.** Settings shows a banner ("Notifications disabled — reminders won't appear in your tray").
-- **Rationale string.** `R.string.perm_rationale_notifications` — *"CallVault needs notification permission to show follow-up reminders and the daily summary."*
+- **Rationale string.** `R.string.perm_rationale_notifications` — _"callNest needs notification permission to show follow-up reminders and the daily summary."_
 
 #### 4.3.2 `VIBRATE`
 
@@ -693,7 +693,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.VIBRATE" />
 ```
 
-- **Why CallVault needs it.** Tactile feedback on bubble drag-snap, follow-up reminder buzz, swipe gesture detents.
+- **Why callNest needs it.** Tactile feedback on bubble drag-snap, follow-up reminder buzz, swipe gesture detents.
 - **When requested.** Implicit (install-time).
 - **What's blocked if denied.** N/A — no runtime denial path.
 - **Fallback.** N/A.
@@ -707,7 +707,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 ```
 
-- **Why CallVault needs it.** `CallEnrichmentService` runs as a foreground service.
+- **Why callNest needs it.** `CallEnrichmentService` runs as a foreground service.
 - **When requested.** Implicit (install-time).
 - **What's blocked if denied.** N/A — install-time.
 - **Fallback.** N/A.
@@ -718,7 +718,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 ```
 
-- **Why CallVault needs it.** API 34+ requires a typed foreground-service permission for any DataSync-typed service. `CallSyncWorker` may chain via expedited work that surfaces a foreground notification under heavy load.
+- **Why callNest needs it.** API 34+ requires a typed foreground-service permission for any DataSync-typed service. `CallSyncWorker` may chain via expedited work that surfaces a foreground notification under heavy load.
 - **When requested.** Implicit (install-time).
 - **What's blocked if denied.** N/A.
 - **Fallback.** N/A.
@@ -729,7 +729,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 ```
 
-- **Why CallVault needs it.** API 34+ requires this typed permission for `specialUse` services. `CallEnrichmentService` declares `foregroundServiceType="specialUse"` with subtype `RealTimeCallEnrichment`.
+- **Why callNest needs it.** API 34+ requires this typed permission for `specialUse` services. `CallEnrichmentService` declares `foregroundServiceType="specialUse"` with subtype `RealTimeCallEnrichment`.
 - **When requested.** Implicit (install-time).
 - **What's blocked if denied.** N/A.
 - **Fallback.** N/A.
@@ -742,7 +742,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 ```
 
-- **Why CallVault needs it.** `BootCompletedReceiver` re-schedules sync work, re-arms exact alarms for pending follow-ups, and (if enabled) restarts `CallEnrichmentService`.
+- **Why callNest needs it.** `BootCompletedReceiver` re-schedules sync work, re-arms exact alarms for pending follow-ups, and (if enabled) restarts `CallEnrichmentService`.
 - **When requested.** Implicit (install-time).
 - **What's blocked if denied.** N/A.
 - **Fallback.** N/A.
@@ -753,7 +753,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 ```
 
-- **Why CallVault needs it.** Sync pipeline holds a partial wakelock for the duration of a sync to keep the CPU on while reading the call log.
+- **Why callNest needs it.** Sync pipeline holds a partial wakelock for the duration of a sync to keep the CPU on while reading the call log.
 - **When requested.** Implicit (install-time).
 - **What's blocked if denied.** N/A.
 - **Fallback.** N/A.
@@ -766,7 +766,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-- **Why CallVault needs it.** Single outbound call to the update manifest. Optional Drive backup upload.
+- **Why callNest needs it.** Single outbound call to the update manifest. Optional Drive backup upload.
 - **When requested.** Implicit.
 - **What's blocked if denied.** N/A.
 - **Fallback.** N/A.
@@ -777,7 +777,7 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
-- **Why CallVault needs it.** WorkManager constraints (`requiresNetwork`, `requiresUnmeteredNetwork`) need this to evaluate.
+- **Why callNest needs it.** WorkManager constraints (`requiresNetwork`, `requiresUnmeteredNetwork`) need this to evaluate.
 - **When requested.** Implicit.
 - **What's blocked if denied.** N/A.
 - **Fallback.** N/A.
@@ -788,22 +788,22 @@ These are not runtime-dialog permissions. They go through Settings.
 <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 ```
 
-- **Why CallVault needs it.** Self-update install flow hands off via `FileProvider` + `ACTION_VIEW` to the system installer, gated by `PackageManager.canRequestPackageInstalls()` on API 26+.
+- **Why callNest needs it.** Self-update install flow hands off via `FileProvider` + `ACTION_VIEW` to the system installer, gated by `PackageManager.canRequestPackageInstalls()` on API 26+.
 - **When requested.** First time the user taps Install in `UpdateAvailableScreen`. The screen routes to "Settings → Install unknown apps" if not granted.
 - **What's blocked if denied.** Self-update download still works; install does not.
 - **Fallback.** User can manually install the downloaded APK from a file manager.
-- **Rationale string.** `R.string.perm_rationale_install_packages` — *"To install the CallVault update you just downloaded, allow CallVault to install unknown apps."*
+- **Rationale string.** `R.string.perm_rationale_install_packages` — _"To install the callNest update you just downloaded, allow callNest to install unknown apps."_
 
 ### 4.7 Permission gating summary
 
-| Surface | Required permissions | Behavior if missing |
-|---------|---------------------|---------------------|
-| Calls list / detail | `READ_CALL_LOG`, `READ_CONTACTS`, `READ_PHONE_STATE` | Route to `permission_rationale`. |
-| Auto-save toggle | `WRITE_CONTACTS` | Toggle disabled with help link. |
-| Real-time bubble / popup | `SYSTEM_ALERT_WINDOW` + `READ_PHONE_STATE` + (API 31+) `READ_CALL_LOG` for number resolution | Toggles disabled. |
-| Follow-up reminders | `SCHEDULE_EXACT_ALARM` (graceful fallback to inexact) | Reminder may fire late. |
-| Notifications | `POST_NOTIFICATIONS` (API 33+) | Reminders fire silently. |
-| Self-update install | `REQUEST_INSTALL_PACKAGES` | Install screen routes to system settings. |
+| Surface                  | Required permissions                                                                         | Behavior if missing                       |
+| ------------------------ | -------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| Calls list / detail      | `READ_CALL_LOG`, `READ_CONTACTS`, `READ_PHONE_STATE`                                         | Route to `permission_rationale`.          |
+| Auto-save toggle         | `WRITE_CONTACTS`                                                                             | Toggle disabled with help link.           |
+| Real-time bubble / popup | `SYSTEM_ALERT_WINDOW` + `READ_PHONE_STATE` + (API 31+) `READ_CALL_LOG` for number resolution | Toggles disabled.                         |
+| Follow-up reminders      | `SCHEDULE_EXACT_ALARM` (graceful fallback to inexact)                                        | Reminder may fire late.                   |
+| Notifications            | `POST_NOTIFICATIONS` (API 33+)                                                               | Reminders fire silently.                  |
+| Self-update install      | `REQUEST_INSTALL_PACKAGES`                                                                   | Install screen routes to system settings. |
 
 ---
 
@@ -811,7 +811,7 @@ These are not runtime-dialog permissions. They go through Settings.
 
 ### 5.1 Room database
 
-`CallVaultDatabase`, file `callvault.db`, **schema version 2**. Migration v1 → v2 adds `rule_score_boosts`. Schema export is wired through KSP arg pointing at `app/schemas/`.
+`callNestDatabase`, file `callNest.db`, **schema version 2**. Migration v1 → v2 adds `rule_score_boosts`. Schema export is wired through KSP arg pointing at `app/schemas/`.
 
 Entities (14 + 2 FTS):
 
@@ -838,30 +838,30 @@ DAOs:
 
 Table: `calls`. PK: `systemId`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `systemId` | `Long` | INTEGER | no | — | PK |
-| `rawNumber` | `String` | TEXT | no | `""` | — |
-| `normalizedNumber` | `String` | TEXT | no | `""` | yes |
-| `cachedName` | `String?` | TEXT | yes | null | — |
-| `geocodedLocation` | `String?` | TEXT | yes | null | — |
-| `type` | `Int` | INTEGER | no | — | yes |
-| `simSlot` | `Int?` | INTEGER | yes | null | — |
-| `phoneAccountId` | `String?` | TEXT | yes | null | — |
-| `dateMillis` | `Long` | INTEGER | no | — | yes |
-| `durationSec` | `Long` | INTEGER | no | `0` | — |
-| `isPrivate` | `Boolean` | INTEGER | no | `false` | — |
-| `isBookmarked` | `Boolean` | INTEGER | no | `false` | yes |
-| `bookmarkReason` | `String?` | TEXT | yes | null | — |
-| `followUpDate` | `Long?` | INTEGER | yes | null | yes |
-| `followUpTime` | `Int?` | INTEGER | yes | null | — |
-| `followUpDone` | `Boolean` | INTEGER | no | `false` | — |
-| `archived` | `Boolean` | INTEGER | no | `false` | — |
-| `leadScore` | `Int` | INTEGER | no | `0` | — |
-| `leadScoreManualOverride` | `Int?` | INTEGER | yes | null | — |
-| `tagIdsCsv` | `String` | TEXT | no | `""` | — |
-| `createdAt` | `Long` | INTEGER | no | — | — |
-| `updatedAt` | `Long` | INTEGER | no | — | — |
+| Column                    | Kotlin type | SQL type | Nullable | Default | Index |
+| ------------------------- | ----------- | -------- | -------- | ------- | ----- |
+| `systemId`                | `Long`      | INTEGER  | no       | —       | PK    |
+| `rawNumber`               | `String`    | TEXT     | no       | `""`    | —     |
+| `normalizedNumber`        | `String`    | TEXT     | no       | `""`    | yes   |
+| `cachedName`              | `String?`   | TEXT     | yes      | null    | —     |
+| `geocodedLocation`        | `String?`   | TEXT     | yes      | null    | —     |
+| `type`                    | `Int`       | INTEGER  | no       | —       | yes   |
+| `simSlot`                 | `Int?`      | INTEGER  | yes      | null    | —     |
+| `phoneAccountId`          | `String?`   | TEXT     | yes      | null    | —     |
+| `dateMillis`              | `Long`      | INTEGER  | no       | —       | yes   |
+| `durationSec`             | `Long`      | INTEGER  | no       | `0`     | —     |
+| `isPrivate`               | `Boolean`   | INTEGER  | no       | `false` | —     |
+| `isBookmarked`            | `Boolean`   | INTEGER  | no       | `false` | yes   |
+| `bookmarkReason`          | `String?`   | TEXT     | yes      | null    | —     |
+| `followUpDate`            | `Long?`     | INTEGER  | yes      | null    | yes   |
+| `followUpTime`            | `Int?`      | INTEGER  | yes      | null    | —     |
+| `followUpDone`            | `Boolean`   | INTEGER  | no       | `false` | —     |
+| `archived`                | `Boolean`   | INTEGER  | no       | `false` | —     |
+| `leadScore`               | `Int`       | INTEGER  | no       | `0`     | —     |
+| `leadScoreManualOverride` | `Int?`      | INTEGER  | yes      | null    | —     |
+| `tagIdsCsv`               | `String`    | TEXT     | no       | `""`    | —     |
+| `createdAt`               | `Long`      | INTEGER  | no       | —       | —     |
+| `updatedAt`               | `Long`      | INTEGER  | no       | —       | —     |
 
 Sample row:
 
@@ -896,31 +896,38 @@ Sample row:
 
 Table: `tags`. PK: `id` (autogen).
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `id` | `Long` | INTEGER | no | autogen | PK |
-| `name` | `String` | TEXT | no | — | unique |
-| `colorArgb` | `Int` | INTEGER | no | — | — |
-| `isSystem` | `Boolean` | INTEGER | no | `false` | — |
-| `sortOrder` | `Int` | INTEGER | no | `0` | — |
-| `createdAt` | `Long` | INTEGER | no | — | — |
+| Column      | Kotlin type | SQL type | Nullable | Default | Index  |
+| ----------- | ----------- | -------- | -------- | ------- | ------ |
+| `id`        | `Long`      | INTEGER  | no       | autogen | PK     |
+| `name`      | `String`    | TEXT     | no       | —       | unique |
+| `colorArgb` | `Int`       | INTEGER  | no       | —       | —      |
+| `isSystem`  | `Boolean`   | INTEGER  | no       | `false` | —      |
+| `sortOrder` | `Int`       | INTEGER  | no       | `0`     | —      |
+| `createdAt` | `Long`      | INTEGER  | no       | —       | —      |
 
 Sample row:
 
 ```json
-{ "id": 1, "name": "Inquiry", "colorArgb": -16776961, "isSystem": true, "sortOrder": 0, "createdAt": 1714000000000 }
+{
+  "id": 1,
+  "name": "Inquiry",
+  "colorArgb": -16776961,
+  "isSystem": true,
+  "sortOrder": 0,
+  "createdAt": 1714000000000
+}
 ```
 
 ### 5.4 `CallTagCrossRef`
 
 Table: `call_tag_cross_ref`. Composite PK: `(callSystemId, tagId)`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `callSystemId` | `Long` | INTEGER | no | — | PK |
-| `tagId` | `Long` | INTEGER | no | — | PK + index |
-| `appliedBy` | `String` | TEXT | no | `"user"` | yes |
-| `appliedAt` | `Long` | INTEGER | no | — | — |
+| Column         | Kotlin type | SQL type | Nullable | Default  | Index      |
+| -------------- | ----------- | -------- | -------- | -------- | ---------- |
+| `callSystemId` | `Long`      | INTEGER  | no       | —        | PK         |
+| `tagId`        | `Long`      | INTEGER  | no       | —        | PK + index |
+| `appliedBy`    | `String`    | TEXT     | no       | `"user"` | yes        |
+| `appliedAt`    | `Long`      | INTEGER  | no       | —        | —          |
 
 `appliedBy` values: `"user"`, `"rule:${ruleId}"`. Cascade-clean on rule delete (application-level).
 
@@ -928,31 +935,31 @@ Table: `call_tag_cross_ref`. Composite PK: `(callSystemId, tagId)`.
 
 Table: `contact_meta`. PK: `normalizedNumber`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `normalizedNumber` | `String` | TEXT | no | — | PK |
-| `displayName` | `String?` | TEXT | yes | null | — |
-| `totalCalls` | `Int` | INTEGER | no | `0` | — |
-| `totalDurationSec` | `Long` | INTEGER | no | `0` | — |
-| `firstCallAt` | `Long?` | INTEGER | yes | null | — |
-| `lastCallAt` | `Long?` | INTEGER | yes | null | yes |
-| `incomingCount` | `Int` | INTEGER | no | `0` | — |
-| `outgoingCount` | `Int` | INTEGER | no | `0` | — |
-| `missedCount` | `Int` | INTEGER | no | `0` | — |
-| `rejectedCount` | `Int` | INTEGER | no | `0` | — |
-| `leadScore` | `Int` | INTEGER | no | `0` | yes |
-| `manualLeadScore` | `Int?` | INTEGER | yes | null | — |
-| `isInSystemContacts` | `Boolean` | INTEGER | no | `false` | yes |
-| `isAutoSaved` | `Boolean` | INTEGER | no | `false` | yes |
-| `autoSavedFormat` | `String?` | TEXT | yes | null | — |
-| `lastSyncedAt` | `Long` | INTEGER | no | — | — |
+| Column               | Kotlin type | SQL type | Nullable | Default | Index |
+| -------------------- | ----------- | -------- | -------- | ------- | ----- |
+| `normalizedNumber`   | `String`    | TEXT     | no       | —       | PK    |
+| `displayName`        | `String?`   | TEXT     | yes      | null    | —     |
+| `totalCalls`         | `Int`       | INTEGER  | no       | `0`     | —     |
+| `totalDurationSec`   | `Long`      | INTEGER  | no       | `0`     | —     |
+| `firstCallAt`        | `Long?`     | INTEGER  | yes      | null    | —     |
+| `lastCallAt`         | `Long?`     | INTEGER  | yes      | null    | yes   |
+| `incomingCount`      | `Int`       | INTEGER  | no       | `0`     | —     |
+| `outgoingCount`      | `Int`       | INTEGER  | no       | `0`     | —     |
+| `missedCount`        | `Int`       | INTEGER  | no       | `0`     | —     |
+| `rejectedCount`      | `Int`       | INTEGER  | no       | `0`     | —     |
+| `leadScore`          | `Int`       | INTEGER  | no       | `0`     | yes   |
+| `manualLeadScore`    | `Int?`      | INTEGER  | yes      | null    | —     |
+| `isInSystemContacts` | `Boolean`   | INTEGER  | no       | `false` | yes   |
+| `isAutoSaved`        | `Boolean`   | INTEGER  | no       | `false` | yes   |
+| `autoSavedFormat`    | `String?`   | TEXT     | yes      | null    | —     |
+| `lastSyncedAt`       | `Long`      | INTEGER  | no       | —       | —     |
 
 Sample row:
 
 ```json
 {
   "normalizedNumber": "+919876543210",
-  "displayName": "callVault-s1 +919876543210",
+  "displayName": "callNest-s1 +919876543210",
   "totalCalls": 12,
   "totalDurationSec": 1800,
   "firstCallAt": 1713000000000,
@@ -965,7 +972,7 @@ Sample row:
   "manualLeadScore": null,
   "isInSystemContacts": true,
   "isAutoSaved": true,
-  "autoSavedFormat": "callVault-{simTag} {phone}",
+  "autoSavedFormat": "callNest-{simTag} {phone}",
   "lastSyncedAt": 1714382540000
 }
 ```
@@ -974,15 +981,15 @@ Sample row:
 
 Table: `notes`. PK: `id` (autogen).
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `id` | `Long` | INTEGER | no | autogen | PK |
-| `normalizedNumber` | `String` | TEXT | no | — | yes |
-| `callSystemId` | `Long?` | INTEGER | yes | null | yes |
-| `body` | `String` | TEXT | no | — | — |
-| `createdBy` | `String` | TEXT | no | `"user"` | — |
-| `createdAt` | `Long` | INTEGER | no | — | yes |
-| `updatedAt` | `Long` | INTEGER | no | — | — |
+| Column             | Kotlin type | SQL type | Nullable | Default  | Index |
+| ------------------ | ----------- | -------- | -------- | -------- | ----- |
+| `id`               | `Long`      | INTEGER  | no       | autogen  | PK    |
+| `normalizedNumber` | `String`    | TEXT     | no       | —        | yes   |
+| `callSystemId`     | `Long?`     | INTEGER  | yes      | null     | yes   |
+| `body`             | `String`    | TEXT     | no       | —        | —     |
+| `createdBy`        | `String`    | TEXT     | no       | `"user"` | —     |
+| `createdAt`        | `Long`      | INTEGER  | no       | —        | yes   |
+| `updatedAt`        | `Long`      | INTEGER  | no       | —        | —     |
 
 `createdBy`: `"user"`, `"bubble"`. Orphan notes have `callSystemId = null` until sync attaches them.
 
@@ -990,12 +997,12 @@ Table: `notes`. PK: `id` (autogen).
 
 Table: `note_history`. PK: `id`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `id` | `Long` | INTEGER | no | autogen | PK |
-| `noteId` | `Long` | INTEGER | no | — | yes |
-| `body` | `String` | TEXT | no | — | — |
-| `savedAt` | `Long` | INTEGER | no | — | — |
+| Column    | Kotlin type | SQL type | Nullable | Default | Index |
+| --------- | ----------- | -------- | -------- | ------- | ----- |
+| `id`      | `Long`      | INTEGER  | no       | autogen | PK    |
+| `noteId`  | `Long`      | INTEGER  | no       | —       | yes   |
+| `body`    | `String`    | TEXT     | no       | —       | —     |
+| `savedAt` | `Long`      | INTEGER  | no       | —       | —     |
 
 Last 5 versions retained per `noteId`.
 
@@ -1003,12 +1010,12 @@ Last 5 versions retained per `noteId`.
 
 Table: `filter_presets`. PK: `id`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `id` | `Long` | INTEGER | no | autogen | PK |
-| `name` | `String` | TEXT | no | — | — |
-| `stateJson` | `String` | TEXT | no | — | — |
-| `createdAt` | `Long` | INTEGER | no | — | — |
+| Column      | Kotlin type | SQL type | Nullable | Default | Index |
+| ----------- | ----------- | -------- | -------- | ------- | ----- |
+| `id`        | `Long`      | INTEGER  | no       | autogen | PK    |
+| `name`      | `String`    | TEXT     | no       | —       | —     |
+| `stateJson` | `String`    | TEXT     | no       | —       | —     |
+| `createdAt` | `Long`      | INTEGER  | no       | —       | —     |
 
 `stateJson` carries a serialized `FilterState`.
 
@@ -1016,16 +1023,16 @@ Table: `filter_presets`. PK: `id`.
 
 Table: `auto_tag_rules`. PK: `id`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `id` | `Long` | INTEGER | no | autogen | PK |
-| `name` | `String` | TEXT | no | — | — |
-| `enabled` | `Boolean` | INTEGER | no | `true` | — |
-| `sortOrder` | `Int` | INTEGER | no | `0` | yes |
-| `conditionsJson` | `String` | TEXT | no | — | — |
-| `actionsJson` | `String` | TEXT | no | — | — |
-| `createdAt` | `Long` | INTEGER | no | — | — |
-| `updatedAt` | `Long` | INTEGER | no | — | — |
+| Column           | Kotlin type | SQL type | Nullable | Default | Index |
+| ---------------- | ----------- | -------- | -------- | ------- | ----- |
+| `id`             | `Long`      | INTEGER  | no       | autogen | PK    |
+| `name`           | `String`    | TEXT     | no       | —       | —     |
+| `enabled`        | `Boolean`   | INTEGER  | no       | `true`  | —     |
+| `sortOrder`      | `Int`       | INTEGER  | no       | `0`     | yes   |
+| `conditionsJson` | `String`    | TEXT     | no       | —       | —     |
+| `actionsJson`    | `String`    | TEXT     | no       | —       | —     |
+| `createdAt`      | `Long`      | INTEGER  | no       | —       | —     |
+| `updatedAt`      | `Long`      | INTEGER  | no       | —       | —     |
 
 Conditions and actions use kotlinx.serialization with `class-discriminator = "type"`.
 
@@ -1033,55 +1040,55 @@ Conditions and actions use kotlinx.serialization with `class-discriminator = "ty
 
 Table: `rule_score_boosts`. Composite PK: `(callSystemId, ruleId)`. Added in v2.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `callSystemId` | `Long` | INTEGER | no | — | PK |
-| `ruleId` | `Long` | INTEGER | no | — | PK + index |
-| `delta` | `Int` | INTEGER | no | — | — |
-| `appliedAt` | `Long` | INTEGER | no | — | — |
+| Column         | Kotlin type | SQL type | Nullable | Default | Index      |
+| -------------- | ----------- | -------- | -------- | ------- | ---------- |
+| `callSystemId` | `Long`      | INTEGER  | no       | —       | PK         |
+| `ruleId`       | `Long`      | INTEGER  | no       | —       | PK + index |
+| `delta`        | `Int`       | INTEGER  | no       | —       | —          |
+| `appliedAt`    | `Long`      | INTEGER  | no       | —       | —          |
 
 ### 5.11 `SearchHistoryEntity`
 
 Table: `search_history`. PK: `id`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `id` | `Long` | INTEGER | no | autogen | PK |
-| `query` | `String` | TEXT | no | — | unique |
-| `lastUsedAt` | `Long` | INTEGER | no | — | yes |
-| `useCount` | `Int` | INTEGER | no | `1` | — |
+| Column       | Kotlin type | SQL type | Nullable | Default | Index  |
+| ------------ | ----------- | -------- | -------- | ------- | ------ |
+| `id`         | `Long`      | INTEGER  | no       | autogen | PK     |
+| `query`      | `String`    | TEXT     | no       | —       | unique |
+| `lastUsedAt` | `Long`      | INTEGER  | no       | —       | yes    |
+| `useCount`   | `Int`       | INTEGER  | no       | `1`     | —      |
 
 ### 5.12 `DocFeedbackEntity`
 
 Table: `doc_feedback`. PK: `articleId`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `articleId` | `String` | TEXT | no | — | PK |
-| `helpful` | `Boolean` | INTEGER | no | — | — |
-| `submittedAt` | `Long` | INTEGER | no | — | — |
+| Column        | Kotlin type | SQL type | Nullable | Default | Index |
+| ------------- | ----------- | -------- | -------- | ------- | ----- |
+| `articleId`   | `String`    | TEXT     | no       | —       | PK    |
+| `helpful`     | `Boolean`   | INTEGER  | no       | —       | —     |
+| `submittedAt` | `Long`      | INTEGER  | no       | —       | —     |
 
 ### 5.13 `SkippedUpdateEntity`
 
 Table: `skipped_updates`. PK: `versionCode`.
 
-| Column | Kotlin type | SQL type | Nullable | Default | Index |
-|--------|-------------|----------|----------|---------|-------|
-| `versionCode` | `Int` | INTEGER | no | — | PK |
-| `version` | `String` | TEXT | no | — | — |
-| `skippedAt` | `Long` | INTEGER | no | — | — |
+| Column        | Kotlin type | SQL type | Nullable | Default | Index |
+| ------------- | ----------- | -------- | -------- | ------- | ----- |
+| `versionCode` | `Int`       | INTEGER  | no       | —       | PK    |
+| `version`     | `String`    | TEXT     | no       | —       | —     |
+| `skippedAt`   | `Long`      | INTEGER  | no       | —       | —     |
 
 ### 5.14 `CallFts`
 
 FTS4 virtual table. Content table: `calls`.
 
-| Column | Source |
-|--------|--------|
-| `rawNumber` | from `calls.rawNumber` |
+| Column             | Source                        |
+| ------------------ | ----------------------------- |
+| `rawNumber`        | from `calls.rawNumber`        |
 | `normalizedNumber` | from `calls.normalizedNumber` |
-| `cachedName` | from `calls.cachedName` |
+| `cachedName`       | from `calls.cachedName`       |
 | `geocodedLocation` | from `calls.geocodedLocation` |
-| `bookmarkReason` | from `calls.bookmarkReason` |
+| `bookmarkReason`   | from `calls.bookmarkReason`   |
 
 Tokenizer: `unicode61 remove_diacritics 2`.
 
@@ -1089,64 +1096,64 @@ Tokenizer: `unicode61 remove_diacritics 2`.
 
 FTS4 virtual table. Content table: `notes`.
 
-| Column | Source |
-|--------|--------|
+| Column | Source            |
+| ------ | ----------------- |
 | `body` | from `notes.body` |
 
 ### 5.16 DataStore keys (`SettingsDataStore`)
 
 The DataStore preferences object is split into ~10 logical groups. Each key has a typed `Flow<T>` accessor and a `suspend fun setX(value: T)` writer.
 
-| Key | Kotlin type | Default | Read accessor | Write fn |
-|-----|-------------|---------|---------------|----------|
-| `onboarding_complete` | Boolean | `false` | `onboardingComplete: Flow<Boolean>` | `setOnboardingComplete` |
-| `tags_seeded` | Boolean | `false` | `tagsSeeded` | `setTagsSeeded` |
-| `default_region` | String | `"IN"` | `defaultRegion` | `setDefaultRegion` |
-| `last_sync_call_id` | Long | `0` | `lastSyncCallId` | `setLastSyncCallId` |
-| `last_sync_at` | Long | `0` | `lastSyncAt` | `setLastSyncAt` |
-| `sync_interval_minutes` | Int | `15` | `syncIntervalMinutes` | `setSyncIntervalMinutes` |
-| `sync_only_on_unmetered` | Boolean | `false` | `syncOnlyOnUnmetered` | `setSyncOnlyOnUnmetered` |
-| `auto_save_enabled` | Boolean | `false` | `autoSaveEnabled` | `setAutoSaveEnabled` |
-| `auto_save_prefix` | String | `"callVault-"` | `autoSavePrefix` | `setAutoSavePrefix` |
-| `auto_save_sim_tag_format` | String | `"s{n}"` | `autoSaveSimTagFormat` | `setAutoSaveSimTagFormat` |
-| `auto_save_suffix` | String | `""` | `autoSaveSuffix` | `setAutoSaveSuffix` |
-| `auto_save_group_name` | String | `"CallVault Inquiries"` | `autoSaveGroupName` | `setAutoSaveGroupName` |
-| `real_time_bubble_enabled` | Boolean | `false` | `bubbleEnabled` | `setBubbleEnabled` |
-| `real_time_popup_enabled` | Boolean | `false` | `popupEnabled` | `setPopupEnabled` |
-| `post_call_popup_timeout_seconds` | Int | `8` | `postCallPopupTimeoutSeconds` | `setPostCallPopupTimeoutSeconds` |
-| `notifications_follow_up` | Boolean | `true` | `followUpNotificationsEnabled` | `setFollowUpNotificationsEnabled` |
-| `notifications_daily_summary` | Boolean | `true` | `dailySummaryEnabled` | `setDailySummaryEnabled` |
-| `daily_summary_hour` | Int | `9` | `dailySummaryHour` | `setDailySummaryHour` |
-| `lead_weight_frequency` | Float | `1.0` | `leadWeightFrequency` | `setLeadWeightFrequency` |
-| `lead_weight_duration` | Float | `1.0` | `leadWeightDuration` | `setLeadWeightDuration` |
-| `lead_weight_recency` | Float | `1.0` | `leadWeightRecency` | `setLeadWeightRecency` |
-| `lead_weight_followup_bonus` | Float | `5.0` | `leadWeightFollowupBonus` | `setLeadWeightFollowupBonus` |
-| `lead_weight_customer_tag_bonus` | Float | `10.0` | `leadWeightCustomerTagBonus` | `setLeadWeightCustomerTagBonus` |
-| `lead_weight_saved_contact_bonus` | Float | `5.0` | `leadWeightSavedContactBonus` | `setLeadWeightSavedContactBonus` |
-| `backup_passphrase_set` | Boolean | `false` | `backupPassphraseSet` | `setBackupPassphraseSet` |
-| `backup_auto_enabled` | Boolean | `true` | `backupAutoEnabled` | `setBackupAutoEnabled` |
-| `backup_keep_count` | Int | `7` | `backupKeepCount` | `setBackupKeepCount` |
-| `backup_drive_enabled` | Boolean | `false` | `backupDriveEnabled` | `setBackupDriveEnabled` |
-| `backup_last_at` | Long | `0` | `backupLastAt` | `setBackupLastAt` |
-| `update_channel` | String | `"stable"` | `updateChannel` | `setUpdateChannel` |
-| `update_auto_check` | Boolean | `true` | `updateAutoCheck` | `setUpdateAutoCheck` |
-| `update_last_checked_at` | Long | `0` | `updateLastCheckedAt` | `setUpdateLastCheckedAt` |
-| `display_density` | String | `"comfortable"` | `displayDensity` | `setDisplayDensity` |
-| `call_sort_mode` | String | `"date_desc"` | `callSortMode` | `setCallSortMode` |
-| `pinned_bookmarks_json` | String | `"[]"` | `pinnedBookmarksJson` | `setPinnedBookmarksJson` |
-| `stats_range_preset` | String | `"7d"` | `statsRangePreset` | `setStatsRangePreset` |
-| `exact_alarm_fallback_used` | Boolean | `false` | `exactAlarmFallbackUsed` | `setExactAlarmFallbackUsed` |
-| `privacy_screenshot_blocked` | Boolean | `false` | `privacyScreenshotBlocked` | `setPrivacyScreenshotBlocked` |
-| `last_oem_guide_shown_for` | String | `""` | `lastOemGuideShownFor` | `setLastOemGuideShownFor` |
-| `bubble_position_x` | Int | `-1` | `bubblePositionX` | `setBubblePositionX` |
-| `bubble_position_y` | Int | `-1` | `bubblePositionY` | `setBubblePositionY` |
+| Key                               | Kotlin type | Default                | Read accessor                       | Write fn                          |
+| --------------------------------- | ----------- | ---------------------- | ----------------------------------- | --------------------------------- |
+| `onboarding_complete`             | Boolean     | `false`                | `onboardingComplete: Flow<Boolean>` | `setOnboardingComplete`           |
+| `tags_seeded`                     | Boolean     | `false`                | `tagsSeeded`                        | `setTagsSeeded`                   |
+| `default_region`                  | String      | `"IN"`                 | `defaultRegion`                     | `setDefaultRegion`                |
+| `last_sync_call_id`               | Long        | `0`                    | `lastSyncCallId`                    | `setLastSyncCallId`               |
+| `last_sync_at`                    | Long        | `0`                    | `lastSyncAt`                        | `setLastSyncAt`                   |
+| `sync_interval_minutes`           | Int         | `15`                   | `syncIntervalMinutes`               | `setSyncIntervalMinutes`          |
+| `sync_only_on_unmetered`          | Boolean     | `false`                | `syncOnlyOnUnmetered`               | `setSyncOnlyOnUnmetered`          |
+| `auto_save_enabled`               | Boolean     | `false`                | `autoSaveEnabled`                   | `setAutoSaveEnabled`              |
+| `auto_save_prefix`                | String      | `"callNest-"`          | `autoSavePrefix`                    | `setAutoSavePrefix`               |
+| `auto_save_sim_tag_format`        | String      | `"s{n}"`               | `autoSaveSimTagFormat`              | `setAutoSaveSimTagFormat`         |
+| `auto_save_suffix`                | String      | `""`                   | `autoSaveSuffix`                    | `setAutoSaveSuffix`               |
+| `auto_save_group_name`            | String      | `"callNest Inquiries"` | `autoSaveGroupName`                 | `setAutoSaveGroupName`            |
+| `real_time_bubble_enabled`        | Boolean     | `false`                | `bubbleEnabled`                     | `setBubbleEnabled`                |
+| `real_time_popup_enabled`         | Boolean     | `false`                | `popupEnabled`                      | `setPopupEnabled`                 |
+| `post_call_popup_timeout_seconds` | Int         | `8`                    | `postCallPopupTimeoutSeconds`       | `setPostCallPopupTimeoutSeconds`  |
+| `notifications_follow_up`         | Boolean     | `true`                 | `followUpNotificationsEnabled`      | `setFollowUpNotificationsEnabled` |
+| `notifications_daily_summary`     | Boolean     | `true`                 | `dailySummaryEnabled`               | `setDailySummaryEnabled`          |
+| `daily_summary_hour`              | Int         | `9`                    | `dailySummaryHour`                  | `setDailySummaryHour`             |
+| `lead_weight_frequency`           | Float       | `1.0`                  | `leadWeightFrequency`               | `setLeadWeightFrequency`          |
+| `lead_weight_duration`            | Float       | `1.0`                  | `leadWeightDuration`                | `setLeadWeightDuration`           |
+| `lead_weight_recency`             | Float       | `1.0`                  | `leadWeightRecency`                 | `setLeadWeightRecency`            |
+| `lead_weight_followup_bonus`      | Float       | `5.0`                  | `leadWeightFollowupBonus`           | `setLeadWeightFollowupBonus`      |
+| `lead_weight_customer_tag_bonus`  | Float       | `10.0`                 | `leadWeightCustomerTagBonus`        | `setLeadWeightCustomerTagBonus`   |
+| `lead_weight_saved_contact_bonus` | Float       | `5.0`                  | `leadWeightSavedContactBonus`       | `setLeadWeightSavedContactBonus`  |
+| `backup_passphrase_set`           | Boolean     | `false`                | `backupPassphraseSet`               | `setBackupPassphraseSet`          |
+| `backup_auto_enabled`             | Boolean     | `true`                 | `backupAutoEnabled`                 | `setBackupAutoEnabled`            |
+| `backup_keep_count`               | Int         | `7`                    | `backupKeepCount`                   | `setBackupKeepCount`              |
+| `backup_drive_enabled`            | Boolean     | `false`                | `backupDriveEnabled`                | `setBackupDriveEnabled`           |
+| `backup_last_at`                  | Long        | `0`                    | `backupLastAt`                      | `setBackupLastAt`                 |
+| `update_channel`                  | String      | `"stable"`             | `updateChannel`                     | `setUpdateChannel`                |
+| `update_auto_check`               | Boolean     | `true`                 | `updateAutoCheck`                   | `setUpdateAutoCheck`              |
+| `update_last_checked_at`          | Long        | `0`                    | `updateLastCheckedAt`               | `setUpdateLastCheckedAt`          |
+| `display_density`                 | String      | `"comfortable"`        | `displayDensity`                    | `setDisplayDensity`               |
+| `call_sort_mode`                  | String      | `"date_desc"`          | `callSortMode`                      | `setCallSortMode`                 |
+| `pinned_bookmarks_json`           | String      | `"[]"`                 | `pinnedBookmarksJson`               | `setPinnedBookmarksJson`          |
+| `stats_range_preset`              | String      | `"7d"`                 | `statsRangePreset`                  | `setStatsRangePreset`             |
+| `exact_alarm_fallback_used`       | Boolean     | `false`                | `exactAlarmFallbackUsed`            | `setExactAlarmFallbackUsed`       |
+| `privacy_screenshot_blocked`      | Boolean     | `false`                | `privacyScreenshotBlocked`          | `setPrivacyScreenshotBlocked`     |
+| `last_oem_guide_shown_for`        | String      | `""`                   | `lastOemGuideShownFor`              | `setLastOemGuideShownFor`         |
+| `bubble_position_x`               | Int         | `-1`                   | `bubblePositionX`                   | `setBubblePositionX`              |
+| `bubble_position_y`               | Int         | `-1`                   | `bubblePositionY`                   | `setBubblePositionY`              |
 
 ### 5.17 SecurePrefs (EncryptedSharedPreferences)
 
-| Key | Kotlin type | Purpose |
-|-----|-------------|---------|
-| `backupPassphrase` | String | User-supplied passphrase for `.cvb` files. Read by `BackupManager` only. |
-| `drive_auth_state` | String (JSON) | Serialized AppAuth `AuthState` for the optional Drive backup feature. |
+| Key                | Kotlin type   | Purpose                                                                  |
+| ------------------ | ------------- | ------------------------------------------------------------------------ |
+| `backupPassphrase` | String        | User-supplied passphrase for `.cvb` files. Read by `BackupManager` only. |
+| `drive_auth_state` | String (JSON) | Serialized AppAuth `AuthState` for the optional Drive backup feature.    |
 
 These keys never round-trip through Timber, never appear in exports, and are excluded from Android backup via `data_extraction_rules.xml`.
 
@@ -1161,7 +1168,7 @@ This section gives the canonical algorithms with pseudocode and worked examples.
 Implementation: `SyncCallLogUseCase`. Triggered by `CallSyncWorker`, `SyncScheduler.triggerOnce`, scheduled paths, and post-call by `CallEnrichmentService`.
 
 ```text
-1.  acquire WakeLock("callvault:sync", 60s timeout)
+1.  acquire WakeLock("callNest:sync", 60s timeout)
 2.  read lastSyncCallId from DataStore; defaultRegion := "IN"
 3.  rows := CallLogReader.readSince(lastSyncCallId)   // ORDER BY _ID ASC
 4.  for each row in rows:
@@ -1239,16 +1246,16 @@ Inputs:
 
 Compute:
 
-| Component | Raw value | Weighted |
-|-----------|-----------|----------|
-| Frequency | min(100, 12 × 5) = 60 | 60 × 1.0 = 60 |
-| Duration | min(100, 1800/60) = 30 | 30 × 1.0 = 30 |
-| Recency | 100 × exp(-3/14) ≈ 100 × 0.806 ≈ 80.6 | 80.6 × 1.0 = 80.6 |
-| Follow-up bonus | 0 | 0 |
-| Customer-tag bonus | 1 × 10 | 10 |
-| Saved-contact bonus | 1 × 5 | 5 |
-| Rule boosts | 0 | 0 |
-| **Sum** | | **185.6** |
+| Component           | Raw value                             | Weighted          |
+| ------------------- | ------------------------------------- | ----------------- |
+| Frequency           | min(100, 12 × 5) = 60                 | 60 × 1.0 = 60     |
+| Duration            | min(100, 1800/60) = 30                | 30 × 1.0 = 30     |
+| Recency             | 100 × exp(-3/14) ≈ 100 × 0.806 ≈ 80.6 | 80.6 × 1.0 = 80.6 |
+| Follow-up bonus     | 0                                     | 0                 |
+| Customer-tag bonus  | 1 × 10                                | 10                |
+| Saved-contact bonus | 1 × 5                                 | 5                 |
+| Rule boosts         | 0                                     | 0                 |
+| **Sum**             |                                       | **185.6**         |
 
 Normalize: 185.6 / (1+1+1+5+10+5) = 185.6 / 23 ≈ 8.07. Multiply by 100/range… The actual implementation normalizes by clamping the sum to [0, 100] after weighting, not by dividing — so `score = round(min(100, 185.6 × adjustment))`. The chosen adjustment in v1 brings the example out to **~63**, matching the value documented in §3.4 sample row.
 
@@ -1275,12 +1282,12 @@ Format: `{prefix}{simTag} {fullNormalizedPhone}{suffix}`.
 
 #### 6.5.1 Worked examples
 
-| Settings | SIM | Phone | Result |
-|----------|-----|-------|--------|
-| prefix=`callVault-`, simTag=`s{n}`, suffix=`""` | 0 | `+919876543210` | `callVault-s1 +919876543210` |
-| prefix=`callVault-`, simTag=`s{n}`, suffix=`""` | 1 | `+919876543210` | `callVault-s2 +919876543210` |
-| prefix=`Inq-`, simTag=`""`, suffix=` (CV)` | 0 | `+919876543210` | `Inq- +919876543210 (CV)` |
-| prefix=`callVault-`, simTag=`s{n}`, suffix=`""` | null | `+919876543210` | `callVault- +919876543210` |
+| Settings                                       | SIM  | Phone           | Result                      |
+| ---------------------------------------------- | ---- | --------------- | --------------------------- |
+| prefix=`callNest-`, simTag=`s{n}`, suffix=`""` | 0    | `+919876543210` | `callNest-s1 +919876543210` |
+| prefix=`callNest-`, simTag=`s{n}`, suffix=`""` | 1    | `+919876543210` | `callNest-s2 +919876543210` |
+| prefix=`Inq-`, simTag=`""`, suffix=` (CV)`     | 0    | `+919876543210` | `Inq- +919876543210 (CV)`   |
+| prefix=`callNest-`, simTag=`s{n}`, suffix=`""` | null | `+919876543210` | `callNest- +919876543210`   |
 
 ### 6.6 Lenient bucketing detection
 
@@ -1339,14 +1346,14 @@ Then `getByIdsOrdered(ids)` re-fetches in date-desc order.
 Formula: `score = 100 * exp(-days / 14)`.
 
 | Days since last call | Recency score |
-|----------------------|---------------|
-| 0 | 100.0 |
-| 1 | 93.1 |
-| 3 | 80.6 |
-| 7 | 60.7 |
-| 14 | 36.8 |
-| 30 | 11.7 |
-| 60 | 1.4 |
+| -------------------- | ------------- |
+| 0                    | 100.0         |
+| 1                    | 93.1          |
+| 3                    | 80.6          |
+| 7                    | 60.7          |
+| 14                   | 36.8          |
+| 30                   | 11.7          |
+| 60                   | 1.4           |
 
 The half-life is approximately 9.7 days. The decay curve was chosen to match the persona's working rhythm: a lead 3 days old is still warm, a lead 14 days old is barely warm, a lead 30 days old is effectively cold.
 

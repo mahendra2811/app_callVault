@@ -61,7 +61,7 @@ Also consider:
 ## P1: Update Hosting
 
 - Host real `versions-stable.json` and `versions-beta.json`.
-- Replace placeholder `https://callvault.app/dl/...` URLs if that domain is not live.
+- Replace placeholder `https://callNest.app/dl/...` URLs if that domain is not live.
 - Verify SHA-256 verification against a real APK.
 - Test unknown-sources permission fallback on API 26+.
 - Test skipped-version behavior and "clear skipped".
@@ -100,10 +100,10 @@ Also consider:
 
 - Revisit `ResetAllDataUseCase`; `CHANGELOG.md` says it currently wipes notes/search/skipped only while calls/contacts/tags retain.
 - Decide whether reset should:
-  - clear local CallVault tables only
+  - clear local callNest tables only
   - also reset DataStore watermarks
   - never touch system contacts
-  - optionally remove auto-saved CallVault contacts
+  - optionally remove auto-saved callNest contacts
 - Document final destructive behavior in in-app docs.
 
 ## P2: Performance
@@ -130,7 +130,7 @@ Possible future features, subject to user approval:
 - Rule templates for common small-business workflows.
 - Better conversion funnel analytics.
 - Optional local-only import from previous backups during onboarding.
-- Contact cleanup tools for CallVault-created inquiries.
+- Contact cleanup tools for callNest-created inquiries.
 - More localized copy for Indian business users.
 
 ## Do Not Add Without Explicit Approval
@@ -144,4 +144,3 @@ Possible future features, subject to user approval:
 - New state-management framework.
 - New Gradle module.
 - Network feature beyond self-update.
-

@@ -1,6 +1,6 @@
 # 06 — Google Cloud OAuth setup (for Drive backup)
 
-CallVault uses **AppAuth + Drive REST** for the optional Google Drive backup feature. No Google Play Services involved. This file walks you through getting the OAuth credentials Phase G needs.
+callNest uses **AppAuth + Drive REST** for the optional Google Drive backup feature. No Google Play Services involved. This file walks you through getting the OAuth credentials Phase G needs.
 
 Total time: ~10 minutes.
 
@@ -23,7 +23,7 @@ For step 1 to work, Google needs to know your app exists. That's the **OAuth cli
 
 1. Open https://console.cloud.google.com.
 2. Top bar → project dropdown → **New Project**.
-3. Project name: `CallVault` (or anything you like).
+3. Project name: `callNest` (or anything you like).
 4. Location: leave as "No organization".
 5. Click **Create**. Wait ~30 seconds.
 6. Make sure the new project is selected in the top bar dropdown.
@@ -39,13 +39,13 @@ For step 1 to work, Google needs to know your app exists. That's the **OAuth cli
 1. Sidebar → **APIs & Services** → **OAuth consent screen**.
 2. User type: **External**. Click **Create**.
 3. Fill in:
-   - App name: `CallVault`
+   - App name: `callNest`
    - User support email: your email
    - Developer contact email: your email
    - Logo, app domain, etc: skip (optional)
 4. **Save and Continue**.
 5. Scopes step — click **Add or Remove Scopes**, search and tick:
-   - `.../auth/drive.file` (recommended — only files CallVault creates)
+   - `.../auth/drive.file` (recommended — only files callNest creates)
    - OR `.../auth/drive` (full Drive access — only if you actually need to read existing files; we do not).
 6. **Update** → **Save and Continue**.
 7. Test users — add your own Gmail address as a test user so you can sign in while the app is in "testing" mode.
@@ -56,20 +56,20 @@ For step 1 to work, Google needs to know your app exists. That's the **OAuth cli
 1. Sidebar → **APIs & Services** → **Credentials**.
 2. **+ Create Credentials** → **OAuth client ID**.
 3. Application type: **Web application** (yes, Web — not Android. AppAuth uses a custom URI scheme redirect, not the Android-client SHA-1 mechanism).
-4. Name: `CallVault Android (AppAuth)`.
+4. Name: `callNest Android (AppAuth)`.
 5. Authorized redirect URIs — click **+ Add URI** and paste:
    ```
-   com.callvault.app.debug:/oauth2redirect
+   com.callNest.app.debug:/oauth2redirect
    ```
    And another for the release build:
    ```
-   com.callvault.app:/oauth2redirect
+   com.callNest.app:/oauth2redirect
    ```
 6. **Create**.
 7. Copy the **Client ID** (looks like `1234567890-abcdefg.apps.googleusercontent.com`).
 8. Copy the **Client secret** (looks like `GOCSPX-XXXXXXXXX`).
 
-> A Web client *does* issue a client secret. AppAuth uses it together with PKCE — the secret isn't a security boundary in this flow (AppAuth treats public clients correctly), but Google requires it on Web client types.
+> A Web client _does_ issue a client secret. AppAuth uses it together with PKCE — the secret isn't a security boundary in this flow (AppAuth treats public clients correctly), but Google requires it on Web client types.
 
 ## Step 5 — Paste credentials into the app
 
@@ -95,18 +95,18 @@ After Phase G lands and you `./gradlew installDebug`:
 4. Pick your test-user account → grant `drive.file` scope.
 5. Tab closes; the toggle row should now show "Signed in as `<your email>`".
 6. Tap **Upload now**.
-7. Open https://drive.google.com — a folder named **CallVault Backups** should contain a `.cvb` file.
+7. Open https://drive.google.com — a folder named **callNest Backups** should contain a `.cvb` file.
 
 ---
 
 ## Common errors
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `redirect_uri_mismatch` | The authorized URI in step 4.5 doesn't match the scheme the app uses. | Verify both URIs are exact: `com.callvault.app.debug:/oauth2redirect` AND `com.callvault.app:/oauth2redirect`. |
-| `access_denied` | Your test-user isn't on the consent-screen Test Users list. | Step 3.7 — add the email. |
-| `invalid_client` | Client ID or secret typo in `secrets.xml`. | Re-copy from the Credentials page. |
-| Token request returns 401 | App is in production OAuth state without verified domain. | Keep the consent screen in "Testing" while developing. |
+| Symptom                   | Cause                                                                 | Fix                                                                                                          |
+| ------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `redirect_uri_mismatch`   | The authorized URI in step 4.5 doesn't match the scheme the app uses. | Verify both URIs are exact: `com.callNest.app.debug:/oauth2redirect` AND `com.callNest.app:/oauth2redirect`. |
+| `access_denied`           | Your test-user isn't on the consent-screen Test Users list.           | Step 3.7 — add the email.                                                                                    |
+| `invalid_client`          | Client ID or secret typo in `secrets.xml`.                            | Re-copy from the Credentials page.                                                                           |
+| Token request returns 401 | App is in production OAuth state without verified domain.             | Keep the consent screen in "Testing" while developing.                                                       |
 
 ## When you're ready to ship publicly
 

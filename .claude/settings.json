@@ -17,7 +17,7 @@
       "Bash(adb devices)",
       "Bash(adb logcat:*)",
       "Bash(adb shell pm list packages*)",
-      "Bash(adb shell dumpsys activity services com.callvault.app:*)",
+      "Bash(adb shell dumpsys activity services com.callNest.app:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -51,7 +51,7 @@
     ]
   },
   "env": {
-    "CALLVAULT_PROJECT_ROOT": "/home/primathon/Documents/p_projet/a_APP/4. callVault",
-    "CALLVAULT_PACKAGE": "com.callvault.app"
+    "callNest_PROJECT_ROOT": "/home/primathon/Documents/p_projet/a_APP/4. callNest",
+    "callNest_PACKAGE": "com.callNest.app"
   }
 }

@@ -21,7 +21,7 @@ React analogue: changing a string in `i18n/en.json` and hot-reloading.
 
 ## Change how a screen looks
 
-Find the screen in `app/src/main/java/com/callvault/app/ui/screen/{feature}/{Feature}Screen.kt`.
+Find the screen in `app/src/main/java/com/callNest/app/ui/screen/{feature}/{Feature}Screen.kt`.
 
 Compose syntax cheat sheet (vs JSX):
 
@@ -108,7 +108,7 @@ The pattern: **screen wrapper does Hilt injection + state collection; inner Cont
 
 ## Add a row to the database
 
-1. Add (or edit) an entity in `app/src/main/java/com/callvault/app/data/local/entity/`:
+1. Add (or edit) an entity in `app/src/main/java/com/callNest/app/data/local/entity/`:
    ```kotlin
    @Entity(tableName = "things")
    data class ThingEntity(
@@ -125,7 +125,7 @@ The pattern: **screen wrapper does Hilt injection + state collection; inner Cont
        @Query("SELECT * FROM things ORDER BY createdAt DESC") fun observeAll(): Flow<List<ThingEntity>>
    }
    ```
-3. Register in `data/local/CallVaultDatabase.kt`: add the entity to `@Database(entities = [...])`, bump version (e.g. 2 → 3), add an abstract `fun thingDao(): ThingDao`.
+3. Register in `data/local/callNestDatabase.kt`: add the entity to `@Database(entities = [...])`, bump version (e.g. 2 → 3), add an abstract `fun thingDao(): ThingDao`.
 4. Add a migration in `data/local/migration/Migrations.kt`:
    ```kotlin
    val MIGRATION_2_3 = object : Migration(2, 3) {
@@ -199,6 +199,7 @@ The Flow<T> emits new values when the underlying DB rows change — like SWR's a
 ## Run something on a schedule
 
 Background scheduling = **WorkManager**. Examples already in `data/work/`:
+
 - `CallSyncWorker` (periodic)
 - `DailyBackupWorker` (daily at 2 AM)
 - `UpdateCheckWorker` (weekly)
@@ -232,7 +233,7 @@ class MyWorker @AssistedInject constructor(
 }
 ```
 
-Then `MyWorker.schedule(this)` from `CallVaultApp.onCreate`.
+Then `MyWorker.schedule(this)` from `callNestApp.onCreate`.
 
 React/Next analogue: a Vercel Cron job, but running on-device.
 
@@ -264,7 +265,7 @@ For automated tests:
 This project doesn't have a git history yet; nothing's committed. When you're ready:
 
 ```bash
-cd "/home/primathon/Documents/p_projet/a_APP/4. callVault"
+cd "/home/primathon/Documents/p_projet/a_APP/4. callNest"
 git init
 git add .
 git commit -m "feat: initial v1.0.0 import"
@@ -275,6 +276,7 @@ git commit -m "feat: initial v1.0.0 import"
 ## You're ready.
 
 The flow:
+
 1. Edit code.
 2. See changes via Compose Preview (UI) or Live Edit (running app).
 3. Logcat + Database Inspector when something breaks.

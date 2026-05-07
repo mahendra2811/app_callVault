@@ -1,12 +1,12 @@
-# CLAUDE.md — CallVault project context
+# CLAUDE.md — callNest project context
 
-You are working inside the **CallVault** Android project. This file is loaded into every Claude Code session opened in this repo. Read it before doing anything else.
+You are working inside the **callNest** Android project. This file is loaded into every Claude Code session opened in this repo. Read it before doing anything else.
 
 ## What this app is
 
-CallVault is a sideloaded (non-Play-Store) Android app for Indian small-business owners who receive 20–100 daily inquiry calls. It captures every call from `CallLog.Calls`, auto-saves unsaved inquiry numbers into a dedicated contact group, lets the user tag/note/bookmark/follow-up each call, computes a 0–100 lead score, and exports to Excel/CSV/PDF. Real-time features include a floating in-call bubble and a post-call popup. Self-update is via a hosted `versions.json` manifest, not Play Store.
+callNest is a sideloaded (non-Play-Store) Android app for Indian small-business owners who receive 20–100 daily inquiry calls. It captures every call from `CallLog.Calls`, auto-saves unsaved inquiry numbers into a dedicated contact group, lets the user tag/note/bookmark/follow-up each call, computes a 0–100 lead score, and exports to Excel/CSV/PDF. Real-time features include a floating in-call bubble and a post-call popup. Self-update is via a hosted `versions.json` manifest, not Play Store.
 
-Full spec: `/home/primathon/Downloads/callvault_mega_prompt.md` (1533 lines, locked).
+Full spec: `/home/primathon/Downloads/callNest_mega_prompt.md` (1533 lines, locked).
 
 AI handoff docs for future sessions live in `.claude/docs/README.md`. Start there when you need a compact project map, architecture/flow guide, file index, backlog, or agent working guide.
 
@@ -38,6 +38,7 @@ di/      Hilt modules
 ```
 
 Cross-layer rules:
+
 - `ui/` may import `domain/` and `util/`. Never `data/`.
 - `domain/` may import nothing else (pure Kotlin). No Android imports in `domain/model/` or `domain/usecase/`.
 - `data/` implements `domain/repository/` interfaces and bridges to Android.
@@ -45,7 +46,7 @@ Cross-layer rules:
 ## Existing conventions — match them
 
 - **Single Android module**: `app/`. Don't add modules.
-- **Package**: `com.callvault.app`.
+- **Package**: `com.callNest.app`.
 - **DI**: every class is `@Inject constructor(...)` or `@Singleton`. ViewModels are `@HiltViewModel`. Workers are `@HiltWorker` with `@AssistedInject`.
 - **State**: `StateFlow` for UI state, `SharedFlow` for one-shot events (snackbars, navigation). Collect via `collectAsStateWithLifecycle()`.
 - **Strings**: every UI string goes through `stringResource(R.string.X)`. Add new strings to `app/src/main/res/values/strings.xml`. Final-quality English — no Lorem ipsum, no "Coming soon".
@@ -78,6 +79,7 @@ Cross-layer rules:
 13 sprints (0–12) shipped. 245 Kotlin files in `app/src/main/`, 15 in-app docs articles, 3 unit tests, 0 instrumentation tests landed.
 
 What to read for state:
+
 - `RELEASE-PLAN.md` — phased plan to ship v1.0.0, with explicit you/Claude split. Read first.
 - `CHANGELOG.md` — what each version added.
 - `DECISIONS.md` — every fallback / deferral / trade-off.
@@ -92,11 +94,11 @@ When the user gives an open-ended task ("continue", "next item", "fix the build"
 1. Open `TODO.md`. Pick the highest-priority unchecked item.
 2. Confirm the scope in one sentence.
 3. Use the appropriate subagent (see `.claude/agents/`):
-   - Feature work → `callvault-android-engineer`
-   - Compose UI → `callvault-ui-builder`
-   - Tests → `callvault-test-writer`
-   - Build errors → `callvault-build-fixer`
-   - Docs/changelog → `callvault-doc-writer`
+   - Feature work → `callNest-android-engineer`
+   - Compose UI → `callNest-ui-builder`
+   - Tests → `callNest-test-writer`
+   - Build errors → `callNest-build-fixer`
+   - Docs/changelog → `callNest-doc-writer`
 4. After finishing, update `TODO.md` (check the box, add follow-ups), append to `CHANGELOG.md` if user-visible, append to `DECISIONS.md` if a fallback was taken.
 
 When the user invokes a slash command (e.g. `/build`, `/smoke`, `/next`), follow the corresponding file in `.claude/commands/`.
@@ -115,7 +117,7 @@ When the user invokes a slash command (e.g. `/build`, `/smoke`, `/next`), follow
 
 ```bash
 # Search
-grep -rn "pattern" app/src/main/java/com/callvault/app/
+grep -rn "pattern" app/src/main/java/com/callNest/app/
 
 # Find files
 find app/src/main -name "*.kt" -path "*/screen/calls/*"
@@ -123,29 +125,29 @@ find app/src/main -name "*.kt" -path "*/screen/calls/*"
 # Read with offset/limit (use Read tool, don't cat large files)
 
 # Check what was last touched
-ls -lt app/src/main/java/com/callvault/app/ui/screen/
+ls -lt app/src/main/java/com/callNest/app/ui/screen/
 
 # Project file count
-find app/src/main/java/com/callvault/app -name "*.kt" | wc -l
+find app/src/main/java/com/callNest/app -name "*.kt" | wc -l
 ```
 
 ## Where to put new things
 
-| New thing | Lives in |
-|-----------|----------|
-| Compose screen | `ui/screen/{feature}/{Feature}Screen.kt` + `{Feature}ViewModel.kt` |
-| Reusable Compose component | `ui/components/neo/Neo{Name}.kt` |
-| Use case | `domain/usecase/{Verb}{Noun}UseCase.kt` |
-| Domain model | `domain/model/{Name}.kt` |
-| Repository interface | `domain/repository/{Name}Repository.kt` |
-| Repository impl | `data/repository/{Name}RepositoryImpl.kt` |
-| Room entity | `data/local/entity/{Name}Entity.kt` |
-| DAO | `data/local/dao/{Name}Dao.kt` |
-| WorkManager job | `data/work/{Name}Worker.kt` |
-| Foreground/alarm | `data/service/...` |
-| Settings key | Add to `data/prefs/SettingsDataStore.kt` |
-| String | Add to `res/values/strings.xml`, reference via `stringResource(R.string.X)` |
-| In-app doc | New `app/src/main/assets/docs/NN-slug.md` + bump article list in `AssetDocsLoader` |
+| New thing                  | Lives in                                                                           |
+| -------------------------- | ---------------------------------------------------------------------------------- |
+| Compose screen             | `ui/screen/{feature}/{Feature}Screen.kt` + `{Feature}ViewModel.kt`                 |
+| Reusable Compose component | `ui/components/neo/Neo{Name}.kt`                                                   |
+| Use case                   | `domain/usecase/{Verb}{Noun}UseCase.kt`                                            |
+| Domain model               | `domain/model/{Name}.kt`                                                           |
+| Repository interface       | `domain/repository/{Name}Repository.kt`                                            |
+| Repository impl            | `data/repository/{Name}RepositoryImpl.kt`                                          |
+| Room entity                | `data/local/entity/{Name}Entity.kt`                                                |
+| DAO                        | `data/local/dao/{Name}Dao.kt`                                                      |
+| WorkManager job            | `data/work/{Name}Worker.kt`                                                        |
+| Foreground/alarm           | `data/service/...`                                                                 |
+| Settings key               | Add to `data/prefs/SettingsDataStore.kt`                                           |
+| String                     | Add to `res/values/strings.xml`, reference via `stringResource(R.string.X)`        |
+| In-app doc                 | New `app/src/main/assets/docs/NN-slug.md` + bump article list in `AssetDocsLoader` |
 
 ## When you're stuck
 

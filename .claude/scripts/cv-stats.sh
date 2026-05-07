@@ -1,44 +1,44 @@
 #!/usr/bin/env bash
-# Print a quick CallVault project stat snapshot. No build, no network.
+# Print a quick callNest project stat snapshot. No build, no network.
 # Usage: bash .claude/scripts/cv-stats.sh
 
 set -euo pipefail
 
-ROOT="/home/primathon/Documents/p_projet/a_APP/4. callVault"
+ROOT="/home/primathon/Documents/p_projet/a_APP/4. callNest"
 cd "$ROOT"
 
-echo "=== CallVault project stats ==="
+echo "=== callNest project stats ==="
 echo
 
 printf "Kotlin source files     : "
-find app/src/main/java/com/callvault/app -name "*.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app -name "*.kt" 2>/dev/null | wc -l
 
 printf "  ui/ files             : "
-find app/src/main/java/com/callvault/app/ui -name "*.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app/ui -name "*.kt" 2>/dev/null | wc -l
 
 printf "  domain/ files         : "
-find app/src/main/java/com/callvault/app/domain -name "*.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app/domain -name "*.kt" 2>/dev/null | wc -l
 
 printf "  data/ files           : "
-find app/src/main/java/com/callvault/app/data -name "*.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app/data -name "*.kt" 2>/dev/null | wc -l
 
 printf "Compose @Preview count  : "
-grep -rln "@Preview" app/src/main/java/com/callvault/app 2>/dev/null | wc -l
+grep -rln "@Preview" app/src/main/java/com/callNest/app 2>/dev/null | wc -l
 
 printf "Composable count        : "
-grep -r "@Composable" app/src/main/java/com/callvault/app 2>/dev/null | wc -l
+grep -r "@Composable" app/src/main/java/com/callNest/app 2>/dev/null | wc -l
 
 printf "ViewModels              : "
-find app/src/main/java/com/callvault/app -name "*ViewModel.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app -name "*ViewModel.kt" 2>/dev/null | wc -l
 
 printf "DAOs                    : "
-find app/src/main/java/com/callvault/app/data/local/dao -name "*.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app/data/local/dao -name "*.kt" 2>/dev/null | wc -l
 
 printf "Use cases               : "
-find app/src/main/java/com/callvault/app/domain/usecase -name "*.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app/domain/usecase -name "*.kt" 2>/dev/null | wc -l
 
 printf "Workers                 : "
-find app/src/main/java/com/callvault/app/data/work -name "*.kt" 2>/dev/null | wc -l
+find app/src/main/java/com/callNest/app/data/work -name "*.kt" 2>/dev/null | wc -l
 
 printf "Unit tests              : "
 find app/src/test -name "*Test.kt" 2>/dev/null | wc -l
@@ -69,5 +69,5 @@ done
 
 echo
 echo "Last 5 modified .kt files:"
-find app/src/main/java/com/callvault/app -name "*.kt" -printf '%T@ %p\n' 2>/dev/null \
+find app/src/main/java/com/callNest/app -name "*.kt" -printf '%T@ %p\n' 2>/dev/null \
   | sort -nr | head -5 | awk '{print "  " $2}'

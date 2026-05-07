@@ -1,9 +1,9 @@
-# CallVault APP-SPEC — Part 04: Deep Pages I
+# callNest APP-SPEC — Part 04: Deep Pages I
 
 > Section: Call detail · Search · Stats · Bookmarks · Follow-ups · My Contacts
-> Audience: a UX engineer rebuilding CallVault from scratch.
+> Audience: a UX engineer rebuilding callNest from scratch.
 > Status: locked. Cross-references: Part 02 (Tabs & Home), Part 03 (Library tab),
-> Part 05 (Deep pages II), Part 06 (Appendices — Neo* components, CallRow, color
+> Part 05 (Deep pages II), Part 06 (Appendices — Neo\* components, CallRow, color
 > tokens, formatters).
 > Sister files: see `docs/spec-parts/02-tabs-and-home.md`,
 > `docs/spec-parts/03-library.md`.
@@ -15,14 +15,14 @@ expanded with the specifics that distinguish that page.
 
 The six pages, numbered to continue the global section counter from Parts 02/03:
 
-| #  | Page         | Route                              | Spec section |
-|----|--------------|------------------------------------|--------------|
-| 21 | CallDetail   | `callDetail/{normalizedNumber}`    | §21          |
-| 22 | Search       | `search` (overlay)                 | §22          |
-| 23 | Stats        | `stats`                            | §23          |
-| 24 | Bookmarks    | `bookmarks`                        | §24          |
-| 25 | FollowUps    | `followUps`                        | §25          |
-| 26 | MyContacts   | `myContacts`                       | §26          |
+| #   | Page       | Route                           | Spec section |
+| --- | ---------- | ------------------------------- | ------------ |
+| 21  | CallDetail | `callDetail/{normalizedNumber}` | §21          |
+| 22  | Search     | `search` (overlay)              | §22          |
+| 23  | Stats      | `stats`                         | §23          |
+| 24  | Bookmarks  | `bookmarks`                     | §24          |
+| 25  | FollowUps  | `followUps`                     | §25          |
+| 26  | MyContacts | `myContacts`                    | §26          |
 
 Per-page template (15 subsections, identical to Parts 02 + 03):
 
@@ -43,6 +43,7 @@ Per-page template (15 subsections, identical to Parts 02 + 03):
 15. Performance budget
 
 Conventions used throughout:
+
 - `Neo*` = the in-house component library documented in Part 06 Appendix A.
 - `StandardPage` = the screen scaffold (top bar + colored tab background +
   header gradient + body slot) documented in Part 06 Appendix B.
@@ -56,51 +57,51 @@ Conventions used throughout:
 
 ## §21 — CallDetail screen
 
-`com.callvault.app.ui.screen.detail.CallDetailScreen`
+`com.callNest.app.ui.screen.detail.CallDetailScreen`
 
 ### 21.1 Purpose
 
-CallDetail is the most important deep page in the app. It is the *single number
-of truth* for a phone number: who they are (name + avatar + saved/unsaved state),
+CallDetail is the most important deep page in the app. It is the _single number
+of truth_ for a phone number: who they are (name + avatar + saved/unsaved state),
 how the user has interacted with them (every call, every tag, every note, every
 follow-up), and what the user is going to do next about them (call, message,
 WhatsApp, save, block, schedule).
 
-Every other surface in CallVault eventually delegates here. From Calls, the user
+Every other surface in callNest eventually delegates here. From Calls, the user
 taps a row → CallDetail. From Library → CallDetail. From Search → CallDetail.
 From the post-call popup "Open" button → CallDetail. From a notification's
 "View" action → CallDetail. From an exported PDF link (deep-linked via
-`callvault://detail/<num>`) → CallDetail.
+`callNest://detail/<num>`) → CallDetail.
 
 Because of that fan-in, CallDetail must answer in a single glance:
 
-1. *Who is this?* Hero card — name, avatar, status pill, lead score.
-2. *What can I do right now?* Action bar — call, message, WhatsApp, save, block.
-3. *What's the history at a glance?* Stats card — totals + averages + dates.
-4. *How have I categorized them?* Tags section.
-5. *What did I write down about them?* Notes journal.
-6. *What did I promise to do?* Follow-up section.
-7. *What's the full timeline?* Call history timeline.
-8. *What admin levers do I have?* Manage section.
+1. _Who is this?_ Hero card — name, avatar, status pill, lead score.
+2. _What can I do right now?_ Action bar — call, message, WhatsApp, save, block.
+3. _What's the history at a glance?_ Stats card — totals + averages + dates.
+4. _How have I categorized them?_ Tags section.
+5. _What did I write down about them?_ Notes journal.
+6. _What did I promise to do?_ Follow-up section.
+7. _What's the full timeline?_ Call history timeline.
+8. _What admin levers do I have?_ Manage section.
 
 The page is a vertically scrolled `LazyColumn`; the user reads top-down and
 scrolls until they find what they need. Nothing is collapsed by default.
 
 ### 21.2 Entry points
 
-| Source                                         | Args passed                       | Notes                    |
-|------------------------------------------------|-----------------------------------|--------------------------|
-| Calls tab → CallRow tap                        | `normalizedNumber`                | Most common (~70%)       |
-| Library tab → ContactRow tap                   | `normalizedNumber`                | ~15%                     |
-| Search overlay → result tap                    | `normalizedNumber`                | ~7%                      |
-| Bookmarks → row or pinned-bookmark tap         | `normalizedNumber`                |                          |
-| FollowUps → row tap                            | `normalizedNumber`                |                          |
-| MyContacts → row tap                           | `normalizedNumber`                |                          |
-| Post-call popup → "Open" button                | `normalizedNumber`                |                          |
-| Floating in-call bubble → expand → tap header  | `normalizedNumber`                |                          |
-| Notification ("Missed call from …") → tap      | `normalizedNumber` (PendingIntent)|                          |
-| External deep link (`callvault://detail/<n>`)  | `normalizedNumber`                | Phase I.2                |
-| Exported PDF link clicked while app open       | `normalizedNumber`                | Same handler as above    |
+| Source                                        | Args passed                        | Notes                 |
+| --------------------------------------------- | ---------------------------------- | --------------------- |
+| Calls tab → CallRow tap                       | `normalizedNumber`                 | Most common (~70%)    |
+| Library tab → ContactRow tap                  | `normalizedNumber`                 | ~15%                  |
+| Search overlay → result tap                   | `normalizedNumber`                 | ~7%                   |
+| Bookmarks → row or pinned-bookmark tap        | `normalizedNumber`                 |                       |
+| FollowUps → row tap                           | `normalizedNumber`                 |                       |
+| MyContacts → row tap                          | `normalizedNumber`                 |                       |
+| Post-call popup → "Open" button               | `normalizedNumber`                 |                       |
+| Floating in-call bubble → expand → tap header | `normalizedNumber`                 |                       |
+| Notification ("Missed call from …") → tap     | `normalizedNumber` (PendingIntent) |                       |
+| External deep link (`callNest://detail/<n>`)  | `normalizedNumber`                 | Phase I.2             |
+| Exported PDF link clicked while app open      | `normalizedNumber`                 | Same handler as above |
 
 The route is `callDetail/{normalizedNumber}` where `normalizedNumber` is
 URL-encoded E.164 (e.g. `+919876543210` → `%2B919876543210`). The
@@ -149,39 +150,39 @@ Route arg: `normalizedNumber: String` (E.164, may be empty for private).
 
 `CallDetailViewModel` state — single `StateFlow<CallDetailUiState>`:
 
-| Field                | Type                              | Source                                         |
-|----------------------|-----------------------------------|------------------------------------------------|
-| `normalizedNumber`   | `String`                          | savedStateHandle                               |
-| `displayName`        | `String?`                         | `contactsRepo.observeName(num)`                |
-| `formattedNumber`    | `String`                          | `PhoneFormatter.formatForDisplay(num)`         |
-| `geocodedLocation`   | `String?`                         | `callRepo.observeMostRecentGeocoded(num)`      |
-| `avatarSeed`         | `String`                          | derived = normalizedNumber                     |
-| `status`             | `enum SavedStatus`                | derived: Saved / Unsaved / AutoSaved           |
-| `leadScore`          | `Int` 0..100                      | `LeadScoreUseCase.observe(num)`                |
-| `leadBucket`         | `enum LeadBucket`                 | derived from `leadScore`                       |
-| `stats`              | `NumberStats`                     | `NumberStatsUseCase.observe(num)`              |
-| `tags`               | `List<TagApplication>`            | `tagRepo.observeApplied(num)`                  |
-| `notes`              | `List<NoteEntry>`                 | `noteRepo.observe(num)` (newest first)         |
-| `followUp`           | `FollowUp?`                       | `callRepo.observeFollowUp(num)`                |
-| `history`            | `PagingData<CallEntity>`          | `callRepo.pagedHistory(num, pageSize=50)`      |
-| `historyTotalCount`  | `Int`                             | counted upfront                                |
-| `isLoading`          | `Boolean`                         | true until first emission of stats             |
-| `isError`            | `String?`                         | non-null = banner copy                         |
-| `permissionMissing`  | `Boolean`                         | true if call-log perm revoked while open       |
+| Field               | Type                     | Source                                    |
+| ------------------- | ------------------------ | ----------------------------------------- |
+| `normalizedNumber`  | `String`                 | savedStateHandle                          |
+| `displayName`       | `String?`                | `contactsRepo.observeName(num)`           |
+| `formattedNumber`   | `String`                 | `PhoneFormatter.formatForDisplay(num)`    |
+| `geocodedLocation`  | `String?`                | `callRepo.observeMostRecentGeocoded(num)` |
+| `avatarSeed`        | `String`                 | derived = normalizedNumber                |
+| `status`            | `enum SavedStatus`       | derived: Saved / Unsaved / AutoSaved      |
+| `leadScore`         | `Int` 0..100             | `LeadScoreUseCase.observe(num)`           |
+| `leadBucket`        | `enum LeadBucket`        | derived from `leadScore`                  |
+| `stats`             | `NumberStats`            | `NumberStatsUseCase.observe(num)`         |
+| `tags`              | `List<TagApplication>`   | `tagRepo.observeApplied(num)`             |
+| `notes`             | `List<NoteEntry>`        | `noteRepo.observe(num)` (newest first)    |
+| `followUp`          | `FollowUp?`              | `callRepo.observeFollowUp(num)`           |
+| `history`           | `PagingData<CallEntity>` | `callRepo.pagedHistory(num, pageSize=50)` |
+| `historyTotalCount` | `Int`                    | counted upfront                           |
+| `isLoading`         | `Boolean`                | true until first emission of stats        |
+| `isError`           | `String?`                | non-null = banner copy                    |
+| `permissionMissing` | `Boolean`                | true if call-log perm revoked while open  |
 
 `NumberStats` (computed by `NumberStatsUseCase`):
 
-| Field              | Type               | Notes                              |
-|--------------------|--------------------|------------------------------------|
-| `totalCalls`       | `Int`              |                                    |
-| `incomingCount`    | `Int`              |                                    |
-| `outgoingCount`    | `Int`              |                                    |
-| `missedCount`      | `Int`              | includes rejected per spec §3.4    |
-| `totalDurationSec` | `Long`             |                                    |
-| `firstCallAtMs`    | `Long`             |                                    |
-| `lastCallAtMs`     | `Long`             |                                    |
-| `avgDurationSec`   | `Long`             | `totalDurationSec / answeredCount` |
-| `missedRatio`      | `Float` 0..1       | `missedCount / totalCalls`         |
+| Field              | Type         | Notes                              |
+| ------------------ | ------------ | ---------------------------------- |
+| `totalCalls`       | `Int`        |                                    |
+| `incomingCount`    | `Int`        |                                    |
+| `outgoingCount`    | `Int`        |                                    |
+| `missedCount`      | `Int`        | includes rejected per spec §3.4    |
+| `totalDurationSec` | `Long`       |                                    |
+| `firstCallAtMs`    | `Long`       |                                    |
+| `lastCallAtMs`     | `Long`       |                                    |
+| `avgDurationSec`   | `Long`       | `totalDurationSec / answeredCount` |
+| `missedRatio`      | `Float` 0..1 | `missedCount / totalCalls`         |
 
 The ViewModel exposes a `SharedFlow<CallDetailEvent>` for one-shot side effects:
 snackbars, toast on share, "Copied number" feedback, navigation pops.
@@ -196,31 +197,31 @@ sealed interface CallDetailEvent {
 
 ### 21.5 Required inputs (user)
 
-| Gesture                                   | Effect                                       |
-|-------------------------------------------|----------------------------------------------|
-| Tap back                                  | popBackStack                                 |
-| Tap share-contact (top bar)               | fire vCard share intent                      |
-| Tap any of the 5 action-bar buttons       | fire corresponding intent                    |
-| Tap "Save to contacts" CTA in hero card   | fire ContactsContract insert intent          |
-| Long-press hero number                    | copy to clipboard, snackbar "Copied"         |
-| Tap LeadScoreBadge                        | tooltip popover with score breakdown         |
-| Tap a tag chip                            | no-op (visual feedback only)                 |
-| Tap × on a tag chip                       | remove that tag (`RemoveTagUseCase`)         |
-| Tap "Add tag"                             | open TagPickerSheet                          |
-| Tap a note's Edit                         | open NoteEditorDialog prefilled              |
-| Tap a note's Delete                       | confirmation → `DeleteNoteUseCase`           |
-| Tap "Add note"                            | open NoteEditorDialog blank                  |
-| Tap "Set follow-up"                       | DatePicker → TimePicker chain                |
-| Tap follow-up Edit                        | DatePicker → TimePicker prefilled            |
-| Tap follow-up Cancel                      | confirmation → `CancelFollowUpUseCase`       |
-| Tap follow-up Snooze                      | menu (1h / 1d / pick…)                       |
-| Tap a history-timeline row                | no-op (already on this number's detail)      |
-| Long-press a history-timeline row         | popup menu: Copy timestamp, Delete this call |
-| Tap Manage → Edit notes                   | scroll + focus notes journal                 |
-| Tap Manage → Clear all data               | dialog → clear → pop                         |
-| Tap Manage → Report spam                  | apply Spam tag                               |
-| Pull-to-refresh on the LazyColumn         | re-fetch stats + history                     |
-| Scroll                                    | normal vertical scroll                       |
+| Gesture                                 | Effect                                       |
+| --------------------------------------- | -------------------------------------------- |
+| Tap back                                | popBackStack                                 |
+| Tap share-contact (top bar)             | fire vCard share intent                      |
+| Tap any of the 5 action-bar buttons     | fire corresponding intent                    |
+| Tap "Save to contacts" CTA in hero card | fire ContactsContract insert intent          |
+| Long-press hero number                  | copy to clipboard, snackbar "Copied"         |
+| Tap LeadScoreBadge                      | tooltip popover with score breakdown         |
+| Tap a tag chip                          | no-op (visual feedback only)                 |
+| Tap × on a tag chip                     | remove that tag (`RemoveTagUseCase`)         |
+| Tap "Add tag"                           | open TagPickerSheet                          |
+| Tap a note's Edit                       | open NoteEditorDialog prefilled              |
+| Tap a note's Delete                     | confirmation → `DeleteNoteUseCase`           |
+| Tap "Add note"                          | open NoteEditorDialog blank                  |
+| Tap "Set follow-up"                     | DatePicker → TimePicker chain                |
+| Tap follow-up Edit                      | DatePicker → TimePicker prefilled            |
+| Tap follow-up Cancel                    | confirmation → `CancelFollowUpUseCase`       |
+| Tap follow-up Snooze                    | menu (1h / 1d / pick…)                       |
+| Tap a history-timeline row              | no-op (already on this number's detail)      |
+| Long-press a history-timeline row       | popup menu: Copy timestamp, Delete this call |
+| Tap Manage → Edit notes                 | scroll + focus notes journal                 |
+| Tap Manage → Clear all data             | dialog → clear → pop                         |
+| Tap Manage → Report spam                | apply Spam tag                               |
+| Pull-to-refresh on the LazyColumn       | re-fetch stats + history                     |
+| Scroll                                  | normal vertical scroll                       |
 
 There is no horizontal swipe, no edge swipe, no shake gesture.
 
@@ -240,17 +241,17 @@ In strict top-to-bottom order:
    - WhatsApp (custom vector, brand green tint)
    - Save (`Icons.Filled.PersonAdd`, accent purple tint) — disabled when `status == Saved`
    - Block (`Icons.Filled.Block`, error tint)
-   Each button has a 12sp label below the icon.
+     Each button has a 12sp label below the icon.
 4. **Stats card** — `NeoCard`, 16dp padding, two-column grid of stats:
    - Total calls · Talk time
    - First call · Last call
    - Avg duration · Missed rate
-   Values are large; labels small. Empty values render `—` (em dash), not `0`.
+     Values are large; labels small. Empty values render `—` (em dash), not `0`.
 5. **Tags section** — Section header "Tags" (titleSmall) with trailing "Add tag" `NeoButton.Tertiary`. Below: a `FlowRow(spacing = 8dp)` of applied tag chips, each with leading colored dot + text + trailing × icon. If no tags applied, a single greyed placeholder chip "No tags yet" (non-interactive).
 6. **Notes journal** — Section header "Notes" with right-aligned count "(N)". Below: vertical list of note cards, newest first. Each note card:
    - Top row: timestamp (e.g. "Apr 14, 3:42 PM") + Edit + Delete inline icon buttons.
    - Body: markdown-rendered note (bold/italic/bullets/links via `MarkdownRenderer`, which supports a strict subset — see Part 06 Appendix M).
-   At the end of the list: `NeoButton.Secondary("Add note", icon = NoteAdd)` full width.
+     At the end of the list: `NeoButton.Secondary("Add note", icon = NoteAdd)` full width.
 7. **Follow-up section** — Section header "Follow-up". Below:
    - If `followUp != null && followUp.doneAt == null`: a `NeoCard` with the date+time on the left, and three `NeoIconButton`s on the right: Edit / Cancel / Snooze. A small "in 3 days" relative-time hint underneath.
    - If `followUp != null && followUp.doneAt != null`: a strikethrough card showing "Completed on …".
@@ -278,12 +279,12 @@ In strict top-to-bottom order:
 CallDetail itself is never "empty" in the global sense — there is always at least
 one call that brought the user here. But individual sections can be empty:
 
-| Section       | Empty copy / element                                                        |
-|---------------|------------------------------------------------------------------------------|
-| Tags          | Greyed placeholder chip: `"No tags yet"`                                    |
-| Notes         | Light card: `"No notes yet."` + small body: `"Tap Add note to capture context."` |
-| Follow-up     | Just the `Set follow-up` button (no separate empty card).                    |
-| History       | Cannot be empty by definition; if it ever is, render `"No calls in history. This is unusual — try refreshing."` and a refresh button. |
+| Section   | Empty copy / element                                                                                                                  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Tags      | Greyed placeholder chip: `"No tags yet"`                                                                                              |
+| Notes     | Light card: `"No notes yet."` + small body: `"Tap Add note to capture context."`                                                      |
+| Follow-up | Just the `Set follow-up` button (no separate empty card).                                                                             |
+| History   | Cannot be empty by definition; if it ever is, render `"No calls in history. This is unusual — try refreshing."` and a refresh button. |
 
 The screen-level "404" state is documented in 21.11.a.
 
@@ -313,152 +314,152 @@ The screen-level "404" state is documented in 21.11.a.
 ### 21.11 Edge cases
 
 a. **Number not in DB.** ViewModel sees `historyTotalCount == 0` after first
-   refresh. Render a dedicated "404" body: icon `SearchOff`, title `"This number isn't in your call log yet."`, body `"It may have been deleted, or this is a deep link from a stale source."`, button `"Go back"`. The hero card and action bar still render — calling/messaging an unknown number is still useful.
+refresh. Render a dedicated "404" body: icon `SearchOff`, title `"This number isn't in your call log yet."`, body `"It may have been deleted, or this is a deep link from a stale source."`, button `"Go back"`. The hero card and action bar still render — calling/messaging an unknown number is still useful.
 
 b. **Private number** (caller passed empty string for `normalizedNumber`). The
-   ViewModel synthesizes a degraded state: `displayName = "Private number"`,
-   action bar shows only the Block button enabled (Call/Message/WhatsApp/Save
-   are disabled with a tooltip `"Number not available."`). History timeline
-   shows all rows whose `phoneNumber.isBlank() == true`.
+ViewModel synthesizes a degraded state: `displayName = "Private number"`,
+action bar shows only the Block button enabled (Call/Message/WhatsApp/Save
+are disabled with a tooltip `"Number not available."`). History timeline
+shows all rows whose `phoneNumber.isBlank() == true`.
 
 c. **0 calls in history but contact exists.** Defensive — shouldn't happen since
-   we sourced the contact from a call. If it does, fall through to (a).
+we sourced the contact from a call. If it does, fall through to (a).
 
 d. **1000+ calls in history.** Use `Pager(pageSize = 50, prefetchDistance = 10)`.
-   The first page (50 rows) renders inline; the next page is appended on scroll.
-   Compose key on `callId` to keep scroll position stable. Do **not** lazily
-   recompute totals while paging — totals come from `NumberStatsUseCase` which
-   queries with `COUNT(*)` once.
+The first page (50 rows) renders inline; the next page is appended on scroll.
+Compose key on `callId` to keep scroll position stable. Do **not** lazily
+recompute totals while paging — totals come from `NumberStatsUseCase` which
+queries with `COUNT(*)` once.
 
 e. **Tag picker offline / DB locked.** TagPickerSheet shows skeleton rows for
-   up to 1s then a `"Couldn't load tags. Tap to retry."` row.
+up to 1s then a `"Couldn't load tags. Tap to retry."` row.
 
 f. **Follow-up scheduled in the past.** Allowed (the user may be back-dating a
-   note-style reminder). The follow-up card simply shows "Overdue · 2 days ago"
-   in red. The notification worker (which only fires on future timestamps) will
-   ignore it.
+note-style reminder). The follow-up card simply shows "Overdue · 2 days ago"
+in red. The notification worker (which only fires on future timestamps) will
+ignore it.
 
 g. **Note > 5000 characters.** The dialog's TextField has `maxLength = 5000`. The
-   counter turns red at 4900. Pasting a longer string truncates with a snackbar.
+counter turns red at 4900. Pasting a longer string truncates with a snackbar.
 
 h. **Markdown with malicious link** (`javascript:`). Renderer strips any non-`http(s)`
-   schemes silently; `tel:`/`mailto:` are allowed; everything else is treated as
-   plaintext.
+schemes silently; `tel:`/`mailto:` are allowed; everything else is treated as
+plaintext.
 
 i. **Concurrent edit** (user edits a note in this screen while the call sync
-   worker writes a new call). Room observers re-emit independently; the notes
-   list and the history list refresh independently without blocking each other.
+worker writes a new call). Room observers re-emit independently; the notes
+list and the history list refresh independently without blocking each other.
 
 j. **Hot-reload during edit.** If a configuration change occurs (rotation, dark
-   mode toggle), the open NoteEditorDialog persists its draft via
-   `rememberSaveable`.
+mode toggle), the open NoteEditorDialog persists its draft via
+`rememberSaveable`.
 
 k. **Share contact card with no display name.** vCard text uses the formatted
-   number as `FN`; `N` field is left blank. The share text body reads
-   `"Contact from CallVault: <number>"`.
+number as `FN`; `N` field is left blank. The share text body reads
+`"Contact from callNest: <number>"`.
 
 l. **Number is the user's own number** (Telephony `getLine1Number()`). Action bar
-   Call/Message remain enabled (the user might want to leave themselves a voicemail).
-   No special UI — there is no reliable way to detect this on Android 10+.
+Call/Message remain enabled (the user might want to leave themselves a voicemail).
+No special UI — there is no reliable way to detect this on Android 10+.
 
 m. **Block confirmation race.** If the user taps Block twice in <300ms, the
-   second tap is debounced (button enters loading state on first press).
+second tap is debounced (button enters loading state on first press).
 
 n. **Clear all data for number** while the number is currently in an active call
-   (in-call bubble visible). Allowed: the in-call bubble survives; only DB rows
-   are cleared. A new call entry will be re-inserted on `CALL_STATE_IDLE`.
+(in-call bubble visible). Allowed: the in-call bubble survives; only DB rows
+are cleared. A new call entry will be re-inserted on `CALL_STATE_IDLE`.
 
 ### 21.12 Copy table
 
-| Key                                  | Copy                                                                  |
-|--------------------------------------|-----------------------------------------------------------------------|
-| `cd_top_bar_title_unsaved`           | (formatted number)                                                    |
-| `cd_top_bar_title_saved`             | (display name)                                                        |
-| `cd_share_icon_cd`                   | Share contact card                                                    |
-| `cd_back_icon_cd`                    | Back                                                                  |
-| `cd_status_pill_saved`               | Saved                                                                 |
-| `cd_status_pill_unsaved`             | Unsaved                                                               |
-| `cd_status_pill_autosaved`           | Auto-saved                                                            |
-| `cd_status_pill_blocked`             | Blocked                                                               |
-| `cd_save_cta_label`                  | Save to contacts                                                      |
-| `cd_lead_cold`                       | Cold lead                                                             |
-| `cd_lead_warm`                       | Warm lead                                                             |
-| `cd_lead_hot`                        | Hot lead                                                              |
-| `cd_lead_score_tooltip_title`        | How this score is calculated                                          |
-| `cd_lead_score_tooltip_body`         | Recency, frequency, answered ratio, follow-up activity.               |
-| `cd_action_call`                     | Call                                                                  |
-| `cd_action_message`                  | Message                                                               |
-| `cd_action_whatsapp`                 | WhatsApp                                                              |
-| `cd_action_save`                     | Save                                                                  |
-| `cd_action_block`                    | Block                                                                 |
-| `cd_action_block_confirm_title`      | Block this number?                                                    |
-| `cd_action_block_confirm_body`       | You won't get calls or messages from this number until you unblock it. |
-| `cd_action_block_confirm_yes`        | Block                                                                 |
-| `cd_action_block_confirm_no`         | Cancel                                                                |
-| `cd_stats_title`                     | At a glance                                                           |
-| `cd_stats_total_calls`               | Total calls                                                           |
-| `cd_stats_talk_time`                 | Talk time                                                             |
-| `cd_stats_first_call`                | First call                                                            |
-| `cd_stats_last_call`                 | Last call                                                             |
-| `cd_stats_avg_duration`              | Avg duration                                                          |
-| `cd_stats_missed_rate`               | Missed rate                                                           |
-| `cd_tags_title`                      | Tags                                                                  |
-| `cd_tags_add`                        | Add tag                                                               |
-| `cd_tags_empty_chip`                 | No tags yet                                                           |
-| `cd_tags_remove_cd`                  | Remove tag %1$s                                                       |
-| `cd_notes_title`                     | Notes                                                                 |
-| `cd_notes_count`                     | (%1$d)                                                                |
-| `cd_notes_empty_title`               | No notes yet.                                                         |
-| `cd_notes_empty_body`                | Tap Add note to capture context.                                      |
-| `cd_notes_add`                       | Add note                                                              |
-| `cd_notes_edit`                      | Edit                                                                  |
-| `cd_notes_delete`                    | Delete                                                                |
-| `cd_notes_delete_confirm_title`      | Delete this note?                                                     |
-| `cd_notes_delete_confirm_body`       | This can't be undone.                                                 |
-| `cd_notes_delete_confirm_yes`        | Delete                                                                |
-| `cd_notes_dialog_title_new`          | New note                                                              |
-| `cd_notes_dialog_title_edit`         | Edit note                                                             |
-| `cd_notes_dialog_placeholder`        | What did you discuss? Markdown supported.                             |
-| `cd_notes_dialog_save`               | Save                                                                  |
-| `cd_notes_dialog_cancel`             | Cancel                                                                |
-| `cd_notes_dialog_counter`            | %1$d / 5000                                                           |
-| `cd_followup_title`                  | Follow-up                                                             |
-| `cd_followup_set`                    | Set follow-up                                                         |
-| `cd_followup_edit`                   | Edit                                                                  |
-| `cd_followup_cancel`                 | Cancel                                                                |
-| `cd_followup_snooze`                 | Snooze                                                                |
-| `cd_followup_snooze_1h`              | 1 hour                                                                |
-| `cd_followup_snooze_1d`              | 1 day                                                                 |
-| `cd_followup_snooze_pick`            | Pick a time…                                                          |
-| `cd_followup_overdue`                | Overdue · %1$s                                                        |
-| `cd_followup_done_prefix`            | Completed on %1$s                                                     |
-| `cd_history_title`                   | Call history                                                          |
-| `cd_history_count`                   | (%1$d)                                                                |
-| `cd_history_show_more`               | Show older calls                                                      |
-| `cd_manage_title`                    | Manage                                                                |
-| `cd_manage_edit_notes`               | Edit notes                                                            |
-| `cd_manage_clear_all`                | Clear all data for this number                                        |
-| `cd_manage_clear_confirm_title`      | Clear all data?                                                       |
-| `cd_manage_clear_confirm_body`       | This deletes every call, tag, note, bookmark, and follow-up for %1$s. The contact in your phone book is not touched. |
-| `cd_manage_clear_confirm_yes`        | Clear                                                                 |
-| `cd_manage_clear_confirm_no`         | Keep                                                                  |
-| `cd_manage_report_spam`              | Report spam                                                           |
-| `cd_manage_report_spam_snackbar`     | Reported as spam.                                                     |
-| `cd_error_perm_title`                | Call log access was turned off.                                       |
-| `cd_error_perm_body`                 | Re-grant permission to see this number's history.                     |
-| `cd_error_perm_button`               | Grant permission                                                      |
-| `cd_error_db_title`                  | Couldn't load this contact.                                           |
-| `cd_error_db_body`                   | Pull to refresh or try again in a moment.                             |
-| `cd_error_db_button`                 | Retry                                                                 |
-| `cd_error_no_whatsapp`               | WhatsApp isn't installed on this device.                              |
-| `cd_error_block_failed`              | Couldn't block this number. Try again.                                |
-| `cd_error_save_cancelled`            | Save cancelled.                                                       |
-| `cd_404_title`                       | This number isn't in your call log yet.                               |
-| `cd_404_body`                        | It may have been deleted, or this is a deep link from a stale source. |
-| `cd_404_button`                      | Go back                                                               |
-| `cd_private_label`                   | Private number                                                        |
-| `cd_private_disabled_tooltip`        | Number not available.                                                 |
-| `cd_copied_snackbar`                 | Copied                                                                |
+| Key                              | Copy                                                                                                                 |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `cd_top_bar_title_unsaved`       | (formatted number)                                                                                                   |
+| `cd_top_bar_title_saved`         | (display name)                                                                                                       |
+| `cd_share_icon_cd`               | Share contact card                                                                                                   |
+| `cd_back_icon_cd`                | Back                                                                                                                 |
+| `cd_status_pill_saved`           | Saved                                                                                                                |
+| `cd_status_pill_unsaved`         | Unsaved                                                                                                              |
+| `cd_status_pill_autosaved`       | Auto-saved                                                                                                           |
+| `cd_status_pill_blocked`         | Blocked                                                                                                              |
+| `cd_save_cta_label`              | Save to contacts                                                                                                     |
+| `cd_lead_cold`                   | Cold lead                                                                                                            |
+| `cd_lead_warm`                   | Warm lead                                                                                                            |
+| `cd_lead_hot`                    | Hot lead                                                                                                             |
+| `cd_lead_score_tooltip_title`    | How this score is calculated                                                                                         |
+| `cd_lead_score_tooltip_body`     | Recency, frequency, answered ratio, follow-up activity.                                                              |
+| `cd_action_call`                 | Call                                                                                                                 |
+| `cd_action_message`              | Message                                                                                                              |
+| `cd_action_whatsapp`             | WhatsApp                                                                                                             |
+| `cd_action_save`                 | Save                                                                                                                 |
+| `cd_action_block`                | Block                                                                                                                |
+| `cd_action_block_confirm_title`  | Block this number?                                                                                                   |
+| `cd_action_block_confirm_body`   | You won't get calls or messages from this number until you unblock it.                                               |
+| `cd_action_block_confirm_yes`    | Block                                                                                                                |
+| `cd_action_block_confirm_no`     | Cancel                                                                                                               |
+| `cd_stats_title`                 | At a glance                                                                                                          |
+| `cd_stats_total_calls`           | Total calls                                                                                                          |
+| `cd_stats_talk_time`             | Talk time                                                                                                            |
+| `cd_stats_first_call`            | First call                                                                                                           |
+| `cd_stats_last_call`             | Last call                                                                                                            |
+| `cd_stats_avg_duration`          | Avg duration                                                                                                         |
+| `cd_stats_missed_rate`           | Missed rate                                                                                                          |
+| `cd_tags_title`                  | Tags                                                                                                                 |
+| `cd_tags_add`                    | Add tag                                                                                                              |
+| `cd_tags_empty_chip`             | No tags yet                                                                                                          |
+| `cd_tags_remove_cd`              | Remove tag %1$s                                                                                                      |
+| `cd_notes_title`                 | Notes                                                                                                                |
+| `cd_notes_count`                 | (%1$d)                                                                                                               |
+| `cd_notes_empty_title`           | No notes yet.                                                                                                        |
+| `cd_notes_empty_body`            | Tap Add note to capture context.                                                                                     |
+| `cd_notes_add`                   | Add note                                                                                                             |
+| `cd_notes_edit`                  | Edit                                                                                                                 |
+| `cd_notes_delete`                | Delete                                                                                                               |
+| `cd_notes_delete_confirm_title`  | Delete this note?                                                                                                    |
+| `cd_notes_delete_confirm_body`   | This can't be undone.                                                                                                |
+| `cd_notes_delete_confirm_yes`    | Delete                                                                                                               |
+| `cd_notes_dialog_title_new`      | New note                                                                                                             |
+| `cd_notes_dialog_title_edit`     | Edit note                                                                                                            |
+| `cd_notes_dialog_placeholder`    | What did you discuss? Markdown supported.                                                                            |
+| `cd_notes_dialog_save`           | Save                                                                                                                 |
+| `cd_notes_dialog_cancel`         | Cancel                                                                                                               |
+| `cd_notes_dialog_counter`        | %1$d / 5000                                                                                                          |
+| `cd_followup_title`              | Follow-up                                                                                                            |
+| `cd_followup_set`                | Set follow-up                                                                                                        |
+| `cd_followup_edit`               | Edit                                                                                                                 |
+| `cd_followup_cancel`             | Cancel                                                                                                               |
+| `cd_followup_snooze`             | Snooze                                                                                                               |
+| `cd_followup_snooze_1h`          | 1 hour                                                                                                               |
+| `cd_followup_snooze_1d`          | 1 day                                                                                                                |
+| `cd_followup_snooze_pick`        | Pick a time…                                                                                                         |
+| `cd_followup_overdue`            | Overdue · %1$s                                                                                                       |
+| `cd_followup_done_prefix`        | Completed on %1$s                                                                                                    |
+| `cd_history_title`               | Call history                                                                                                         |
+| `cd_history_count`               | (%1$d)                                                                                                               |
+| `cd_history_show_more`           | Show older calls                                                                                                     |
+| `cd_manage_title`                | Manage                                                                                                               |
+| `cd_manage_edit_notes`           | Edit notes                                                                                                           |
+| `cd_manage_clear_all`            | Clear all data for this number                                                                                       |
+| `cd_manage_clear_confirm_title`  | Clear all data?                                                                                                      |
+| `cd_manage_clear_confirm_body`   | This deletes every call, tag, note, bookmark, and follow-up for %1$s. The contact in your phone book is not touched. |
+| `cd_manage_clear_confirm_yes`    | Clear                                                                                                                |
+| `cd_manage_clear_confirm_no`     | Keep                                                                                                                 |
+| `cd_manage_report_spam`          | Report spam                                                                                                          |
+| `cd_manage_report_spam_snackbar` | Reported as spam.                                                                                                    |
+| `cd_error_perm_title`            | Call log access was turned off.                                                                                      |
+| `cd_error_perm_body`             | Re-grant permission to see this number's history.                                                                    |
+| `cd_error_perm_button`           | Grant permission                                                                                                     |
+| `cd_error_db_title`              | Couldn't load this contact.                                                                                          |
+| `cd_error_db_body`               | Pull to refresh or try again in a moment.                                                                            |
+| `cd_error_db_button`             | Retry                                                                                                                |
+| `cd_error_no_whatsapp`           | WhatsApp isn't installed on this device.                                                                             |
+| `cd_error_block_failed`          | Couldn't block this number. Try again.                                                                               |
+| `cd_error_save_cancelled`        | Save cancelled.                                                                                                      |
+| `cd_404_title`                   | This number isn't in your call log yet.                                                                              |
+| `cd_404_body`                    | It may have been deleted, or this is a deep link from a stale source.                                                |
+| `cd_404_button`                  | Go back                                                                                                              |
+| `cd_private_label`               | Private number                                                                                                       |
+| `cd_private_disabled_tooltip`    | Number not available.                                                                                                |
+| `cd_copied_snackbar`             | Copied                                                                                                               |
 
 ### 21.13 ASCII wireframe
 
@@ -605,14 +606,14 @@ Error (permission revoked):
 
 ### 21.15 Performance budget
 
-| Metric                                  | Budget                |
-|-----------------------------------------|-----------------------|
-| Time to first paint of top bar + hero   | ≤ 120 ms              |
-| Time to stats card filled               | ≤ 250 ms              |
-| Time to first 50 history rows           | ≤ 350 ms              |
-| Memory (steady state)                   | ≤ 18 MB above baseline|
-| Frame rate during scroll                | 60 fps p95            |
-| Pull-to-refresh round trip              | ≤ 600 ms              |
+| Metric                                | Budget                 |
+| ------------------------------------- | ---------------------- |
+| Time to first paint of top bar + hero | ≤ 120 ms               |
+| Time to stats card filled             | ≤ 250 ms               |
+| Time to first 50 history rows         | ≤ 350 ms               |
+| Memory (steady state)                 | ≤ 18 MB above baseline |
+| Frame rate during scroll              | 60 fps p95             |
+| Pull-to-refresh round trip            | ≤ 600 ms               |
 
 `NumberStatsUseCase` issues a single SQL query with grouped aggregates; it does
 not iterate on JVM. Notes and tags are observed via Flow; updates re-emit only
@@ -622,7 +623,7 @@ the changed list.
 
 ## §22 — Search overlay
 
-`com.callvault.app.ui.screen.search.SearchScreen`
+`com.callNest.app.ui.screen.search.SearchScreen`
 
 ### 22.1 Purpose
 
@@ -630,7 +631,7 @@ Search is the universal find-anything page. It is reached from the persistent
 search icon in the Calls and Library top bars, and from the global keyboard
 shortcut (`Ctrl+K` on hardware-keyboard devices).
 
-It is intentionally *not* wrapped in `StandardPage`. The colored tab background
+It is intentionally _not_ wrapped in `StandardPage`. The colored tab background
 and the header gradient would add chrome that fights focus. Instead the page is
 pure white (or pure surface in dark mode), edge-to-edge, with only the search
 field at the top. This is the one place in the app where the user wants tunnel
@@ -644,12 +645,12 @@ character no-op, special-character escaping, and per-token trim.
 
 ### 22.2 Entry points
 
-| Source                                             | Effect                |
-|----------------------------------------------------|-----------------------|
-| Top-bar search icon on Calls / Library             | navigate to `search`  |
-| Hardware keyboard `Ctrl + K` from any tab          | navigate to `search`  |
-| Empty-state CTA on the Calls tab "Search calls"    | navigate to `search`  |
-| Stats insight card "View calls in this range"      | navigate to `search`  |
+| Source                                          | Effect               |
+| ----------------------------------------------- | -------------------- |
+| Top-bar search icon on Calls / Library          | navigate to `search` |
+| Hardware keyboard `Ctrl + K` from any tab       | navigate to `search` |
+| Empty-state CTA on the Calls tab "Search calls" | navigate to `search` |
+| Stats insight card "View calls in this range"   | navigate to `search` |
 
 The route is the literal string `search` — no args.
 
@@ -666,14 +667,14 @@ The route is the literal string `search` — no args.
 
 `SearchViewModel` state:
 
-| Field            | Type                       | Notes                              |
-|------------------|----------------------------|------------------------------------|
-| `query`          | `String`                   | trimmed, length-capped at 80 chars |
-| `debouncedQuery` | `String`                   | derived, 300ms debounce             |
-| `recents`        | `List<RecentSearch>`       | last 10 from `SearchHistoryDao`    |
-| `results`        | `List<CallEntity>`         | capped at 200 (see edge case)      |
-| `isLoading`      | `Boolean`                  | true while FTS in flight           |
-| `activeFilters`  | `List<SearchFilter>`       | populated from advanced filters; empty in v1.0 |
+| Field            | Type                 | Notes                                          |
+| ---------------- | -------------------- | ---------------------------------------------- |
+| `query`          | `String`             | trimmed, length-capped at 80 chars             |
+| `debouncedQuery` | `String`             | derived, 300ms debounce                        |
+| `recents`        | `List<RecentSearch>` | last 10 from `SearchHistoryDao`                |
+| `results`        | `List<CallEntity>`   | capped at 200 (see edge case)                  |
+| `isLoading`      | `Boolean`            | true while FTS in flight                       |
+| `activeFilters`  | `List<SearchFilter>` | populated from advanced filters; empty in v1.0 |
 
 Source: `callRepo.searchFts(q: String): Flow<List<CallEntity>>`. The
 implementation:
@@ -688,16 +689,16 @@ LIMIT 200
 
 ### 22.5 Required inputs (user)
 
-| Gesture                  | Effect                                             |
-|--------------------------|----------------------------------------------------|
-| Type into field          | updates `query`; debounced 300ms triggers search   |
-| Tap × in field           | clears query                                       |
-| Tap leading back arrow   | popBackStack                                       |
-| Tap a recent-search row  | fills field with that query                        |
-| Long-press recent-search | offers "Remove" item                               |
-| Tap "Clear" recents      | empties history                                    |
-| Tap a result row         | navigate to CallDetail; persist the query as recent|
-| Pull-to-refresh          | re-runs the current query                          |
+| Gesture                  | Effect                                                   |
+| ------------------------ | -------------------------------------------------------- |
+| Type into field          | updates `query`; debounced 300ms triggers search         |
+| Tap × in field           | clears query                                             |
+| Tap leading back arrow   | popBackStack                                             |
+| Tap a recent-search row  | fills field with that query                              |
+| Long-press recent-search | offers "Remove" item                                     |
+| Tap "Clear" recents      | empties history                                          |
+| Tap a result row         | navigate to CallDetail; persist the query as recent      |
+| Pull-to-refresh          | re-runs the current query                                |
 | Hardware keyboard Enter  | dismisses keyboard; query still runs (already debounced) |
 
 ### 22.6 Mandatory display elements
@@ -715,7 +716,7 @@ LIMIT 200
   - If recents is empty: a single placeholder "Try a number, name, or note keyword."
 - **Body — query non-empty, no results**:
   - Centered `NeoEmptyState`: icon `SearchOff`, title `"No matches."`, body
-    `"Try a number, name, or note keyword. CallVault searches across notes, tags, names, and numbers."`.
+    `"Try a number, name, or note keyword. callNest searches across notes, tags, names, and numbers."`.
 - **Body — query non-empty, results**:
   - `LazyColumn` of `CallRow`s (the canonical row, see Part 06 Appendix C).
     Each row gets a subtle highlight on the matched text token (Compose
@@ -760,49 +761,49 @@ to 800ms while SQLite warms its index.
 ### 22.11 Edge cases
 
 a. **Single character query.** Do not run FTS until length ≥ 2. Show the recents
-   list still.
+list still.
 
 b. **Query is all whitespace.** Treated as empty.
 
 c. **Special characters** (`'`, `"`, `*`, `(`, `)`). Sanitizer strips them
-   before passing to FTS `MATCH`; otherwise SQLite would throw.
+before passing to FTS `MATCH`; otherwise SQLite would throw.
 
 d. **200+ results.** Hard cap. Footer message tells the user to narrow.
 
 e. **No notes or tags exist on this device.** FTS still works on number, name,
-   and geocoded location only — query something matching those.
+and geocoded location only — query something matching those.
 
 f. **User pastes a 500-character string.** Field clamps to 80; pastes over
-   trigger a snackbar `"Search query truncated."`.
+trigger a snackbar `"Search query truncated."`.
 
 g. **Quick consecutive typing.** Debounce 300ms means only the final query in a
-   burst is run. The loading indicator only shows for queries actually in flight.
+burst is run. The loading indicator only shows for queries actually in flight.
 
 h. **Result tapped while next debounce is pending.** Cancel the pending search;
-   navigate immediately.
+navigate immediately.
 
 i. **Recent searches contain stale numbers.** A recent like "+91 98765 43210"
-   that no longer matches anything in the DB still runs and yields the empty
-   state (it is not auto-pruned).
+that no longer matches anything in the DB still runs and yields the empty
+state (it is not auto-pruned).
 
 ### 22.12 Copy table
 
-| Key                          | Copy                                                                         |
-|------------------------------|------------------------------------------------------------------------------|
-| `srch_field_placeholder`     | Search number, name, note, tag…                                              |
-| `srch_field_clear_cd`        | Clear search                                                                 |
-| `srch_back_cd`               | Back                                                                         |
-| `srch_recents_title`         | Recent                                                                       |
-| `srch_recents_clear`         | Clear                                                                        |
-| `srch_recents_remove_cd`     | Remove %1$s from recents                                                     |
-| `srch_empty_tip`             | Try a number, name, or note keyword.                                         |
-| `srch_no_results_title`      | No matches.                                                                  |
-| `srch_no_results_body`       | Try a number, name, or note keyword. CallVault searches across notes, tags, names, and numbers. |
-| `srch_cap_footer`            | Showing top 200 results — narrow your query for more.                        |
-| `srch_truncated_paste`       | Search query truncated.                                                      |
-| `srch_error_syntax`          | Search hit an error. Try simplifying your query.                             |
-| `srch_error_unavailable`     | Search is unavailable right now. Try again.                                  |
-| `srch_loading_cd`            | Searching                                                                    |
+| Key                      | Copy                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| `srch_field_placeholder` | Search number, name, note, tag…                                                                |
+| `srch_field_clear_cd`    | Clear search                                                                                   |
+| `srch_back_cd`           | Back                                                                                           |
+| `srch_recents_title`     | Recent                                                                                         |
+| `srch_recents_clear`     | Clear                                                                                          |
+| `srch_recents_remove_cd` | Remove %1$s from recents                                                                       |
+| `srch_empty_tip`         | Try a number, name, or note keyword.                                                           |
+| `srch_no_results_title`  | No matches.                                                                                    |
+| `srch_no_results_body`   | Try a number, name, or note keyword. callNest searches across notes, tags, names, and numbers. |
+| `srch_cap_footer`        | Showing top 200 results — narrow your query for more.                                          |
+| `srch_truncated_paste`   | Search query truncated.                                                                        |
+| `srch_error_syntax`      | Search hit an error. Try simplifying your query.                                               |
+| `srch_error_unavailable` | Search is unavailable right now. Try again.                                                    |
+| `srch_loading_cd`        | Searching                                                                                      |
 
 ### 22.13 ASCII wireframes
 
@@ -866,7 +867,7 @@ No results:
 │                                                             │
 │                       🔍✗                                   │
 │                  No matches.                                │
-│  Try a number, name, or note keyword. CallVault searches    │
+│  Try a number, name, or note keyword. callNest searches    │
 │  across notes, tags, names, and numbers.                    │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
@@ -880,19 +881,19 @@ No results:
 - Result rows expose the same a11y surface as the canonical `CallRow` (see
   Part 06 Appendix C).
 - Empty/no-result states are announced via `LiveRegion.Assertive` only on
-  *transition* into the state (not on every recomposition).
-- Highlighted match span uses background color *and* underline so colorblind
+  _transition_ into the state (not on every recomposition).
+- Highlighted match span uses background color _and_ underline so colorblind
   users can still see the match.
 
 ### 22.15 Performance budget
 
-| Metric                                       | Budget       |
-|----------------------------------------------|--------------|
-| Keystroke → debounced query fire             | 300 ms ± 20  |
-| FTS round trip for typical 50k-call DB       | ≤ 80 ms      |
-| FTS round trip for 200k-call DB              | ≤ 220 ms     |
-| First result paint after query fire          | ≤ 350 ms p95 |
-| Memory                                       | ≤ 8 MB       |
+| Metric                                 | Budget       |
+| -------------------------------------- | ------------ |
+| Keystroke → debounced query fire       | 300 ms ± 20  |
+| FTS round trip for typical 50k-call DB | ≤ 80 ms      |
+| FTS round trip for 200k-call DB        | ≤ 220 ms     |
+| First result paint after query fire    | ≤ 350 ms p95 |
+| Memory                                 | ≤ 8 MB       |
 
 The 200-result cap, the FTS index, and the 300ms debounce are jointly tuned to
 hit these numbers on a Snapdragon 660-class device. If the user has fewer than
@@ -902,7 +903,7 @@ hit these numbers on a Snapdragon 660-class device. If the user has fewer than
 
 ## §23 — Stats dashboard
 
-`com.callvault.app.ui.screen.stats.StatsScreen`
+`com.callNest.app.ui.screen.stats.StatsScreen`
 
 ### 23.1 Purpose
 
@@ -911,7 +912,7 @@ in the form: "How am I doing this week vs last? When are calls coming in? Who
 are my top inquiries? What share am I missing?"
 
 The spec in §3.10 of the master prompt lists 10 possible charts. v1.0 ships
-*4 of those 10*; the rest are scaffolded for v1.1+. The 4 v1.0 charts are:
+_4 of those 10_; the rest are scaffolded for v1.1+. The 4 v1.0 charts are:
 DailyVolume (line + 7d MA), TypeDonut (incoming/outgoing/missed/voicemail),
 HourlyHeatmap (24×7), and TopNumbersList (segmented by count or duration).
 
@@ -922,10 +923,10 @@ followed up with 4 hot leads from last week").
 
 ### 23.2 Entry points
 
-| Source                                    | Effect              |
-|-------------------------------------------|---------------------|
-| Bottom nav → Stats tab → "Open dashboard" | navigate to `stats` |
-| Home shortcut tile "View stats"           | navigate to `stats` |
+| Source                                    | Effect                            |
+| ----------------------------------------- | --------------------------------- |
+| Bottom nav → Stats tab → "Open dashboard" | navigate to `stats`               |
+| Home shortcut tile "View stats"           | navigate to `stats`               |
 | Notification "Weekly summary" tap         | deep link to `stats?range=last7d` |
 
 ### 23.3 Exit points
@@ -942,45 +943,45 @@ followed up with 4 hot leads from last week").
 
 `StatsViewModel` state:
 
-| Field        | Type              | Notes                                              |
-|--------------|-------------------|----------------------------------------------------|
-| `range`      | `DateRange`       | sealed: `Today`, `Last7d`, `Last30d` (default), `ThisMonth`, `LastMonth`, `Last90d`, `Custom(from, to)` |
-| `snapshot`   | `StatsSnapshot?`  | computed by `BuildStatsSnapshotUseCase(range)`     |
-| `prevSnapshot` | `StatsSnapshot?`| same range shifted back, for trend arrows         |
-| `insights`   | `List<Insight>`   | ≤ 5, from `GenerateInsightsUseCase(snapshot)`     |
-| `isLoading`  | `Boolean`         |                                                    |
-| `error`      | `String?`         |                                                    |
+| Field          | Type             | Notes                                                                                                   |
+| -------------- | ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `range`        | `DateRange`      | sealed: `Today`, `Last7d`, `Last30d` (default), `ThisMonth`, `LastMonth`, `Last90d`, `Custom(from, to)` |
+| `snapshot`     | `StatsSnapshot?` | computed by `BuildStatsSnapshotUseCase(range)`                                                          |
+| `prevSnapshot` | `StatsSnapshot?` | same range shifted back, for trend arrows                                                               |
+| `insights`     | `List<Insight>`  | ≤ 5, from `GenerateInsightsUseCase(snapshot)`                                                           |
+| `isLoading`    | `Boolean`        |                                                                                                         |
+| `error`        | `String?`        |                                                                                                         |
 
 `StatsSnapshot`:
 
-| Field                | Type                       |
-|----------------------|----------------------------|
-| `range`              | `DateRange`                |
-| `totalCalls`         | `Int`                      |
-| `talkTimeSec`        | `Long`                     |
-| `avgDurationSec`     | `Long`                     |
-| `missedRatio`        | `Float`                    |
-| `byType`             | `Map<CallType, Int>`       |
-| `byHourDay`          | `IntArray` size 24*7 = 168 |
-| `dailyVolume`        | `List<DailyPoint>`         |
-| `topByCount`         | `List<LeaderboardEntry>`   |
-| `topByDuration`      | `List<LeaderboardEntry>`   |
-| `leadDistribution`   | `Triple<Int, Int, Int>`    | cold / warm / hot         |
+| Field              | Type                        |
+| ------------------ | --------------------------- | ----------------- |
+| `range`            | `DateRange`                 |
+| `totalCalls`       | `Int`                       |
+| `talkTimeSec`      | `Long`                      |
+| `avgDurationSec`   | `Long`                      |
+| `missedRatio`      | `Float`                     |
+| `byType`           | `Map<CallType, Int>`        |
+| `byHourDay`        | `IntArray` size 24\*7 = 168 |
+| `dailyVolume`      | `List<DailyPoint>`          |
+| `topByCount`       | `List<LeaderboardEntry>`    |
+| `topByDuration`    | `List<LeaderboardEntry>`    |
+| `leadDistribution` | `Triple<Int, Int, Int>`     | cold / warm / hot |
 
 ### 23.5 Required inputs (user)
 
-| Gesture                              | Effect                                |
-|--------------------------------------|---------------------------------------|
-| Tap back                             | popBackStack                          |
-| Tap DateRangeChip                    | opens DateRangeSheet                  |
-| Tap a preset chip in the sheet       | sets range, dismiss sheet, recompute  |
-| Tap "Custom…"                        | opens DatePickerDialog (from + to)    |
-| Tap a TopNumbers row                 | navigate to CallDetail                |
-| Toggle TopNumbers segmented control  | switches between byCount / byDuration |
-| Tap an insight's primary CTA         | as defined by insight type            |
-| Tap "Export PDF"                     | snackbar "Available in v1.1"          |
-| Pull-to-refresh                      | re-run snapshot                       |
-| Pinch-zoom on a chart                | no-op (Phase II)                      |
+| Gesture                             | Effect                                |
+| ----------------------------------- | ------------------------------------- |
+| Tap back                            | popBackStack                          |
+| Tap DateRangeChip                   | opens DateRangeSheet                  |
+| Tap a preset chip in the sheet      | sets range, dismiss sheet, recompute  |
+| Tap "Custom…"                       | opens DatePickerDialog (from + to)    |
+| Tap a TopNumbers row                | navigate to CallDetail                |
+| Toggle TopNumbers segmented control | switches between byCount / byDuration |
+| Tap an insight's primary CTA        | as defined by insight type            |
+| Tap "Export PDF"                    | snackbar "Available in v1.1"          |
+| Pull-to-refresh                     | re-run snapshot                       |
+| Pinch-zoom on a chart               | no-op (Phase II)                      |
 
 ### 23.6 Mandatory display elements
 
@@ -1010,7 +1011,7 @@ Body — `LazyColumn`, items in this order:
    - Optional primary CTA `NeoButton.Tertiary` aligned right.
 
 4. **Daily volume chart** — `NeoCard`, height 220dp:
-   - Header row: title "Calls per day" + small legend "● Volume   — 7d avg".
+   - Header row: title "Calls per day" + small legend "● Volume — 7d avg".
    - Compose `Canvas` rendering: vertical bars (or line — implementation choice
      per Part 08 §8.4) for daily totals, plus an overlaid 7-day moving average
      line. X-axis date ticks at start, midpoint, end of range. Y-axis hidden.
@@ -1029,7 +1030,7 @@ Body — `LazyColumn`, items in this order:
 7. **Top numbers list** — `NeoCard`:
    - Header: title "Top numbers" + segmented control "By count / By duration".
    - Below: 10 `LeaderboardEntry` rows. Each row = NeoAvatar (sm) + name/number
-     + numeric value (count or duration) + trailing chevron.
+     - numeric value (count or duration) + trailing chevron.
 
 8. **Export PDF** — `NeoButton.Primary("Export PDF as report")` full width, in
    its own bottom block. Disabled affordance because v1.0 only shows a snackbar.
@@ -1075,83 +1076,83 @@ Copy: `stats_empty_range_title` = "No calls in this range." · `stats_empty_rang
 ### 23.11 Edge cases
 
 a. **0 calls in range** — see Empty state. Each chart shows its own placeholder
-   ("No data in this range") instead of an empty plot area.
+("No data in this range") instead of an empty plot area.
 
 b. **Single-SIM device** — no SIM chart in v1.0; future-proofed.
 
 c. **200k+ calls in range** — `BuildStatsSnapshotUseCase` does a single SQL
-   pass with grouped aggregates; daily volume is computed by `GROUP BY date(timestampUtc, 'unixepoch', 'localtime')`. Sampling kicks in *only* for the heatmap render (it draws once per cell, not per call).
+pass with grouped aggregates; daily volume is computed by `GROUP BY date(timestampUtc, 'unixepoch', 'localtime')`. Sampling kicks in _only_ for the heatmap render (it draws once per cell, not per call).
 
 d. **Custom range with from > to** — swap in ViewModel before passing to use
-   case; emit a `Snackbar("Swapped your dates so 'from' comes first.")`.
+case; emit a `Snackbar("Swapped your dates so 'from' comes first.")`.
 
 e. **Custom range with from == to** — treated as a single-day range; daily
-   volume chart is degenerate (one bar) but renders.
+volume chart is degenerate (one bar) but renders.
 
 f. **Range > 365 days** — clamped to 365 with snackbar `"Range capped at 365 days. Use export for longer history."`.
 
 g. **All calls are missed in the range** — donut renders with one slice (red
-   "Missed 100%"); incoming/outgoing slices render as 1px hairlines so the
-   legend still resolves them.
+"Missed 100%"); incoming/outgoing slices render as 1px hairlines so the
+legend still resolves them.
 
 h. **DST transition inside the range** — `dailyVolume` aggregation uses the
-   device's current zone; days during DST shift may show 23 or 25 hours of data.
-   Acceptable for v1.0; flagged in DECISIONS.md.
+device's current zone; days during DST shift may show 23 or 25 hours of data.
+Acceptable for v1.0; flagged in DECISIONS.md.
 
 i. **Insight CTA target removed** (e.g. an insight references a number whose
-   data was cleared) — the CTA shows a snackbar `"That contact is no longer in your data."` instead of navigating.
+data was cleared) — the CTA shows a snackbar `"That contact is no longer in your data."` instead of navigating.
 
 j. **Export PDF tapped** — v1.0 always shows `"Available in v1.1"`. No work is
-   queued.
+queued.
 
 ### 23.12 Copy table
 
-| Key                              | Copy                                                            |
-|----------------------------------|-----------------------------------------------------------------|
-| `stats_title`                    | Stats                                                           |
-| `stats_back_cd`                  | Back                                                            |
-| `stats_range_chip_cd`            | Change date range                                               |
-| `stats_range_today`              | Today                                                           |
-| `stats_range_last7d`             | Last 7 days                                                     |
-| `stats_range_last30d`            | Last 30 days                                                    |
-| `stats_range_this_month`         | This month                                                      |
-| `stats_range_last_month`         | Last month                                                      |
-| `stats_range_last90d`            | Last 90 days                                                    |
-| `stats_range_custom`             | Custom…                                                         |
-| `stats_overview_total`           | Total calls                                                     |
-| `stats_overview_talk`            | Talk time                                                       |
-| `stats_overview_avg`             | Avg duration                                                    |
-| `stats_overview_missed`          | Missed rate                                                     |
-| `stats_overview_delta_up`        | +%1$s vs prev                                                   |
-| `stats_overview_delta_down`      | %1$s vs prev                                                    |
-| `stats_lead_mix_title`           | Lead mix                                                        |
-| `stats_lead_cold`                | Cold                                                            |
-| `stats_lead_warm`                | Warm                                                            |
-| `stats_lead_hot`                 | Hot                                                             |
-| `stats_insights_title`           | Insights                                                        |
-| `stats_chart_daily_title`        | Calls per day                                                   |
-| `stats_chart_daily_legend_vol`   | Volume                                                          |
-| `stats_chart_daily_legend_avg`   | 7d avg                                                          |
-| `stats_chart_daily_empty`        | No daily data in this range.                                    |
-| `stats_chart_donut_title`        | Call mix                                                        |
-| `stats_chart_donut_empty`        | No call mix to show.                                            |
-| `stats_chart_heatmap_title`      | When calls happen                                               |
-| `stats_chart_heatmap_empty`      | Not enough data to map by hour.                                 |
-| `stats_chart_top_title`          | Top numbers                                                     |
-| `stats_chart_top_segment_count`  | By count                                                        |
-| `stats_chart_top_segment_dur`    | By duration                                                     |
-| `stats_chart_top_empty`          | No top numbers in this range.                                   |
-| `stats_export_button`            | Export PDF as report                                            |
-| `stats_export_unavailable`       | Available in v1.1                                               |
-| `stats_empty_range_title`        | No calls in this range.                                         |
-| `stats_empty_range_body`         | Try a wider range from the chip above.                          |
-| `stats_warn_wide_range`          | Wide ranges may take longer to compute.                         |
-| `stats_warn_swap_dates`          | Swapped your dates so 'from' comes first.                       |
-| `stats_warn_clamp_range`         | Range capped at 365 days. Use export for longer history.        |
-| `stats_error_title`              | Couldn't load stats.                                            |
-| `stats_error_body`               | Pull to refresh.                                                |
-| `stats_error_retry`              | Retry                                                           |
-| `stats_insight_target_missing`   | That contact is no longer in your data.                         |
+| Key                             | Copy                                                     |
+| ------------------------------- | -------------------------------------------------------- |
+| `stats_title`                   | Stats                                                    |
+| `stats_back_cd`                 | Back                                                     |
+| `stats_range_chip_cd`           | Change date range                                        |
+| `stats_range_today`             | Today                                                    |
+| `stats_range_last7d`            | Last 7 days                                              |
+| `stats_range_last30d`           | Last 30 days                                             |
+| `stats_range_this_month`        | This month                                               |
+| `stats_range_last_month`        | Last month                                               |
+| `stats_range_last90d`           | Last 90 days                                             |
+| `stats_range_custom`            | Custom…                                                  |
+| `stats_overview_total`          | Total calls                                              |
+| `stats_overview_talk`           | Talk time                                                |
+| `stats_overview_avg`            | Avg duration                                             |
+| `stats_overview_missed`         | Missed rate                                              |
+| `stats_overview_delta_up`       | +%1$s vs prev                                            |
+| `stats_overview_delta_down`     | %1$s vs prev                                             |
+| `stats_lead_mix_title`          | Lead mix                                                 |
+| `stats_lead_cold`               | Cold                                                     |
+| `stats_lead_warm`               | Warm                                                     |
+| `stats_lead_hot`                | Hot                                                      |
+| `stats_insights_title`          | Insights                                                 |
+| `stats_chart_daily_title`       | Calls per day                                            |
+| `stats_chart_daily_legend_vol`  | Volume                                                   |
+| `stats_chart_daily_legend_avg`  | 7d avg                                                   |
+| `stats_chart_daily_empty`       | No daily data in this range.                             |
+| `stats_chart_donut_title`       | Call mix                                                 |
+| `stats_chart_donut_empty`       | No call mix to show.                                     |
+| `stats_chart_heatmap_title`     | When calls happen                                        |
+| `stats_chart_heatmap_empty`     | Not enough data to map by hour.                          |
+| `stats_chart_top_title`         | Top numbers                                              |
+| `stats_chart_top_segment_count` | By count                                                 |
+| `stats_chart_top_segment_dur`   | By duration                                              |
+| `stats_chart_top_empty`         | No top numbers in this range.                            |
+| `stats_export_button`           | Export PDF as report                                     |
+| `stats_export_unavailable`      | Available in v1.1                                        |
+| `stats_empty_range_title`       | No calls in this range.                                  |
+| `stats_empty_range_body`        | Try a wider range from the chip above.                   |
+| `stats_warn_wide_range`         | Wide ranges may take longer to compute.                  |
+| `stats_warn_swap_dates`         | Swapped your dates so 'from' comes first.                |
+| `stats_warn_clamp_range`        | Range capped at 365 days. Use export for longer history. |
+| `stats_error_title`             | Couldn't load stats.                                     |
+| `stats_error_body`              | Pull to refresh.                                         |
+| `stats_error_retry`             | Retry                                                    |
+| `stats_insight_target_missing`  | That contact is no longer in your data.                  |
 
 ### 23.13 ASCII wireframes
 
@@ -1262,13 +1263,13 @@ DateRangeSheet:
 
 ### 23.15 Performance budget
 
-| Metric                                | Budget        |
-|---------------------------------------|---------------|
-| Snapshot for 30k-call DB              | ≤ 220 ms      |
-| Snapshot for 200k-call DB             | ≤ 800 ms      |
-| Chart paint per frame                 | ≤ 4 ms        |
-| Memory                                | ≤ 22 MB       |
-| Range-change → first chart updated    | ≤ 280 ms p95  |
+| Metric                             | Budget       |
+| ---------------------------------- | ------------ |
+| Snapshot for 30k-call DB           | ≤ 220 ms     |
+| Snapshot for 200k-call DB          | ≤ 800 ms     |
+| Chart paint per frame              | ≤ 4 ms       |
+| Memory                             | ≤ 22 MB      |
+| Range-change → first chart updated | ≤ 280 ms p95 |
 
 Heatmap painting uses a single `Canvas.drawRect` per cell with pre-computed
 colors. DailyVolume uses a precomputed `Path` recreated only on data change.
@@ -1278,11 +1279,11 @@ TopNumbers uses Compose `LazyColumn` with `key = entry.normalizedNumber`.
 
 ## §24 — Bookmarks screen
 
-`com.callvault.app.ui.screen.bookmarks.BookmarksScreen`
+`com.callNest.app.ui.screen.bookmarks.BookmarksScreen`
 
 ### 24.1 Purpose
 
-Bookmarks lets the user *star* individual calls (not contacts) so they can
+Bookmarks lets the user _star_ individual calls (not contacts) so they can
 return to them quickly. The semantic is closer to "this specific conversation
 mattered" than "this contact matters" — which is why it's call-scoped, not
 number-scoped.
@@ -1291,16 +1292,16 @@ The first bookmark for a number prompts the user for a free-text "reason"
 which gets stored alongside; this is shown as the row's subtitle in the list.
 Subsequent bookmarks for the same number reuse the existing reason silently.
 
-The page also supports up to 5 *pinned* bookmarks — the user's favorite
+The page also supports up to 5 _pinned_ bookmarks — the user's favorite
 favorites — that float at the top in a horizontal carousel.
 
 ### 24.2 Entry points
 
-| Source                                     | Effect                |
-|--------------------------------------------|-----------------------|
-| Library tab → Bookmarks list item          | navigate to `bookmarks`|
-| Home shortcut tile "Bookmarks"             | navigate to `bookmarks`|
-| CallDetail history → long-press → bookmark | applies & toast       |
+| Source                                     | Effect                  |
+| ------------------------------------------ | ----------------------- |
+| Library tab → Bookmarks list item          | navigate to `bookmarks` |
+| Home shortcut tile "Bookmarks"             | navigate to `bookmarks` |
+| CallDetail history → long-press → bookmark | applies & toast         |
 
 ### 24.3 Exit points
 
@@ -1314,17 +1315,17 @@ favorites — that float at the top in a horizontal carousel.
 
 `BookmarksViewModel` state:
 
-| Field             | Type                       | Source                                         |
-|-------------------|----------------------------|------------------------------------------------|
-| `pinnedBookmarks` | `List<BookmarkEntry>`      | `settings.observePinnedBookmarks()` (≤ 5)      |
-| `allBookmarks`    | `List<BookmarkEntry>`      | `bookmarkRepo.observeAll()` (sorted by `bookmarkedAt DESC`) |
-| `isLoading`       | `Boolean`                  |                                                |
-| `firstReasonPrompt` | `BookmarkEntry?`         | non-null when first bookmark of a number is being created |
+| Field               | Type                  | Source                                                      |
+| ------------------- | --------------------- | ----------------------------------------------------------- |
+| `pinnedBookmarks`   | `List<BookmarkEntry>` | `settings.observePinnedBookmarks()` (≤ 5)                   |
+| `allBookmarks`      | `List<BookmarkEntry>` | `bookmarkRepo.observeAll()` (sorted by `bookmarkedAt DESC`) |
+| `isLoading`         | `Boolean`             |                                                             |
+| `firstReasonPrompt` | `BookmarkEntry?`      | non-null when first bookmark of a number is being created   |
 
 `BookmarkEntry`:
 
 | Field              | Type      |
-|--------------------|-----------|
+| ------------------ | --------- | ---------------------------- |
 | `id`               | `Long`    |
 | `callId`           | `Long`    |
 | `normalizedNumber` | `String`  |
@@ -1336,7 +1337,7 @@ favorites — that float at the top in a horizontal carousel.
 ### 24.5 Required inputs (user)
 
 | Gesture                          | Effect                                    |
-|----------------------------------|-------------------------------------------|
+| -------------------------------- | ----------------------------------------- |
 | Tap row                          | navigate to CallDetail                    |
 | Long-press row                   | bottom sheet: Pin / Unpin / Remove / Open |
 | Tap Pin in sheet                 | promote to pinned (if < 5 already)        |
@@ -1350,6 +1351,7 @@ favorites — that float at the top in a horizontal carousel.
 ### 24.6 Mandatory display elements
 
 `StandardPage` with:
+
 - Title: `"Bookmarks"`
 - Subtitle: `"Calls you've starred"`
 - Header glyph: ⭐ (or `Icons.Filled.Star` in actual code)
@@ -1406,67 +1408,67 @@ When `allBookmarks.isEmpty()`:
 a. **0 bookmarks** → empty state above.
 
 b. **1 bookmark** → no pinned section (the carousel is hidden); a single-row
-   "All" list. The page subtitle remains "Calls you've starred".
+"All" list. The page subtitle remains "Calls you've starred".
 
 c. **5 pinned bookmarks** → the pin action in the action sheet is disabled with
-   a tooltip `"Unpin one first."`.
+a tooltip `"Unpin one first."`.
 
 d. **Drag during scroll** — when the user is mid-drag on a pinned item, the
-   outer LazyColumn is locked from scrolling (we set `userScrollEnabled = false`
-   for the duration of the drag).
+outer LazyColumn is locked from scrolling (we set `userScrollEnabled = false`
+for the duration of the drag).
 
 e. **Bookmark removed mid-scroll** by another window of the app — Compose key
-   on bookmarkId; the row animates out with a 220ms fade.
+on bookmarkId; the row animates out with a 220ms fade.
 
 f. **First-bookmark prompt dismissed via system back** — treated as Skip;
-   bookmark is saved without a reason.
+bookmark is saved without a reason.
 
 g. **Reason text contains emojis** — supported (rendered with default emoji
-   font). Emoji + RTL mix renders correctly (Compose default).
+font). Emoji + RTL mix renders correctly (Compose default).
 
 h. **Pinned bookmark refers to a deleted call** (the call row was hard-deleted
-   via Manage→Clear) — entry is auto-pruned by `BookmarkRepository.observeAll`
-   join semantics; a snackbar `"Removed a bookmark whose call no longer exists."`
-   appears once per session.
+via Manage→Clear) — entry is auto-pruned by `BookmarkRepository.observeAll`
+join semantics; a snackbar `"Removed a bookmark whose call no longer exists."`
+appears once per session.
 
 i. **Configuration change while reorder drag is in progress** — drag is
-   cancelled; pinned positions revert to last committed state.
+cancelled; pinned positions revert to last committed state.
 
 ### 24.12 Copy table
 
-| Key                              | Copy                                                                         |
-|----------------------------------|------------------------------------------------------------------------------|
-| `bm_title`                       | Bookmarks                                                                    |
-| `bm_subtitle`                    | Calls you've starred                                                         |
-| `bm_back_cd`                     | Back                                                                         |
-| `bm_pinned_section`              | Pinned                                                                       |
-| `bm_all_section`                 | All                                                                          |
-| `bm_pinned_badge`                | Top %1$d                                                                     |
-| `bm_action_pin`                  | Pin                                                                          |
-| `bm_action_unpin`                | Unpin                                                                        |
-| `bm_action_remove`               | Remove                                                                       |
-| `bm_action_open`                 | Open                                                                         |
-| `bm_remove_confirm_title`        | Remove this bookmark?                                                        |
-| `bm_remove_confirm_body`         | The call itself stays in your history.                                       |
-| `bm_remove_confirm_yes`          | Remove                                                                       |
-| `bm_remove_confirm_no`           | Cancel                                                                       |
-| `bm_first_prompt_title`          | Why this call?                                                               |
-| `bm_first_prompt_body`           | Add a quick reason so you remember later. (optional)                         |
-| `bm_first_prompt_placeholder`    | e.g. "Quoted ₹42k for bulk order"                                             |
-| `bm_first_prompt_save`           | Save                                                                         |
-| `bm_first_prompt_skip`           | Skip                                                                         |
-| `bm_first_prompt_counter`        | %1$d / 120                                                                   |
-| `bm_pin_limit_snackbar`          | You can pin up to 5 bookmarks.                                               |
-| `bm_pin_limit_tooltip`           | Unpin one first.                                                             |
-| `bm_drag_arrow_up_cd`            | Move up                                                                      |
-| `bm_drag_arrow_down_cd`          | Move down                                                                    |
-| `bm_empty_title`                 | No bookmarks yet.                                                            |
-| `bm_empty_body`                  | Star a call to save it here. Long-press any row in your call list to bookmark it. |
-| `bm_error_title`                 | Couldn't load bookmarks.                                                     |
-| `bm_error_body`                  | Try again.                                                                   |
-| `bm_error_retry`                 | Retry                                                                        |
-| `bm_pruned_snackbar`             | Removed a bookmark whose call no longer exists.                              |
-| `bm_loading_cd`                  | Loading bookmarks                                                            |
+| Key                           | Copy                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------- |
+| `bm_title`                    | Bookmarks                                                                         |
+| `bm_subtitle`                 | Calls you've starred                                                              |
+| `bm_back_cd`                  | Back                                                                              |
+| `bm_pinned_section`           | Pinned                                                                            |
+| `bm_all_section`              | All                                                                               |
+| `bm_pinned_badge`             | Top %1$d                                                                          |
+| `bm_action_pin`               | Pin                                                                               |
+| `bm_action_unpin`             | Unpin                                                                             |
+| `bm_action_remove`            | Remove                                                                            |
+| `bm_action_open`              | Open                                                                              |
+| `bm_remove_confirm_title`     | Remove this bookmark?                                                             |
+| `bm_remove_confirm_body`      | The call itself stays in your history.                                            |
+| `bm_remove_confirm_yes`       | Remove                                                                            |
+| `bm_remove_confirm_no`        | Cancel                                                                            |
+| `bm_first_prompt_title`       | Why this call?                                                                    |
+| `bm_first_prompt_body`        | Add a quick reason so you remember later. (optional)                              |
+| `bm_first_prompt_placeholder` | e.g. "Quoted ₹42k for bulk order"                                                 |
+| `bm_first_prompt_save`        | Save                                                                              |
+| `bm_first_prompt_skip`        | Skip                                                                              |
+| `bm_first_prompt_counter`     | %1$d / 120                                                                        |
+| `bm_pin_limit_snackbar`       | You can pin up to 5 bookmarks.                                                    |
+| `bm_pin_limit_tooltip`        | Unpin one first.                                                                  |
+| `bm_drag_arrow_up_cd`         | Move up                                                                           |
+| `bm_drag_arrow_down_cd`       | Move down                                                                         |
+| `bm_empty_title`              | No bookmarks yet.                                                                 |
+| `bm_empty_body`               | Star a call to save it here. Long-press any row in your call list to bookmark it. |
+| `bm_error_title`              | Couldn't load bookmarks.                                                          |
+| `bm_error_body`               | Try again.                                                                        |
+| `bm_error_retry`              | Retry                                                                             |
+| `bm_pruned_snackbar`          | Removed a bookmark whose call no longer exists.                                   |
+| `bm_loading_cd`               | Loading bookmarks                                                                 |
 
 ### 24.13 ASCII wireframes
 
@@ -1545,18 +1547,18 @@ Pinned (3) — tap arrows or drag to reorder
 
 ### 24.15 Performance budget
 
-| Metric                            | Budget   |
-|-----------------------------------|----------|
-| First paint                       | ≤ 180 ms |
-| Drag-to-drop reorder commit       | ≤ 50 ms  |
-| Memory                            | ≤ 9 MB   |
-| Bookmark add propagation to list  | ≤ 200 ms |
+| Metric                           | Budget   |
+| -------------------------------- | -------- |
+| First paint                      | ≤ 180 ms |
+| Drag-to-drop reorder commit      | ≤ 50 ms  |
+| Memory                           | ≤ 9 MB   |
+| Bookmark add propagation to list | ≤ 200 ms |
 
 ---
 
 ## §25 — FollowUps screen
 
-`com.callvault.app.ui.screen.followups.FollowUpsScreen`
+`com.callNest.app.ui.screen.followups.FollowUpsScreen`
 
 ### 25.1 Purpose
 
@@ -1573,13 +1575,13 @@ of any row, which enters multi-select.
 
 ### 25.2 Entry points
 
-| Source                                     | Effect                  |
-|--------------------------------------------|-------------------------|
-| Library tab → Follow-ups list item         | navigate to `followUps` |
-| Home shortcut tile "Follow-ups today"      | navigate to `followUps?tab=today` |
-| Notification "3 follow-ups today" tap      | deep link to `followUps?tab=today` |
-| Notification "Overdue follow-up" tap       | deep link to `followUps?tab=overdue` |
-| CallDetail follow-up section "View all"    | navigate to `followUps` |
+| Source                                  | Effect                               |
+| --------------------------------------- | ------------------------------------ |
+| Library tab → Follow-ups list item      | navigate to `followUps`              |
+| Home shortcut tile "Follow-ups today"   | navigate to `followUps?tab=today`    |
+| Notification "3 follow-ups today" tap   | deep link to `followUps?tab=today`   |
+| Notification "Overdue follow-up" tap    | deep link to `followUps?tab=overdue` |
+| CallDetail follow-up section "View all" | navigate to `followUps`              |
 
 ### 25.3 Exit points
 
@@ -1594,20 +1596,20 @@ of any row, which enters multi-select.
 
 `FollowUpsViewModel` state:
 
-| Field            | Type                          | Notes                              |
-|------------------|-------------------------------|------------------------------------|
-| `today`          | `List<FollowUpRow>`           | due today (00:00 ≤ due < 24:00 local)|
-| `overdue`        | `List<FollowUpRow>`           | due < now and not done             |
-| `upcoming`       | `List<FollowUpRow>`           | due > end of today and not done    |
-| `completed`      | `List<FollowUpRow>`           | doneAt != null, sorted desc        |
-| `selectedTab`    | `enum FollowUpTab`            | initialised by initial-tab logic   |
-| `multiSelectIds` | `Set<Long>`                   | empty = single-select mode         |
-| `isLoading`      | `Boolean`                     |                                    |
+| Field            | Type                | Notes                                 |
+| ---------------- | ------------------- | ------------------------------------- |
+| `today`          | `List<FollowUpRow>` | due today (00:00 ≤ due < 24:00 local) |
+| `overdue`        | `List<FollowUpRow>` | due < now and not done                |
+| `upcoming`       | `List<FollowUpRow>` | due > end of today and not done       |
+| `completed`      | `List<FollowUpRow>` | doneAt != null, sorted desc           |
+| `selectedTab`    | `enum FollowUpTab`  | initialised by initial-tab logic      |
+| `multiSelectIds` | `Set<Long>`         | empty = single-select mode            |
+| `isLoading`      | `Boolean`           |                                       |
 
 `FollowUpRow`:
 
 | Field              | Type      |
-|--------------------|-----------|
+| ------------------ | --------- |
 | `followUpId`       | `Long`    |
 | `callId`           | `Long`    |
 | `normalizedNumber` | `String`  |
@@ -1621,33 +1623,36 @@ buckets in pure Kotlin.
 
 ### 25.5 Required inputs (user)
 
-| Gesture                            | Effect                                  |
-|------------------------------------|-----------------------------------------|
-| Tap a tab                          | switches `selectedTab`                  |
-| Tap a row (non-multi)              | navigate to CallDetail                  |
-| Long-press a row                   | enters multi-select with that row checked |
-| Tap a row (multi)                  | toggles its selection                   |
-| Tap "Done" in app bar (multi)      | exits multi-select                      |
-| Tap bulk Snooze (multi)            | bottom sheet → snooze all selected      |
-| Tap bulk Mark done (multi)         | mark all selected done                  |
-| Tap bulk Clear (multi)             | confirmation → cancel all selected      |
-| Pull-to-refresh                    | re-fetch                                |
-| Tap snooze icon on a single row    | mini-menu: 1h / 1d / pick…              |
+| Gesture                         | Effect                                    |
+| ------------------------------- | ----------------------------------------- |
+| Tap a tab                       | switches `selectedTab`                    |
+| Tap a row (non-multi)           | navigate to CallDetail                    |
+| Long-press a row                | enters multi-select with that row checked |
+| Tap a row (multi)               | toggles its selection                     |
+| Tap "Done" in app bar (multi)   | exits multi-select                        |
+| Tap bulk Snooze (multi)         | bottom sheet → snooze all selected        |
+| Tap bulk Mark done (multi)      | mark all selected done                    |
+| Tap bulk Clear (multi)          | confirmation → cancel all selected        |
+| Pull-to-refresh                 | re-fetch                                  |
+| Tap snooze icon on a single row | mini-menu: 1h / 1d / pick…                |
 
 ### 25.6 Mandatory display elements
 
 `StandardPage` with:
+
 - Title `"Follow-ups"`
 - Subtitle `"Reminders due today and ahead"`
 - Header glyph 🔔
 
 Below the header: `TabRow` with 4 tabs:
+
 - Today (badge = count)
 - Overdue (badge = count, red dot if > 0)
 - Upcoming (badge = count)
 - Completed (no badge)
 
 Body — depending on `selectedTab`, a `LazyColumn` of follow-up rows. Each row:
+
 - Leading: `NeoAvatar` (sm).
 - Title: displayName or formattedNumber.
 - Subtitle line 1: due date+time (e.g. "Today · 4:30 PM" or "Apr 22 · 9:00 AM").
@@ -1665,12 +1670,12 @@ In multi-select, the top app bar swaps to a count + Done button + overflow
 
 ### 25.8 Empty state per tab
 
-| Tab        | Title (icon)                    | Body                                          |
-|------------|---------------------------------|-----------------------------------------------|
-| Today      | "All caught up for today!" 🎉   | "Future reminders will show up here."         |
-| Overdue    | "No overdue follow-ups." ✓      | "Keep it up."                                 |
-| Upcoming   | "Nothing scheduled." 📅          | "Schedule a follow-up from any call detail."  |
-| Completed  | "No completed follow-ups." 📝   | "Done items will appear here."                |
+| Tab       | Title (icon)                  | Body                                         |
+| --------- | ----------------------------- | -------------------------------------------- |
+| Today     | "All caught up for today!" 🎉 | "Future reminders will show up here."        |
+| Overdue   | "No overdue follow-ups." ✓    | "Keep it up."                                |
+| Upcoming  | "Nothing scheduled." 📅       | "Schedule a follow-up from any call detail." |
+| Completed | "No completed follow-ups." 📝 | "Done items will appear here."               |
 
 Each empty state is a centered NeoEmptyState within the body slot; the TabRow
 remains visible.
@@ -1690,79 +1695,79 @@ remains visible.
 ### 25.11 Edge cases
 
 a. **Follow-up at exactly midnight 00:00:00.** Belongs to Today (the day it
-   begins). Belongs to Overdue once `now > dueAt`. Boundary handled by
-   half-open intervals: `[startOfDay, startOfDay + 24h)`.
+begins). Belongs to Overdue once `now > dueAt`. Boundary handled by
+half-open intervals: `[startOfDay, startOfDay + 24h)`.
 
 b. **Follow-up with no time (date only).** Defaults to 9:00 AM in the device
-   local zone. Set in `ScheduleFollowUpUseCase` when `time == null`.
+local zone. Set in `ScheduleFollowUpUseCase` when `time == null`.
 
 c. **`doneAt != null` but `dueAt` in the future.** Goes into Completed (the
-   user marked it done early). Not "Upcoming". Verified via order-of-checks:
-   `doneAt != null` first, then bucketize by `dueAt`.
+user marked it done early). Not "Upcoming". Verified via order-of-checks:
+`doneAt != null` first, then bucketize by `dueAt`.
 
 d. **Snooze 1h on an overdue item that becomes due in <1h still in past.**
-   Allowed; the new `dueAt = now + 1h` so the row leaves Overdue and lands in
-   Today (or Upcoming if 1h crosses midnight).
+Allowed; the new `dueAt = now + 1h` so the row leaves Overdue and lands in
+Today (or Upcoming if 1h crosses midnight).
 
 e. **Snooze 1d on an item that's already 5 days overdue.** Sets `dueAt = now + 24h`.
-   Not "1 day from original dueAt". Documented in spec §3.7.
+Not "1 day from original dueAt". Documented in spec §3.7.
 
 f. **Bulk snooze with mixed buckets selected.** All selected items get the
-   same snooze offset applied to *now*. Buckets recompute on next emit.
+same snooze offset applied to _now_. Buckets recompute on next emit.
 
 g. **Bulk clear of 50+ items.** Performed in a single Room transaction; the
-   undo snackbar offers `"Undo"` for 8s with the count `"Cleared 53."`.
+undo snackbar offers `"Undo"` for 8s with the count `"Cleared 53."`.
 
 h. **Tab switched mid-multi-select.** Multi-select persists across tabs (the
-   ids carry over).
+ids carry over).
 
 i. **DST transition between snoozedFromAt and dueAt.** Display uses local zone
-   formatter; no special handling.
+formatter; no special handling.
 
 ### 25.12 Copy table
 
-| Key                          | Copy                                                                |
-|------------------------------|---------------------------------------------------------------------|
-| `fu_title`                   | Follow-ups                                                          |
-| `fu_subtitle`                | Reminders due today and ahead                                       |
-| `fu_back_cd`                 | Back                                                                |
-| `fu_tab_today`               | Today                                                               |
-| `fu_tab_overdue`             | Overdue                                                             |
-| `fu_tab_upcoming`            | Upcoming                                                            |
-| `fu_tab_completed`           | Completed                                                           |
-| `fu_due_today_at`            | Today · %1$s                                                        |
-| `fu_due_tomorrow_at`         | Tomorrow · %1$s                                                     |
-| `fu_due_at`                  | %1$s · %2$s                                                         |
-| `fu_overdue_label`           | Overdue · %1$s                                                      |
-| `fu_snoozed_from`            | Snoozed from %1$s                                                   |
-| `fu_snooze_cd`               | Snooze                                                              |
-| `fu_snooze_1h`               | 1 hour                                                              |
-| `fu_snooze_1d`               | 1 day                                                               |
-| `fu_snooze_pick`             | Pick a time…                                                        |
-| `fu_done_cd`                 | Mark done                                                           |
-| `fu_multi_count`             | %1$d selected                                                       |
-| `fu_multi_done`              | Done                                                                |
-| `fu_multi_snooze_all`        | Snooze all                                                          |
-| `fu_multi_mark_done`         | Mark done                                                           |
-| `fu_multi_clear`             | Clear                                                               |
-| `fu_multi_clear_confirm_title` | Clear %1$d follow-ups?                                            |
-| `fu_multi_clear_confirm_body` | This removes the reminders only — the calls stay.                  |
-| `fu_multi_clear_confirm_yes` | Clear                                                               |
-| `fu_multi_clear_confirm_no`  | Cancel                                                              |
-| `fu_multi_cleared_snackbar`  | Cleared %1$d.                                                       |
-| `fu_multi_cleared_undo`      | Undo                                                                |
-| `fu_today_empty_title`       | All caught up for today!                                            |
-| `fu_today_empty_body`        | Future reminders will show up here.                                 |
-| `fu_overdue_empty_title`     | No overdue follow-ups.                                              |
-| `fu_overdue_empty_body`      | Keep it up.                                                         |
-| `fu_upcoming_empty_title`    | Nothing scheduled.                                                  |
-| `fu_upcoming_empty_body`     | Schedule a follow-up from any call detail.                          |
-| `fu_completed_empty_title`   | No completed follow-ups.                                            |
-| `fu_completed_empty_body`    | Done items will appear here.                                        |
-| `fu_error_title`             | Couldn't load follow-ups.                                           |
-| `fu_error_body`              | Try again.                                                          |
-| `fu_error_retry`             | Retry                                                               |
-| `fu_action_failed_snackbar`  | Couldn't update that follow-up.                                     |
+| Key                            | Copy                                              |
+| ------------------------------ | ------------------------------------------------- |
+| `fu_title`                     | Follow-ups                                        |
+| `fu_subtitle`                  | Reminders due today and ahead                     |
+| `fu_back_cd`                   | Back                                              |
+| `fu_tab_today`                 | Today                                             |
+| `fu_tab_overdue`               | Overdue                                           |
+| `fu_tab_upcoming`              | Upcoming                                          |
+| `fu_tab_completed`             | Completed                                         |
+| `fu_due_today_at`              | Today · %1$s                                      |
+| `fu_due_tomorrow_at`           | Tomorrow · %1$s                                   |
+| `fu_due_at`                    | %1$s · %2$s                                       |
+| `fu_overdue_label`             | Overdue · %1$s                                    |
+| `fu_snoozed_from`              | Snoozed from %1$s                                 |
+| `fu_snooze_cd`                 | Snooze                                            |
+| `fu_snooze_1h`                 | 1 hour                                            |
+| `fu_snooze_1d`                 | 1 day                                             |
+| `fu_snooze_pick`               | Pick a time…                                      |
+| `fu_done_cd`                   | Mark done                                         |
+| `fu_multi_count`               | %1$d selected                                     |
+| `fu_multi_done`                | Done                                              |
+| `fu_multi_snooze_all`          | Snooze all                                        |
+| `fu_multi_mark_done`           | Mark done                                         |
+| `fu_multi_clear`               | Clear                                             |
+| `fu_multi_clear_confirm_title` | Clear %1$d follow-ups?                            |
+| `fu_multi_clear_confirm_body`  | This removes the reminders only — the calls stay. |
+| `fu_multi_clear_confirm_yes`   | Clear                                             |
+| `fu_multi_clear_confirm_no`    | Cancel                                            |
+| `fu_multi_cleared_snackbar`    | Cleared %1$d.                                     |
+| `fu_multi_cleared_undo`        | Undo                                              |
+| `fu_today_empty_title`         | All caught up for today!                          |
+| `fu_today_empty_body`          | Future reminders will show up here.               |
+| `fu_overdue_empty_title`       | No overdue follow-ups.                            |
+| `fu_overdue_empty_body`        | Keep it up.                                       |
+| `fu_upcoming_empty_title`      | Nothing scheduled.                                |
+| `fu_upcoming_empty_body`       | Schedule a follow-up from any call detail.        |
+| `fu_completed_empty_title`     | No completed follow-ups.                          |
+| `fu_completed_empty_body`      | Done items will appear here.                      |
+| `fu_error_title`               | Couldn't load follow-ups.                         |
+| `fu_error_body`                | Try again.                                        |
+| `fu_error_retry`               | Retry                                             |
+| `fu_action_failed_snackbar`    | Couldn't update that follow-up.                   |
 
 ### 25.13 ASCII wireframes
 
@@ -1835,40 +1840,40 @@ Empty Today:
 
 ### 25.15 Performance budget
 
-| Metric                       | Budget   |
-|------------------------------|----------|
-| First paint                  | ≤ 200 ms |
-| Tab switch                   | < 16 ms  |
-| Bulk action of 50 items      | ≤ 350 ms |
-| Memory                       | ≤ 10 MB  |
+| Metric                  | Budget   |
+| ----------------------- | -------- |
+| First paint             | ≤ 200 ms |
+| Tab switch              | < 16 ms  |
+| Bulk action of 50 items | ≤ 350 ms |
+| Memory                  | ≤ 10 MB  |
 
 ---
 
 ## §26 — MyContacts screen
 
-`com.callvault.app.ui.screen.contacts.MyContactsScreen`
+`com.callNest.app.ui.screen.contacts.MyContactsScreen`
 
 ### 26.1 Purpose
 
-MyContacts shows the user's *human-saved* contacts — i.e. people they have
+MyContacts shows the user's _human-saved_ contacts — i.e. people they have
 explicitly chosen to put in their phone book. Auto-saved inquiry numbers
 (`isAutoSaved == true`) are explicitly excluded; those live under "All people"
 in the Library tab. The page exists so the user has a quick lens on "who matters
-most" without the noise of every cold inquiry that CallVault auto-promoted.
+most" without the noise of every cold inquiry that callNest auto-promoted.
 
 The selector is `isInSystemContacts == true && isAutoSaved == false`.
 
 A small inline "promoted from inquiry" badge appears on contacts whose
-`autoSavedAt` is non-null but who have *also* been promoted manually since (i.e.
+`autoSavedAt` is non-null but who have _also_ been promoted manually since (i.e.
 auto-saved first, then later edited / re-saved through Contacts).
 
 ### 26.2 Entry points
 
-| Source                                  | Effect                  |
-|-----------------------------------------|-------------------------|
-| Library tab → My Contacts list item     | navigate to `myContacts`|
-| Home shortcut tile "My contacts"        | navigate to `myContacts`|
-| Settings → "Manage contact group"       | navigate to `myContacts`|
+| Source                              | Effect                   |
+| ----------------------------------- | ------------------------ |
+| Library tab → My Contacts list item | navigate to `myContacts` |
+| Home shortcut tile "My contacts"    | navigate to `myContacts` |
+| Settings → "Manage contact group"   | navigate to `myContacts` |
 
 ### 26.3 Exit points
 
@@ -1880,39 +1885,40 @@ auto-saved first, then later edited / re-saved through Contacts).
 
 `MyContactsViewModel` state:
 
-| Field         | Type                  | Notes                                       |
-|---------------|-----------------------|---------------------------------------------|
-| `query`       | `String`              | filter; debounced 200ms                     |
-| `contacts`    | `List<ContactRow>`    | filtered; sorted by displayName ASC, locale |
-| `isLoading`   | `Boolean`             |                                             |
-| `isError`     | `String?`             |                                             |
+| Field       | Type               | Notes                                       |
+| ----------- | ------------------ | ------------------------------------------- |
+| `query`     | `String`           | filter; debounced 200ms                     |
+| `contacts`  | `List<ContactRow>` | filtered; sorted by displayName ASC, locale |
+| `isLoading` | `Boolean`          |                                             |
+| `isError`   | `String?`          |                                             |
 
 `ContactRow`:
 
-| Field              | Type       |
-|--------------------|------------|
-| `normalizedNumber` | `String`   |
-| `displayName`      | `String`   | non-null (rows without name skipped)        |
-| `formattedNumber`  | `String`   |                                             |
-| `avatarSeed`       | `String`   |                                             |
-| `wasPromoted`      | `Boolean`  | `autoSavedAt != null`                       |
+| Field              | Type      |
+| ------------------ | --------- | ------------------------------------ |
+| `normalizedNumber` | `String`  |
+| `displayName`      | `String`  | non-null (rows without name skipped) |
+| `formattedNumber`  | `String`  |                                      |
+| `avatarSeed`       | `String`  |                                      |
+| `wasPromoted`      | `Boolean` | `autoSavedAt != null`                |
 
 Source: `contactsRepo.observeMyContacts()` filtered by selector above.
 
 ### 26.5 Required inputs (user)
 
-| Gesture                  | Effect                                           |
-|--------------------------|--------------------------------------------------|
-| Type into search field   | filters list                                     |
-| Tap × in search          | clears query                                     |
-| Tap a contact row        | navigate to CallDetail                           |
-| Long-press a contact row | action sheet (Open · Open in Phone book · Copy)  |
-| Pull-to-refresh          | resync from Contacts provider                    |
-| Scroll                   | normal scroll                                    |
+| Gesture                  | Effect                                          |
+| ------------------------ | ----------------------------------------------- |
+| Type into search field   | filters list                                    |
+| Tap × in search          | clears query                                    |
+| Tap a contact row        | navigate to CallDetail                          |
+| Long-press a contact row | action sheet (Open · Open in Phone book · Copy) |
+| Pull-to-refresh          | resync from Contacts provider                   |
+| Scroll                   | normal scroll                                   |
 
 ### 26.6 Mandatory display elements
 
 `StandardPage`:
+
 - Title `"My Contacts"`
 - Subtitle `"People you've saved"`
 - Header glyph 👥
@@ -1942,7 +1948,7 @@ Body:
 When `contacts.isEmpty()` (and query is empty):
 
 - Centered NeoEmptyState: icon 👥, title `"No contacts yet."`, body
-  `"CallVault auto-saves new inquiries to your phone. Once you've saved someone in your phone book, they'll appear here."`. No CTA — saving happens elsewhere.
+  `"callNest auto-saves new inquiries to your phone. Once you've saved someone in your phone book, they'll appear here."`. No CTA — saving happens elsewhere.
 
 When query is non-empty and yields nothing:
 
@@ -1963,63 +1969,63 @@ When query is non-empty and yields nothing:
 ### 26.11 Edge cases
 
 a. **1000+ contacts** — `LazyColumn` keys on `normalizedNumber`; sticky headers
-   are O(1) per header; no full re-sort on scroll. First paint stays under
-   budget.
+are O(1) per header; no full re-sort on scroll. First paint stays under
+budget.
 
 b. **Contact without a phone number** — skipped (we have nothing to navigate
-   to). A footer line `"Hidden N contacts without a phone number."` appears below
-   the list.
+to). A footer line `"Hidden N contacts without a phone number."` appears below
+the list.
 
 c. **Name with emoji** (e.g. "Ravi 🌟") — rendered correctly; sticky header is
-   computed from the *first letter character* of the unicode-stripped name. If
-   the name *starts* with an emoji, the header is `'#'`.
+computed from the _first letter character_ of the unicode-stripped name. If
+the name _starts_ with an emoji, the header is `'#'`.
 
 d. **Name with RTL chars** (Hebrew/Arabic) — Compose default LTR/RTL handling
-   applies; sticky header uses the first strong directional letter.
+applies; sticky header uses the first strong directional letter.
 
 e. **Two contacts with same normalized number** — Contacts provider sometimes
-   returns duplicates after sync conflicts. We dedupe by `normalizedNumber`
-   keeping the first (displayName-wise) occurrence; the rest go into a
-   "Duplicates" footer list (Phase II will offer merge).
+returns duplicates after sync conflicts. We dedupe by `normalizedNumber`
+keeping the first (displayName-wise) occurrence; the rest go into a
+"Duplicates" footer list (Phase II will offer merge).
 
 f. **Contact provider permission lost mid-session** — observer detects
-   `SecurityException`; ViewModel transitions to error state.
+`SecurityException`; ViewModel transitions to error state.
 
 g. **Search query is a number partial** — matches against both `formattedNumber`
-   (with stripped formatting) and `displayName`.
+(with stripped formatting) and `displayName`.
 
 h. **Search query exact-matches one contact** — that row scrolls into view if
-   off-screen.
+off-screen.
 
 i. **Configuration change while scrolled deep** — `LazyListState` is
-   `rememberSaveable`; position is preserved.
+`rememberSaveable`; position is preserved.
 
 ### 26.12 Copy table
 
-| Key                          | Copy                                                                            |
-|------------------------------|---------------------------------------------------------------------------------|
-| `mc_title`                   | My Contacts                                                                     |
-| `mc_subtitle`                | People you've saved                                                             |
-| `mc_subtitle_count`          | People you've saved · %1$d                                                      |
-| `mc_back_cd`                 | Back                                                                            |
-| `mc_search_placeholder`      | Filter by name or number                                                        |
-| `mc_search_clear_cd`         | Clear filter                                                                    |
-| `mc_promoted_badge`          | promoted from inquiry                                                           |
-| `mc_action_open`             | Open                                                                            |
-| `mc_action_open_phonebook`   | Open in Phone book                                                              |
-| `mc_action_copy`             | Copy number                                                                     |
-| `mc_copied_snackbar`         | Copied                                                                          |
-| `mc_hidden_no_phone_footer`  | Hidden %1$d contacts without a phone number.                                    |
-| `mc_empty_title`             | No contacts yet.                                                                |
-| `mc_empty_body`              | CallVault auto-saves new inquiries to your phone. Once you've saved someone in your phone book, they'll appear here. |
-| `mc_no_match_title`          | No contacts match "%1$s"                                                        |
-| `mc_no_match_body`           | Try a shorter name or number.                                                   |
-| `mc_error_perm_title`        | Contacts access was turned off.                                                 |
-| `mc_error_perm_body`         | Re-grant permission to see your saved contacts here.                            |
-| `mc_error_perm_button`       | Grant permission                                                                |
-| `mc_error_load_title`        | Couldn't load contacts.                                                         |
-| `mc_error_load_body`         | Try again.                                                                      |
-| `mc_error_load_retry`        | Retry                                                                           |
+| Key                         | Copy                                                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `mc_title`                  | My Contacts                                                                                                         |
+| `mc_subtitle`               | People you've saved                                                                                                 |
+| `mc_subtitle_count`         | People you've saved · %1$d                                                                                          |
+| `mc_back_cd`                | Back                                                                                                                |
+| `mc_search_placeholder`     | Filter by name or number                                                                                            |
+| `mc_search_clear_cd`        | Clear filter                                                                                                        |
+| `mc_promoted_badge`         | promoted from inquiry                                                                                               |
+| `mc_action_open`            | Open                                                                                                                |
+| `mc_action_open_phonebook`  | Open in Phone book                                                                                                  |
+| `mc_action_copy`            | Copy number                                                                                                         |
+| `mc_copied_snackbar`        | Copied                                                                                                              |
+| `mc_hidden_no_phone_footer` | Hidden %1$d contacts without a phone number.                                                                        |
+| `mc_empty_title`            | No contacts yet.                                                                                                    |
+| `mc_empty_body`             | callNest auto-saves new inquiries to your phone. Once you've saved someone in your phone book, they'll appear here. |
+| `mc_no_match_title`         | No contacts match "%1$s"                                                                                            |
+| `mc_no_match_body`          | Try a shorter name or number.                                                                                       |
+| `mc_error_perm_title`       | Contacts access was turned off.                                                                                     |
+| `mc_error_perm_body`        | Re-grant permission to see your saved contacts here.                                                                |
+| `mc_error_perm_button`      | Grant permission                                                                                                    |
+| `mc_error_load_title`       | Couldn't load contacts.                                                                                             |
+| `mc_error_load_body`        | Try again.                                                                                                          |
+| `mc_error_load_retry`       | Retry                                                                                                               |
 
 ### 26.13 ASCII wireframes
 
@@ -2101,7 +2107,7 @@ Empty:
 ├─────────────────────────────────────────────────────────────┤
 │                       👥                                    │
 │                  No contacts yet.                           │
-│   CallVault auto-saves new inquiries to your phone.         │
+│   callNest auto-saves new inquiries to your phone.         │
 │   Once you've saved someone in your phone book,             │
 │   they'll appear here.                                      │
 └─────────────────────────────────────────────────────────────┘
@@ -2120,13 +2126,13 @@ Empty:
 
 ### 26.15 Performance budget
 
-| Metric                            | Budget   |
-|-----------------------------------|----------|
-| First paint (≤500 contacts)       | ≤ 220 ms |
-| First paint (5000 contacts)       | ≤ 600 ms |
-| Search filter recompute           | ≤ 30 ms  |
-| Memory                            | ≤ 14 MB  |
-| Scroll fps                        | 60 p95   |
+| Metric                      | Budget   |
+| --------------------------- | -------- |
+| First paint (≤500 contacts) | ≤ 220 ms |
+| First paint (5000 contacts) | ≤ 600 ms |
+| Search filter recompute     | ≤ 30 ms  |
+| Memory                      | ≤ 14 MB  |
+| Scroll fps                  | 60 p95   |
 
 The list is filtered in-memory (we hold all contacts in `StateFlow`); scaling
 beyond ~20k contacts would warrant a SQLite-backed page; outside scope for v1.0.
@@ -2162,7 +2168,7 @@ beyond ~20k contacts would warrant a SQLite-backed page; outside scope for v1.0.
 - All scrolling surfaces use a single `LazyColumn`; no nested scrollables. The
   pinned-bookmarks carousel uses `Modifier.horizontalScroll` inside a
   non-lazy item to keep the item count predictable.
-- Stats charts are *Compose Canvas*, not Vico, despite Vico being on the
+- Stats charts are _Compose Canvas_, not Vico, despite Vico being on the
   dependency list. We started with Vico in the Stats sprint and ran into
   layout-pass thrash on the heatmap; Canvas was the path of least resistance.
   Documented in `DECISIONS.md` D-024.
@@ -2176,7 +2182,7 @@ beyond ~20k contacts would warrant a SQLite-backed page; outside scope for v1.0.
 - The Stats range chip's persistence: the last selected range is saved to
   DataStore (`stats.last_range`) so the user doesn't have to re-pick on every
   visit.
-- The FollowUps initial-tab logic runs *once* per cold start; subsequent visits
+- The FollowUps initial-tab logic runs _once_ per cold start; subsequent visits
   in the same session honor whatever tab the user last left.
 - The SearchScreen does not save its query across navigations. This is
   intentional — Search is "scratch space".
@@ -2185,14 +2191,14 @@ beyond ~20k contacts would warrant a SQLite-backed page; outside scope for v1.0.
 
 ## Sprint pointers (where this code lives now)
 
-| Page          | Screen file                                                | ViewModel                                                |
-|---------------|------------------------------------------------------------|----------------------------------------------------------|
-| CallDetail    | `ui/screen/detail/CallDetailScreen.kt`                     | `ui/screen/detail/CallDetailViewModel.kt`                |
-| Search        | `ui/screen/search/SearchScreen.kt`                         | `ui/screen/search/SearchViewModel.kt`                    |
-| Stats         | `ui/screen/stats/StatsScreen.kt`                           | `ui/screen/stats/StatsViewModel.kt`                      |
-| Bookmarks     | `ui/screen/bookmarks/BookmarksScreen.kt`                   | `ui/screen/bookmarks/BookmarksViewModel.kt`              |
-| FollowUps     | `ui/screen/followups/FollowUpsScreen.kt`                   | `ui/screen/followups/FollowUpsViewModel.kt`              |
-| MyContacts    | `ui/screen/contacts/MyContactsScreen.kt`                   | `ui/screen/contacts/MyContactsViewModel.kt`              |
+| Page       | Screen file                              | ViewModel                                   |
+| ---------- | ---------------------------------------- | ------------------------------------------- |
+| CallDetail | `ui/screen/detail/CallDetailScreen.kt`   | `ui/screen/detail/CallDetailViewModel.kt`   |
+| Search     | `ui/screen/search/SearchScreen.kt`       | `ui/screen/search/SearchViewModel.kt`       |
+| Stats      | `ui/screen/stats/StatsScreen.kt`         | `ui/screen/stats/StatsViewModel.kt`         |
+| Bookmarks  | `ui/screen/bookmarks/BookmarksScreen.kt` | `ui/screen/bookmarks/BookmarksViewModel.kt` |
+| FollowUps  | `ui/screen/followups/FollowUpsScreen.kt` | `ui/screen/followups/FollowUpsViewModel.kt` |
+| MyContacts | `ui/screen/contacts/MyContactsScreen.kt` | `ui/screen/contacts/MyContactsViewModel.kt` |
 
 End of Part 04. See Part 05 for: Tag picker, Note editor, Tag manager, Settings,
 About, Update flow, Backup/restore, Onboarding, In-app docs, Floating in-call

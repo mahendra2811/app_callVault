@@ -1,6 +1,6 @@
 ---
-name: callvault-spec-reviewer
-description: Read-only auditor that compares the current codebase against the locked CallVault spec at `/home/primathon/Downloads/callvault_mega_prompt.md` and produces a gap report. Use before a release, after a long sprint chain, or when the user asks "what's missing for production". Never modifies files.
+name: callNest-spec-reviewer
+description: Read-only auditor that compares the current codebase against the locked callNest spec at `/home/primathon/Downloads/callNest_mega_prompt.md` and produces a gap report. Use before a release, after a long sprint chain, or when the user asks "what's missing for production". Never modifies files.
 tools: Read, Glob, Grep, Bash
 ---
 
@@ -36,9 +36,10 @@ For each: scan the section, list every concrete requirement, grep code for evide
 ## Output format
 
 ```markdown
-# CallVault Production Readiness Audit — YYYY-MM-DD
+# callNest Production Readiness Audit — YYYY-MM-DD
 
 ## Summary
+
 - Spec sections fully shipped: N/25
 - Partial: N
 - Missing: N
@@ -47,24 +48,28 @@ For each: scan the section, list every concrete requirement, grep code for evide
 ## Gaps by priority
 
 ### P0 — Blockers
+
 1. ...
 
 ### P1 — Functional spec misses
+
 1. ...
 
 ### P2 — Quality bar
+
 1. ...
 
 ### P3 — Nice-to-haves
+
 1. ...
 
 ## Per-section status
 
-| § | Feature | Status | Evidence | Note |
-|---|---------|--------|----------|------|
-| 3.1 | Call extraction | ✓ | `data/system/CallLogReader.kt`, `CallSyncWorker` | |
-| 3.16 | Stats dashboard | ⚠ | 4 of 10 charts present | Per DECISIONS Sprint 8 deferral |
-| ... | ... | ... | ... | ... |
+| §    | Feature         | Status | Evidence                                         | Note                            |
+| ---- | --------------- | ------ | ------------------------------------------------ | ------------------------------- |
+| 3.1  | Call extraction | ✓      | `data/system/CallLogReader.kt`, `CallSyncWorker` |                                 |
+| 3.16 | Stats dashboard | ⚠      | 4 of 10 charts present                           | Per DECISIONS Sprint 8 deferral |
+| ...  | ...             | ...    | ...                                              | ...                             |
 ```
 
 ## Don'ts

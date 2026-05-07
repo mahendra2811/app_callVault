@@ -4,16 +4,16 @@ Added 2026-05-05 as part of the cloud pivot (see `DECISIONS.md` → "Cloud pivot
 
 ## What landed
 
-| Layer | Files |
-|---|---|
-| Spec amendment | `CLAUDE.md`, `DECISIONS.md` |
-| Build config | `gradle/libs.versions.toml`, `build.gradle.kts`, `app/build.gradle.kts`, `local.properties.example` |
-| Supabase auth | `data/auth/SupabaseClientProvider.kt`, `data/repository/AuthRepositoryImpl.kt`, `domain/repository/AuthRepository.kt`, `domain/model/AuthSession.kt` |
-| Auth UI | `ui/screen/auth/AuthScreen.kt`, `ui/screen/auth/AuthViewModel.kt` |
-| DI | `di/RepositoryModule.kt` (binding added), `di/AnalyticsModule.kt` (new) |
-| Analytics | `data/analytics/AnalyticsTracker.kt` |
-| Push | `data/push/CallVaultMessagingService.kt`, `data/push/PushTokenSync.kt`, manifest service entry |
-| App init | `CallVaultApp.kt` calls `analytics.init(this)` and `pushTokenSync.registerCurrentToken()` |
+| Layer          | Files                                                                                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Spec amendment | `CLAUDE.md`, `DECISIONS.md`                                                                                                                          |
+| Build config   | `gradle/libs.versions.toml`, `build.gradle.kts`, `app/build.gradle.kts`, `local.properties.example`                                                  |
+| Supabase auth  | `data/auth/SupabaseClientProvider.kt`, `data/repository/AuthRepositoryImpl.kt`, `domain/repository/AuthRepository.kt`, `domain/model/AuthSession.kt` |
+| Auth UI        | `ui/screen/auth/AuthScreen.kt`, `ui/screen/auth/AuthViewModel.kt`                                                                                    |
+| DI             | `di/RepositoryModule.kt` (binding added), `di/AnalyticsModule.kt` (new)                                                                              |
+| Analytics      | `data/analytics/AnalyticsTracker.kt`                                                                                                                 |
+| Push           | `data/push/callNestMessagingService.kt`, `data/push/PushTokenSync.kt`, manifest service entry                                                        |
+| App init       | `callNestApp.kt` calls `analytics.init(this)` and `pushTokenSync.registerCurrentToken()`                                                             |
 
 ## What you must do before the first build
 
@@ -33,17 +33,19 @@ The build will succeed with empty values — the app will simply skip analytics 
 
 ### 2. Drop in `google-services.json`
 
-Firebase Console → Project settings → *Your apps* → Add Android app with package
-`com.callvault.app` (and `.debug` variant if you want push in debug). Download
+Firebase Console → Project settings → _Your apps_ → Add Android app with package
+`com.callNest.app` (and `.debug` variant if you want push in debug). Download
 `google-services.json` and place it at `app/google-services.json`. Gradle will
 fail without it because the `google-services` plugin is now applied.
 
 ### 2b. Add the password-reset redirect URL to Supabase
 
 Supabase → Authentication → URL Configuration → **Redirect URLs** → add:
+
 ```
-callvault://auth/recovery
+callNest://auth/recovery
 ```
+
 Without this, password-reset emails will land on a generic Supabase web page that can't return users to the app.
 
 ### 2c. Analytics consent (PostHog)
@@ -58,11 +60,11 @@ See `app/src/main/assets/db/device_tokens.sql` for the canonical schema (run tha
 
 The screen exists at `ui/screen/auth/AuthScreen.kt`. To gate the app behind it:
 
-- In `MainActivity` (or `CallVaultNavHost`), observe `AuthRepository.state` (or `AuthViewModel.authState`) at the top.
+- In `MainActivity` (or `callNestNavHost`), observe `AuthRepository.state` (or `AuthViewModel.authState`) at the top.
 - If `AuthState.SignedOut`, render `AuthScreen { /* navigate into the app */ }`.
 - If `AuthState.SignedIn`, render the existing nav graph.
 
-I left this step to you so I don't accidentally break the existing onboarding/permission flow at `ui/navigation/CallVaultNavHost.kt`.
+I left this step to you so I don't accidentally break the existing onboarding/permission flow at `ui/navigation/callNestNavHost.kt`.
 
 ### 5. Activate Google sign-in (when you're ready)
 
@@ -84,6 +86,7 @@ If first-build downloads time out, try `--no-daemon` and ensure `gradle wrapper 
 ## Privacy
 
 The app now transmits user data. Update your privacy policy to disclose:
+
 - Supabase (account email, hashed password) — auth provider
 - PostHog (device events, screen views, user ID after sign-in) — product analytics
 - FCM (device token) — push notifications

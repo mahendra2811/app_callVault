@@ -1,4 +1,4 @@
-# CallVault — AI handoff docs
+# callNest — AI handoff docs
 
 Read these in order. The first three give a future cold-start session everything it needs to be productive without exploring the source.
 
@@ -18,11 +18,11 @@ Read these in order. The first three give a future cold-start session everything
 9. `05-ai-working-guide.md` → behavioural rules for agents (string-resource-only, Timber-only, no `TODO(`, etc.).
 10. `06-glossary.md` → domain vocabulary (inquiry, lenient bucket, orphan note, lead score buckets).
 11. `07-mcp-guide.md` → Context7 + Playwright MCP usage.
-12. `08-agent-spawn-templates.md` → copy-paste sub-agent prompts (`callvault-android-engineer`, `callvault-ui-builder`, etc.).
+12. `08-agent-spawn-templates.md` → copy-paste sub-agent prompts (`callNest-android-engineer`, `callNest-ui-builder`, etc.).
 
 ## Spec & out-of-tree references
 
-- **Spec (locked)**: `/home/primathon/Downloads/callvault_mega_prompt.md` (1533 lines). Use Read with offset/limit; CLAUDE.md lists section ranges.
+- **Spec (locked)**: `/home/primathon/Downloads/callNest_mega_prompt.md` (1533 lines). Use Read with offset/limit; CLAUDE.md lists section ranges.
 - **`CLAUDE.md`** (repo root) → session rules. Note: §"Don'ts" was reversed 2026-05-05 — Supabase Auth, PostHog, FCM are **now in scope**. See `DECISIONS.md` "Cloud pivot".
 - **`DECISIONS.md`** → every fallback, deferral, trade-off (read before re-litigating any architectural choice).
 - **`docs/architecture.md`**, **`docs/cloud-integration.md`**, **`docs/env-setup.md`** → human-facing engineering docs (not AI-tuned).

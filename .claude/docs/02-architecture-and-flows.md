@@ -2,7 +2,7 @@
 
 ## Layering
 
-CallVault uses one Android module: `app`.
+callNest uses one Android module: `app`.
 
 Layer rules:
 
@@ -18,9 +18,9 @@ Important rule from `CLAUDE.md`: `ui/` should not import `data/` directly. Prefe
 
 1. `MainActivity.onCreate`
 2. `enableEdgeToEdge`
-3. `CallVaultTheme`
-4. `CallVaultNavHost(initialDeepLink)`
-5. `CallVaultNavHost` reads:
+3. `callNestTheme`
+4. `callNestNavHost(initialDeepLink)`
+5. `callNestNavHost` reads:
    - `SettingsDataStore.onboardingComplete`
    - `PermissionManager.state`
 6. Start route:
@@ -28,7 +28,7 @@ Important rule from `CLAUDE.md`: `ui/` should not import `data/` directly. Prefe
    - critical permissions missing -> `permission_rationale`
    - otherwise -> `calls`
 
-`CallVaultApp.onCreate` plants Timber in debug builds, creates notification channels, configures Hilt WorkManager, and starts/schedules real-time, update, and daily-summary work after onboarding is complete.
+`callNestApp.onCreate` plants Timber in debug builds, creates notification channels, configures Hilt WorkManager, and starts/schedules real-time, update, and daily-summary work after onboarding is complete.
 
 ## Navigation Flow
 
@@ -63,7 +63,7 @@ Main implemented routes:
 
 ## Data Storage
 
-Room database: `CallVaultDatabase`, name `callvault.db`, schema version `2`.
+Room database: `callNestDatabase`, name `callNest.db`, schema version `2`.
 
 Entities:
 
@@ -151,8 +151,8 @@ Core files:
 Behavior:
 
 - Unsaved numbers are written to ContactsContract when auto-save is enabled.
-- Names use `{prefix}{simTag} {phone}{suffix}`, for example `callVault-s1 +91...`.
-- Contacts go into the configured group, default `CallVault Inquiries`.
+- Names use `{prefix}{simTag} {phone}{suffix}`, for example `callNest-s1 +91...`.
+- Contacts go into the configured group, default `callNest Inquiries`.
 - Conversion to "My Contact" renames the system contact and flips metadata.
 - Rename detection compares live Contacts display names against the current auto-save pattern.
 
@@ -335,4 +335,3 @@ Core files:
 - `MarkdownRenderer`
 - `DocFeedbackEntity/Dao`
 - 15 markdown articles in `app/src/main/assets/docs`
-

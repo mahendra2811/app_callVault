@@ -1,6 +1,6 @@
-# CallVault — Project Map
+# callNest — Project Map
 
-One-page mental model of `app/src/main/`. Last refreshed 2026-05-06. **245 Kotlin files**, single Gradle module `app`, package `com.callvault.app`.
+One-page mental model of `app/src/main/`. Last refreshed 2026-05-06. **245 Kotlin files**, single Gradle module `app`, package `com.callNest.app`.
 
 ## Layering (strict — enforced by import discipline)
 
@@ -15,7 +15,7 @@ di/      → Hilt modules only
 ## Tree (annotated)
 
 ```
-app/src/main/java/com/callvault/app/
+app/src/main/java/com/callNest/app/
 ├── data/                                         repo impls + Android plumbing
 │   ├── analytics/         PostHog wrapper (cloud pivot 2026-05-05)
 │   ├── auth/              Supabase auth bridge (gates the app, see ui/screen/auth/)
@@ -47,7 +47,7 @@ app/src/main/java/com/callvault/app/
 │
 ├── ui/
 │   ├── components/neo/    25 design-system primitives (see UI_GUIDE.md)
-│   ├── navigation/        CallVaultNavHost, Destinations (sealed), MainScaffold (4-tab), LocalMainTabNav
+│   ├── navigation/        callNestNavHost, Destinations (sealed), MainScaffold (4-tab), LocalMainTabNav
 │   ├── screen/
 │   │   ├── auth/          Login + 6 OTHER auth screens (Welcome, Signup, Forgot, Reset, VerifyEmail, Profile) — only LoginScreen is wired (see AUDIT)
 │   │   ├── autotagrules/  RulesList, RuleEditor + components/{ConditionRow, ActionRow, LivePreviewBox}
@@ -80,22 +80,22 @@ app/src/main/java/com/callvault/app/
 
 ## Where to put new things
 
-| New thing | Path |
-|-----------|------|
-| Compose screen | `ui/screen/{feature}/{Feature}Screen.kt` + `{Feature}ViewModel.kt` |
-| Reusable component | `ui/components/neo/Neo{Name}.kt` |
-| Use case | `domain/usecase/{Verb}{Noun}UseCase.kt` |
-| Domain model | `domain/model/{Name}.kt` |
-| Repository interface | `domain/repository/{Name}Repository.kt` |
-| Repository impl | `data/repository/{Name}RepositoryImpl.kt` |
-| Room entity | `data/local/entity/{Name}Entity.kt` |
-| DAO | `data/local/dao/{Name}Dao.kt` |
-| WorkManager job | `data/work/{Name}Worker.kt` |
-| Foreground / overlay service | `data/service/...` |
-| Settings key | Add to `data/prefs/SettingsDataStore.kt` (and a setter); read via VM |
-| String | `res/values/strings.xml` → `stringResource(R.string.X)` |
-| In-app help article | `assets/docs/NN-slug.md` (and bump article list in `AssetDocsLoader`) |
-| Hilt binding | the appropriate module under `di/` |
+| New thing                    | Path                                                                  |
+| ---------------------------- | --------------------------------------------------------------------- |
+| Compose screen               | `ui/screen/{feature}/{Feature}Screen.kt` + `{Feature}ViewModel.kt`    |
+| Reusable component           | `ui/components/neo/Neo{Name}.kt`                                      |
+| Use case                     | `domain/usecase/{Verb}{Noun}UseCase.kt`                               |
+| Domain model                 | `domain/model/{Name}.kt`                                              |
+| Repository interface         | `domain/repository/{Name}Repository.kt`                               |
+| Repository impl              | `data/repository/{Name}RepositoryImpl.kt`                             |
+| Room entity                  | `data/local/entity/{Name}Entity.kt`                                   |
+| DAO                          | `data/local/dao/{Name}Dao.kt`                                         |
+| WorkManager job              | `data/work/{Name}Worker.kt`                                           |
+| Foreground / overlay service | `data/service/...`                                                    |
+| Settings key                 | Add to `data/prefs/SettingsDataStore.kt` (and a setter); read via VM  |
+| String                       | `res/values/strings.xml` → `stringResource(R.string.X)`               |
+| In-app help article          | `assets/docs/NN-slug.md` (and bump article list in `AssetDocsLoader`) |
+| Hilt binding                 | the appropriate module under `di/`                                    |
 
 ## Cross-cutting conventions
 

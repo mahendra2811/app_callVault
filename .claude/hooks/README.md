@@ -17,7 +17,7 @@ This folder is documentation only — actual hook wiring lives in `.claude/setti
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'jq -r .params.file_path | grep -q -E \"callvault_mega_prompt.md|gradle/libs.versions.toml\" && echo BLOCK || true'"
+            "command": "bash -c 'jq -r .params.file_path | grep -q -E \"callNest_mega_prompt.md|gradle/libs.versions.toml\" && echo BLOCK || true'"
           }
         ]
       }
@@ -26,7 +26,7 @@ This folder is documentation only — actual hook wiring lives in `.claude/setti
 }
 ```
 
-The locked spec at `/home/primathon/Downloads/callvault_mega_prompt.md` and the Gradle version catalog should not be edited by Claude without an explicit user "yes". Adjust the regex to taste.
+The locked spec at `/home/primathon/Downloads/callNest_mega_prompt.md` and the Gradle version catalog should not be edited by Claude without an explicit user "yes". Adjust the regex to taste.
 
 ### Auto-format Kotlin on Write
 
@@ -60,7 +60,7 @@ If [`ktlint`](https://pinterest.github.io/ktlint/) is installed:
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"\\nStopped at $(date -Iseconds)\\n\" >> '/home/primathon/Documents/p_projet/a_APP/4. callVault/TODO.md'"
+            "command": "echo \"\\nStopped at $(date -Iseconds)\\n\" >> '/home/primathon/Documents/p_projet/a_APP/4. callNest/TODO.md'"
           }
         ]
       }

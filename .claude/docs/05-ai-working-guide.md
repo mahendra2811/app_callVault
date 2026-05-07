@@ -1,6 +1,6 @@
 # AI Working Guide
 
-This file teaches future AI agents how to work and answer well in CallVault.
+This file teaches future AI agents how to work and answer well in callNest.
 
 ## First Response Pattern
 
@@ -38,7 +38,7 @@ Avoid:
 
 - Keep one module: `app`.
 - Use Kotlin, Compose, Hilt, Room, DataStore, WorkManager.
-- Follow existing package `com.callvault.app`.
+- Follow existing package `com.callNest.app`.
 - Prefer `@Inject constructor`.
 - ViewModels use `@HiltViewModel`.
 - Workers use `@HiltWorker` and assisted injection.
@@ -80,7 +80,7 @@ Avoid:
 
 1. Add entity in `data/local/entity`.
 2. Add DAO in `data/local/dao`.
-3. Add entity and abstract DAO to `CallVaultDatabase`.
+3. Add entity and abstract DAO to `callNestDatabase`.
 4. Bump database version.
 5. Add migration in `Migrations.kt`.
 6. Export schema after approved build.
@@ -90,9 +90,9 @@ Avoid:
 
 1. Create screen and ViewModel under `ui/screen/{feature}`.
 2. Add route to `Destinations.kt`.
-3. Wire route in `CallVaultNavHost.kt`.
+3. Wire route in `callNestNavHost.kt`.
 4. Add strings to `strings.xml`.
-5. Use Neo components and `CallVaultTheme`.
+5. Use Neo components and `callNestTheme`.
 6. Collect state with lifecycle-aware collection.
 7. Add preview where useful.
 
@@ -159,4 +159,3 @@ Because no `TODO.md` currently exists, use this order:
    - stats chart completion
    - NeoHelpIcon/docs wiring
 3. Update docs or changelog only for user-visible changes or real decisions.
-

@@ -11,12 +11,12 @@ every M3 widget — `Button`, `TopAppBar`, `Switch`, `Snackbar`, `AlertDialog`, 
 
 ## When to use which
 
-| Surface | Use |
-|---|---|
-| Hand-built brand cards (Hero, Lead pipeline cards, Calls list rows) | `NeoSurface` + `NeoColors` / `SageColors` directly |
-| System widgets (Buttons, Switches, AlertDialog, BottomSheet, TopAppBar, Cards in non-brand surfaces) | `MaterialTheme.colorScheme.*` |
-| Containers (`primaryContainer`, `tertiaryContainer`, `errorContainer`) | `MaterialTheme.colorScheme.*Container` — they map back to Sage tints |
-| Direct hex / `Color(0xFF…)` | Forbidden in new code. Add a token first. |
+| Surface                                                                                              | Use                                                                  |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Hand-built brand cards (Hero, Lead pipeline cards, Calls list rows)                                  | `NeoSurface` + `NeoColors` / `SageColors` directly                   |
+| System widgets (Buttons, Switches, AlertDialog, BottomSheet, TopAppBar, Cards in non-brand surfaces) | `MaterialTheme.colorScheme.*`                                        |
+| Containers (`primaryContainer`, `tertiaryContainer`, `errorContainer`)                               | `MaterialTheme.colorScheme.*Container` — they map back to Sage tints |
+| Direct hex / `Color(0xFF…)`                                                                          | Forbidden in new code. Add a token first.                            |
 
 ## What was fixed in this audit pass
 
@@ -38,5 +38,5 @@ every M3 widget — `Button`, `TopAppBar`, `Switch`, `Snackbar`, `AlertDialog`, 
 ## Dark mode
 
 The app is light-only. `darkColorScheme` is intentionally not provided — system dark-mode setting
-is ignored by `CallVaultTheme`. If a future iteration wants dark mode, fork `CallVaultColorScheme`
+is ignored by `callNestTheme`. If a future iteration wants dark mode, fork `callNestColorScheme`
 into a dark variant and select via `isSystemInDarkTheme()`.

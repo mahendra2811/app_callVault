@@ -30,7 +30,7 @@ This is an AI-oriented guide to project files. Use it to find the owner of a beh
 
 ## Entry Points
 
-- `CallVaultApp.kt` - Hilt application, WorkManager factory, Timber, notification channels, startup worker/service scheduling.
+- `callNestApp.kt` - Hilt application, WorkManager factory, Timber, notification channels, startup worker/service scheduling.
 - `MainActivity.kt` - single Activity, Compose host, permission recheck on resume, deep-link route extra.
 
 ## Dependency Injection
@@ -92,7 +92,7 @@ This is an AI-oriented guide to project files. Use it to find the owner of a beh
 
 ## Data: Room Database
 
-- `data/local/CallVaultDatabase.kt` - Room database, version 2, entity/DAO list.
+- `data/local/callNestDatabase.kt` - Room database, version 2, entity/DAO list.
 - `data/local/converter/Converters.kt` - Room type converters.
 - `data/local/migration/Migrations.kt` - Room migrations.
 - `data/local/mapper/Mappers.kt` - entity/domain mapping.
@@ -151,7 +151,7 @@ This is an AI-oriented guide to project files. Use it to find the owner of a beh
 - `PhoneNumberNormalizer.kt` - libphonenumber-backed E.164 normalization.
 - `ContactsReader.kt` - resolves contact names and IDs.
 - `ContactsWriter.kt` - writes RawContact, name, phone, group membership through `applyBatch`.
-- `ContactGroupManager.kt` - finds/creates CallVault contact group.
+- `ContactGroupManager.kt` - finds/creates callNest contact group.
 - `SimSlotResolver.kt` - resolves SIM slot/carrier from phone account ID.
 - `PhoneStateMonitor.kt` - call state flow for real-time features.
 - `CallContextResolver.kt` - finds latest call context for popup actions.
@@ -213,7 +213,7 @@ This is an AI-oriented guide to project files. Use it to find the owner of a beh
 ## UI Navigation And Shared Layout
 
 - `ui/navigation/Destinations.kt` - stable route declarations.
-- `ui/navigation/CallVaultNavHost.kt` - top-level graph and startup gates.
+- `ui/navigation/callNestNavHost.kt` - top-level graph and startup gates.
 - `ui/screen/shared/NeoScaffold.kt` - shared scaffold pattern.
 - `ui/screen/PlaceholderScreen.kt` - generic placeholder.
 
@@ -243,7 +243,7 @@ This is an AI-oriented guide to project files. Use it to find the owner of a beh
 
 Navigation:
 
-- `ui/navigation/CallVaultNavHost.kt` - app graph, startup routing, deep-link routing.
+- `ui/navigation/callNestNavHost.kt` - app graph, startup routing, deep-link routing.
 - `ui/navigation/Destinations.kt` - route constants and route builders.
 
 Neo components:
@@ -391,9 +391,9 @@ Screens:
 
 ## Claude Local Files
 
-- `.claude/agents/callvault-android-engineer.md` - feature/code implementation agent prompt.
-- `.claude/agents/callvault-build-fixer.md` - build-fix agent prompt.
-- `.claude/agents/callvault-ui-builder.md` - Compose/UI agent prompt.
-- `.claude/agents/callvault-test-writer.md` - test-writing agent prompt.
+- `.claude/agents/callNest-android-engineer.md` - feature/code implementation agent prompt.
+- `.claude/agents/callNest-build-fixer.md` - build-fix agent prompt.
+- `.claude/agents/callNest-ui-builder.md` - Compose/UI agent prompt.
+- `.claude/agents/callNest-test-writer.md` - test-writing agent prompt.
 - `.claude/settings.json` - Claude project settings.
 - `.claude/docs/*` - this AI-oriented documentation set.

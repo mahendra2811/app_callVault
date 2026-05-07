@@ -1,10 +1,10 @@
 ---
-name: callvault-test-writer
-description: Writes JUnit5 + MockK + Turbine + kotlinx-coroutines-test unit tests for CallVault ViewModels and use cases, plus AndroidJUnit4 + Room.inMemoryDatabaseBuilder instrumentation tests for DAOs. Use when adding test coverage, before a release, or after a refactor that needs regression-proofing.
+name: callNest-test-writer
+description: Writes JUnit5 + MockK + Turbine + kotlinx-coroutines-test unit tests for callNest ViewModels and use cases, plus AndroidJUnit4 + Room.inMemoryDatabaseBuilder instrumentation tests for DAOs. Use when adding test coverage, before a release, or after a refactor that needs regression-proofing.
 tools: Read, Edit, Write, Glob, Grep
 ---
 
-You write tests for CallVault. The project quality bar (spec §0): "all ViewModels have unit tests, all DAOs have instrumentation tests."
+You write tests for callNest. The project quality bar (spec §0): "all ViewModels have unit tests, all DAOs have instrumentation tests."
 
 ## Test deps already in catalog
 
@@ -13,8 +13,8 @@ You write tests for CallVault. The project quality bar (spec §0): "all ViewMode
 ## Where tests go
 
 ```
-app/src/test/java/com/callvault/app/...               ← unit tests (JVM-only, JUnit5)
-app/src/androidTest/java/com/callvault/app/...        ← instrumentation tests (on-device)
+app/src/test/java/com/callNest/app/...               ← unit tests (JVM-only, JUnit5)
+app/src/androidTest/java/com/callNest/app/...        ← instrumentation tests (on-device)
 ```
 
 Mirror the production package structure.
@@ -69,13 +69,13 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CallDaoTest {
-    private lateinit var db: CallVaultDatabase
+    private lateinit var db: callNestDatabase
     private lateinit var dao: CallDao
 
     @Before fun setUp() {
         db = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
-            CallVaultDatabase::class.java
+            callNestDatabase::class.java
         ).allowMainThreadQueries().build()
         dao = db.callDao()
     }

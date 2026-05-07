@@ -1,6 +1,6 @@
 # 06 — Glossary
 
-Domain terms used throughout CallVault code, docs, and spec. When in doubt, this file is the source of truth.
+Domain terms used throughout callNest code, docs, and spec. When in doubt, this file is the source of truth.
 
 ## Call & contact
 
@@ -16,9 +16,9 @@ Domain terms used throughout CallVault code, docs, and spec. When in doubt, this
 
 ## Inquiry & contact segregation
 
-**Inquiry** — an unsaved-number call. The user receives many inquiries per day; CallVault's job is to capture them.
+**Inquiry** — an unsaved-number call. The user receives many inquiries per day; callNest's job is to capture them.
 
-**Auto-saved contact** — an inquiry written to system Contacts by CallVault using a generated name pattern (e.g. `callVault-s1 +919876543210`). Tracked via `ContactMetaEntity.isAutoSaved=true`.
+**Auto-saved contact** — an inquiry written to system Contacts by callNest using a generated name pattern (e.g. `callNest-s1 +919876543210`). Tracked via `ContactMetaEntity.isAutoSaved=true`.
 
 **My Contacts** — top-level UX bucket for "real" contacts (manually saved or auto-saved-then-renamed-by-user). Contains contacts where `isInSystemContacts=true && isAutoSaved=false`.
 
@@ -100,7 +100,7 @@ Domain terms used throughout CallVault code, docs, and spec. When in doubt, this
 
 **Neumorphism** — light source top-left, base `#E8E8EC`. Dual-shadow rendering via `Modifier.neoShadow(elevation, shape)`. Convex (raised), Concave (sunken), Flat.
 
-**Neo* component** — any Compose composable in `ui/components/neo/`. Wraps Material 3 internals with neumorphic styling.
+**Neo\* component** — any Compose composable in `ui/components/neo/`. Wraps Material 3 internals with neumorphic styling.
 
 **NeoColors** — token object. `Base`, `BasePressed`, `Light` (top-left highlight), `Dark` (bottom-right shadow).
 
@@ -114,14 +114,14 @@ Domain terms used throughout CallVault code, docs, and spec. When in doubt, this
 
 ## Workers & schedules
 
-| Worker | Schedule | Purpose |
-|--------|----------|---------|
-| `CallSyncWorker` | Periodic (15m–24h) or AlarmManager exact (5m) or chained OneTime (Daily 2 AM) | Sync pipeline |
-| `DailyBackupWorker` | Daily 2 AM | Encrypted backup |
-| `UpdateCheckWorker` | Weekly | Self-update poll |
-| `DailySummaryWorker` | Daily 9 AM | Notification with day's stats |
-| `LeadScoreRecomputeWorker` | One-shot | Recompute all scores after weight change |
-| `SeedDefaultTagsWorker` | One-shot on first DB create | Seed 9 system tags |
+| Worker                     | Schedule                                                                      | Purpose                                  |
+| -------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------- |
+| `CallSyncWorker`           | Periodic (15m–24h) or AlarmManager exact (5m) or chained OneTime (Daily 2 AM) | Sync pipeline                            |
+| `DailyBackupWorker`        | Daily 2 AM                                                                    | Encrypted backup                         |
+| `UpdateCheckWorker`        | Weekly                                                                        | Self-update poll                         |
+| `DailySummaryWorker`       | Daily 9 AM                                                                    | Notification with day's stats            |
+| `LeadScoreRecomputeWorker` | One-shot                                                                      | Recompute all scores after weight change |
+| `SeedDefaultTagsWorker`    | One-shot on first DB create                                                   | Seed 9 system tags                       |
 
 ## Permissions
 

@@ -94,7 +94,7 @@ Sprint 10 fills in the HTTP / DownloadManager / PackageInstaller flow.
 - Room database, DAOs, repositories — Sprint 1.
 - Permission manager, onboarding flow — Sprint 2.
 - Calls list / detail / search screens — Sprints 3+.
-- Real navigation graph (`CallVaultNavHost`, `Destinations`) — added when the
+- Real navigation graph (`callNestNavHost`, `Destinations`) — added when the
   first real screens land in Sprint 2/3. `MainActivity` currently shows
   `PlaceholderScreen` directly.
 
@@ -132,10 +132,11 @@ pager track the current page in real time.
 
 `PermissionManager` lives in `util/` (not `data/`) because it's a thin Hilt
 wrapper over `ContextCompat.checkSelfPermission` + `Settings.canDrawOverlays`
-+ `AlarmManager.canScheduleExactAlarms`. The "permanently denied" axis only
-materialises after a real permission request — so unless an `Activity` is
-passed to `recheckAll`, every non-granted permission shows up as `Denied`
-(safe default).
+
+- `AlarmManager.canScheduleExactAlarms`. The "permanently denied" axis only
+  materialises after a real permission request — so unless an `Activity` is
+  passed to `recheckAll`, every non-granted permission shows up as `Denied`
+  (safe default).
 
 The Compose helper `rememberPermissionLauncher` wraps
 `RequestMultiplePermissions` and re-invokes `recheckAll(activity)` on
@@ -151,11 +152,11 @@ written for end-users (no placeholders).
 
 ### NavHost routing
 
-`CallVaultNavHost` reads `onboardingComplete` from DataStore and the live
+`callNestNavHost` reads `onboardingComplete` from DataStore and the live
 permission state from `PermissionManager` to choose the start destination.
 After onboarding finishes, it explicitly checks `isCriticalGranted()` and
 either jumps to Calls or to PermissionRationale. The launcher in the
-rationale screen routes to PermissionDenied when *any* critical permission
+rationale screen routes to PermissionDenied when _any_ critical permission
 returns as `PermanentlyDenied`.
 
 ### Hilt entry points in Compose
@@ -187,7 +188,7 @@ one-shot `search(query)` does the spec's union with `note_fts`:
 
 1. Build a token-prefix MATCH string (`token1* token2* ...`).
 2. `SELECT systemId FROM calls JOIN call_fts ... UNION SELECT callSystemId
-   FROM notes JOIN note_fts ...`
+FROM notes JOIN note_fts ...`
 3. Re-fetch matching rows in date-desc order via `getByIdsOrdered`.
 
 Notes-only matches surface only via the one-shot path because Room can't
@@ -230,6 +231,7 @@ predictable; anything we don't recognise renders as literal text.
 ### Account resolution for ContactsContract writes
 
 Spec §3.11 leaves the storage account ambiguous. We resolve in this order:
+
 1. First Google sync account (`com.google`) on the device — the most likely
    candidate to round-trip to the user's primary contact list.
 2. Otherwise, the first account `AccountManager.getAccounts()` returns.
@@ -245,7 +247,7 @@ than silently re-targeting.
 ### Lenient bucketing (§8.5)
 
 `DetectAutoSavedRenameUseCase` re-reads the live system display name and
-compares it against a regex compiled from the *current* settings — not the
+compares it against a regex compiled from the _current_ settings — not the
 snapshot stored in `autoSavedFormat`. This means changing the prefix in
 settings will instantly reclassify every previously auto-saved row whose
 name doesn't fit the new pattern, which matches the spec's "bucketing
@@ -278,7 +280,7 @@ transaction rather than four.
 
 - **Cascade-deletes are application-level, not foreign-key.** When a rule is
   removed we explicitly clear `call_tag_cross_ref WHERE appliedBy =
-  "rule:<id>"` and the rule's rows in `rule_score_boosts` before deleting the
+"rule:<id>"` and the rule's rows in `rule_score_boosts` before deleting the
   rule entity. Schema-level `ON DELETE CASCADE` would couple the rule entity
   to a string column that Room cannot index efficiently — handling this in
   `AutoTagRuleRepositoryImpl.delete` keeps the schema simple while still
@@ -343,7 +345,7 @@ transaction rather than four.
   polish work.
 - **Encryption: PBKDF2 + AES/GCM/NoPadding instead of Tink keysets.**
   Tink is in the `libs` catalog and AeadConfig works fine on Android, but
-  Tink's `KeysetHandle` story for *passphrase-derived* keys requires either
+  Tink's `KeysetHandle` story for _passphrase-derived_ keys requires either
   shipping a separate keyset file or using `KeysetHandle.read` with an
   `Aead` wrapper — extra moving parts that don't add security beyond a
   proper KDF. The chosen path (`PBKDF2WithHmacSHA256`, 120k iterations,
@@ -367,10 +369,11 @@ transaction rather than four.
   `Environment.getExternalStoragePublicDirectory(DOWNLOADS)` without
   requesting `MANAGE_EXTERNAL_STORAGE`.
 - **Auto-backup retention via MediaStore query.** `DailyBackupWorker`
-  globs `callvault-backup-%.cvb` in Downloads, sorted by `DATE_ADDED DESC`,
+  globs `callNest-backup-%.cvb` in Downloads, sorted by `DATE_ADDED DESC`,
   and deletes everything past index `keep`. Pre-Q devices skip rotation.
 
 ### 2026-05-02 — Drive backup deviates from spec §13
+
 Optional cloud backup added per user request. Gated behind `backupDriveEnabled`
 setting (default OFF). Uses AppAuth (NOT play-services-auth) to remain GMS-free
 per spec §1. Encrypted local backup runs first; the encrypted .cvb is uploaded
@@ -383,6 +386,7 @@ User explicitly reversed three locked Don'ts and Spec §13 ("Nothing leaves the 
 The app now collects user accounts, analytics, and supports server-initiated push.
 
 **Added stack:**
+
 - **Supabase Auth** — email/password (active), Google OAuth (scaffolded, commented out for later activation).
 - **PostHog Android** — autocapture + custom events for traffic, funnels, retention.
 - **Firebase Cloud Messaging (FCM)** — server-initiated push notifications. Requires Google Play Services on device; users without GMS keep core functionality but lose push.
@@ -390,6 +394,7 @@ The app now collects user accounts, analytics, and supports server-initiated pus
 **Configuration:** All keys read from `local.properties` at build time and exposed via `BuildConfig` (`.env`-style). See `local.properties.example`. Keys are NOT checked in.
 
 **Implications still to address:**
+
 - Privacy policy must be updated; the app now transmits user data.
 - A `google-services.json` must be placed in `app/` before FCM works.
 - Sideloaded distribution still works, but Play Store distribution is now feasible.

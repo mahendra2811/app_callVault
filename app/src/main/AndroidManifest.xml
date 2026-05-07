@@ -34,7 +34,7 @@
     </queries>
 
     <application
-        android:name=".CallVaultApp"
+        android:name=".CallNestApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -43,7 +43,7 @@
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:enableOnBackInvokedCallback="true"
-        android:theme="@style/Theme.CallVault">
+        android:theme="@style/Theme.callNest">
 
         <property
             android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
@@ -53,7 +53,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.CallVault.Splash">
+            android:theme="@style/Theme.callNest.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -62,7 +62,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="callvault" android:host="auth" />
+                <data android:scheme="callNest" android:host="auth" />
             </intent-filter>
         </activity>
 
@@ -72,7 +72,7 @@
             android:exported="false" />
 
         <service
-            android:name=".data.push.CallVaultMessagingService"
+            android:name=".data.push.CallNestMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

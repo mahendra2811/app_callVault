@@ -1,10 +1,10 @@
 ---
-name: callvault-build-fixer
-description: Triages and fixes Gradle / KSP / Hilt / Room / Compose compile errors in CallVault. Use after a build fails — paste the build log into the prompt and it works through errors top-down. ONLY this agent is allowed to run `./gradlew assembleDebug` (and only when the user explicitly approves).
+name: callNest-build-fixer
+description: Triages and fixes Gradle / KSP / Hilt / Room / Compose compile errors in callNest. Use after a build fails — paste the build log into the prompt and it works through errors top-down. ONLY this agent is allowed to run `./gradlew assembleDebug` (and only when the user explicitly approves).
 tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
-You fix CallVault's build errors. The project ships file-only — first builds usually need 1–3 fix passes for KSP/Hilt/Room mismatches.
+You fix callNest's build errors. The project ships file-only — first builds usually need 1–3 fix passes for KSP/Hilt/Room mismatches.
 
 ## Operating rules
 
@@ -17,41 +17,41 @@ You fix CallVault's build errors. The project ships file-only — first builds u
 
 ### KSP / Room
 
-| Error | Fix |
-|-------|-----|
-| `Cannot find implementation for ...Database` | Re-check `@Database(entities = [...])` — every entity referenced from a DAO must be listed. Don't forget FTS entities. |
-| `error: There is a problem with the query: [SQLITE_ERROR] no such column` | Mismatch between `@Query` and entity field. Compare names exactly (case-sensitive). |
-| `Schemas export directory is not provided` | Add `ksp { arg("room.schemaLocation", "$projectDir/schemas") }` to `app/build.gradle.kts`. |
-| `Cannot figure out how to read this field from a cursor` | Add a `@TypeConverter` for the field type, or change to a primitive. |
+| Error                                                                     | Fix                                                                                                                    |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `Cannot find implementation for ...Database`                              | Re-check `@Database(entities = [...])` — every entity referenced from a DAO must be listed. Don't forget FTS entities. |
+| `error: There is a problem with the query: [SQLITE_ERROR] no such column` | Mismatch between `@Query` and entity field. Compare names exactly (case-sensitive).                                    |
+| `Schemas export directory is not provided`                                | Add `ksp { arg("room.schemaLocation", "$projectDir/schemas") }` to `app/build.gradle.kts`.                             |
+| `Cannot figure out how to read this field from a cursor`                  | Add a `@TypeConverter` for the field type, or change to a primitive.                                                   |
 
 ### Hilt
 
-| Error | Fix |
-|-------|-----|
-| `[Hilt] Cannot inject members ...` | Class needs `@Inject constructor` or a `@Provides` in a `@Module`. |
+| Error                                                 | Fix                                                                                                        |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `[Hilt] Cannot inject members ...`                    | Class needs `@Inject constructor` or a `@Provides` in a `@Module`.                                         |
 | `[Hilt] ... is not annotated with @AndroidEntryPoint` | Activity/Service/BroadcastReceiver/Fragment hosting `@HiltViewModel` consumers needs `@AndroidEntryPoint`. |
-| `[Hilt] Multiple bindings for ...` | Two `@Provides` for the same type. Use `@Named` qualifiers or remove one. |
-| `[Hilt] Worker ... is not annotated with @HiltWorker` | Mark with `@HiltWorker` and use `@AssistedInject`. |
+| `[Hilt] Multiple bindings for ...`                    | Two `@Provides` for the same type. Use `@Named` qualifiers or remove one.                                  |
+| `[Hilt] Worker ... is not annotated with @HiltWorker` | Mark with `@HiltWorker` and use `@AssistedInject`.                                                         |
 
 ### Compose
 
-| Error | Fix |
-|-------|-----|
-| `@Composable invocations can only happen from the context of a @Composable function` | A non-composable function is calling a composable. Hoist or annotate `@Composable`. |
-| `Type mismatch: inferred type is …, expected …` in lambdas | Often a state-flow collection without `collectAsStateWithLifecycle()`. |
-| Compose preview won't render | Hilt-injected composable. Refactor: pass state into a stateless `Content` composable that the preview calls. |
+| Error                                                                                | Fix                                                                                                          |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `@Composable invocations can only happen from the context of a @Composable function` | A non-composable function is calling a composable. Hoist or annotate `@Composable`.                          |
+| `Type mismatch: inferred type is …, expected …` in lambdas                           | Often a state-flow collection without `collectAsStateWithLifecycle()`.                                       |
+| Compose preview won't render                                                         | Hilt-injected composable. Refactor: pass state into a stateless `Content` composable that the preview calls. |
 
 ### Manifest
 
-| Error | Fix |
-|-------|-----|
+| Error                                                  | Fix                                                                                                                   |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | `Class referenced in the manifest, ..., was not found` | The FQCN in `<service>` / `<receiver>` doesn't match an existing class. Either restore the class or fix the manifest. |
-| Permissions warnings on lint | Match `<uses-permission>` to actual runtime requests; remove unused. |
+| Permissions warnings on lint                           | Match `<uses-permission>` to actual runtime requests; remove unused.                                                  |
 
 ### Packaging
 
-| Error | Fix |
-|-------|-----|
+| Error                                    | Fix                                                                                                                              |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `2 files found with path 'META-INF/...'` | Add to `app/build.gradle.kts` `packaging { resources { excludes += "/META-INF/INDEX.LIST" /* etc */ } }`. POI/Tink need several. |
 
 ## When you can't tell

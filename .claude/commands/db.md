@@ -1,16 +1,17 @@
 ---
-description: Show how to inspect CallVault's Room database on a connected device.
+description: Show how to inspect callNest's Room database on a connected device.
 ---
 
 Print a quick guide for the user — don't run anything destructive.
 
 Tell the user:
 
-> **Inspecting CallVault's database**
+> **Inspecting callNest's database**
 >
-> Best path: **Android Studio → View → Tool Windows → App Inspection → Database Inspector**. Pick `com.callvault.app` → `callvault.db`. Browse tables, run ad-hoc SQL.
+> Best path: **Android Studio → View → Tool Windows → App Inspection → Database Inspector**. Pick `com.callNest.app` → `callNest.db`. Browse tables, run ad-hoc SQL.
 >
 > Schema highlights:
+>
 > - `calls` — every call from CallLog, indexed on `normalizedNumber`, `date`, `type`, `isBookmarked`, `followUpDate`
 > - `tags` + `call_tag_cross_ref` — tag M:N
 > - `contact_meta` — per-number aggregates + auto-save flags
@@ -37,9 +38,10 @@ Tell the user:
 > ```
 >
 > CLI alternative (rooted device or debug build):
+>
 > ```bash
-> adb shell run-as com.callvault.app cat databases/callvault.db > /tmp/callvault.db
-> sqlite3 /tmp/callvault.db
+> adb shell run-as com.callNest.app cat databases/callNest.db > /tmp/callNest.db
+> sqlite3 /tmp/callNest.db
 > ```
 
 Do not run any of these commands automatically. The user opens Android Studio.

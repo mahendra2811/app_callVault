@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Compose owns real theming; this is just the launch/system theme. -->
-    <style name="Theme.CallVault" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.callNest" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">#E8E8EC</item>
         <item name="android:navigationBarColor">#E8E8EC</item>
         <item name="android:windowLightStatusBar">true</item>
@@ -9,11 +9,11 @@
         <item name="android:windowBackground">@drawable/ic_launcher_background</item>
     </style>
 
-    <!-- Phase C — system splash theme; hands off to Theme.CallVault after 200ms. -->
-    <style name="Theme.CallVault.Splash" parent="Theme.SplashScreen">
+    <!-- Phase C — system splash theme; hands off to Theme.callNest after 200ms. -->
+    <style name="Theme.callNest.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#FF3D5A4A</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="windowSplashScreenAnimationDuration">200</item>
-        <item name="postSplashScreenTheme">@style/Theme.CallVault</item>
+        <item name="postSplashScreenTheme">@style/Theme.callNest</item>
     </style>
 </resources>

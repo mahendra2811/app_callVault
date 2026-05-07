@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CallVault"
+rootProject.name = "callNest"
 include(":app")

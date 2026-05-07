@@ -19,40 +19,40 @@ The closest thing to "instant feedback" is two tools:
 
 ## Term map
 
-| React / Next.js | Android / CallVault |
-|-----------------|---------------------|
-| `npm run dev` | `./gradlew installDebug` (one-shot install on phone), then **Live Edit** for incremental updates |
-| Browser at `localhost:3000` | A real Android phone plugged in via USB, or an emulator (Android Virtual Device) |
-| Chrome DevTools console | **Logcat** in Android Studio (View → Tool Windows → Logcat) |
-| `console.log("...")` | `Timber.d("...")` — already imported throughout this project |
-| `console.error(err)` | `Timber.e(err, "message")` |
-| React DevTools (component tree) | **Layout Inspector** (Tools → Layout Inspector) |
-| Network tab | **Network Inspector** in App Inspection — but CallVault is offline-first, so almost nothing here |
-| `package.json` | `app/build.gradle.kts` (per-module) + `gradle/libs.versions.toml` (version catalog) |
-| `node_modules/` | `~/.gradle/caches/` — shared across projects, ~500 MB |
-| `npm install` | First `./gradlew assembleDebug` (downloads everything) |
-| `tsconfig.json` | None per se — `build.gradle.kts` has the same role plus more |
-| `.env` | Mostly `BuildConfig.X` fields declared in `build.gradle.kts`; secrets via `keystore.properties` (not committed) |
-| JSX | **Composables** — `@Composable fun X() { ... }` — same idea, render functions |
-| `useState` | `remember { mutableStateOf(...) }` |
-| `useEffect` | `LaunchedEffect(key) { ... }` |
-| Context API | Hilt dependency injection (much more like Inversify or NestJS DI) |
-| Tailwind classes | `Modifier` chains: `Modifier.padding(16.dp).background(...)` |
-| CSS variables | Theme tokens: `MaterialTheme.colorScheme.primary`, `NeoColors.Base` |
-| Server actions | Use cases — `domain/usecase/{Verb}{Noun}UseCase.kt` |
-| API routes (`/api/...`) | Repositories + DAOs (Room SQL queries on-device) |
-| Database (Postgres / Mongo) | **Room** — local SQLite. There is no remote DB; everything is on the phone. |
-| `localStorage` | **DataStore Preferences** — typed key-value, on-device |
-| Cookies / sessions | None — single-user offline app |
-| Server components | Background workers (`WorkManager`) for sync / backup / update checks |
-| Vercel / Netlify | Sideloaded APK from a website. No hosting platform. |
-| `vercel.json` | None |
-| `next build` | `./gradlew assembleRelease` |
-| `next start` (production) | An installed signed APK on the user's phone |
+| React / Next.js                 | Android / callNest                                                                                              |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                   | `./gradlew installDebug` (one-shot install on phone), then **Live Edit** for incremental updates                |
+| Browser at `localhost:3000`     | A real Android phone plugged in via USB, or an emulator (Android Virtual Device)                                |
+| Chrome DevTools console         | **Logcat** in Android Studio (View → Tool Windows → Logcat)                                                     |
+| `console.log("...")`            | `Timber.d("...")` — already imported throughout this project                                                    |
+| `console.error(err)`            | `Timber.e(err, "message")`                                                                                      |
+| React DevTools (component tree) | **Layout Inspector** (Tools → Layout Inspector)                                                                 |
+| Network tab                     | **Network Inspector** in App Inspection — but callNest is offline-first, so almost nothing here                 |
+| `package.json`                  | `app/build.gradle.kts` (per-module) + `gradle/libs.versions.toml` (version catalog)                             |
+| `node_modules/`                 | `~/.gradle/caches/` — shared across projects, ~500 MB                                                           |
+| `npm install`                   | First `./gradlew assembleDebug` (downloads everything)                                                          |
+| `tsconfig.json`                 | None per se — `build.gradle.kts` has the same role plus more                                                    |
+| `.env`                          | Mostly `BuildConfig.X` fields declared in `build.gradle.kts`; secrets via `keystore.properties` (not committed) |
+| JSX                             | **Composables** — `@Composable fun X() { ... }` — same idea, render functions                                   |
+| `useState`                      | `remember { mutableStateOf(...) }`                                                                              |
+| `useEffect`                     | `LaunchedEffect(key) { ... }`                                                                                   |
+| Context API                     | Hilt dependency injection (much more like Inversify or NestJS DI)                                               |
+| Tailwind classes                | `Modifier` chains: `Modifier.padding(16.dp).background(...)`                                                    |
+| CSS variables                   | Theme tokens: `MaterialTheme.colorScheme.primary`, `NeoColors.Base`                                             |
+| Server actions                  | Use cases — `domain/usecase/{Verb}{Noun}UseCase.kt`                                                             |
+| API routes (`/api/...`)         | Repositories + DAOs (Room SQL queries on-device)                                                                |
+| Database (Postgres / Mongo)     | **Room** — local SQLite. There is no remote DB; everything is on the phone.                                     |
+| `localStorage`                  | **DataStore Preferences** — typed key-value, on-device                                                          |
+| Cookies / sessions              | None — single-user offline app                                                                                  |
+| Server components               | Background workers (`WorkManager`) for sync / backup / update checks                                            |
+| Vercel / Netlify                | Sideloaded APK from a website. No hosting platform.                                                             |
+| `vercel.json`                   | None                                                                                                            |
+| `next build`                    | `./gradlew assembleRelease`                                                                                     |
+| `next start` (production)       | An installed signed APK on the user's phone                                                                     |
 
 ## Mental model: "this app is more like an Electron app than a Next.js app"
 
-CallVault is a **single-user, single-device, offline-first** app. The user's phone is the entire stack:
+callNest is a **single-user, single-device, offline-first** app. The user's phone is the entire stack:
 
 - The "frontend" is Compose UI.
 - The "backend" is also on the phone — Room (SQLite), DataStore, `WorkManager`, ContentProvider reads of the device's call log and contacts.

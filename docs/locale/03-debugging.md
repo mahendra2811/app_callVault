@@ -13,7 +13,7 @@ Android Studio → **View → Tool Windows → Logcat** (or Cmd+6 / Alt+6).
 In the filter box, paste:
 
 ```
-package:com.callvault.app
+package:com.callNest.app
 ```
 
 That filters to only your app's logs.
@@ -36,18 +36,18 @@ Don't use `println` or `Log.d`. Always Timber.
 
 ### Useful filters
 
-| Filter | What you see |
-|--------|--------------|
-| `package:com.callvault.app` | All CallVault logs |
-| `package:com.callvault.app level:ERROR` | Only errors and crashes |
-| `package:com.callvault.app tag:CallSyncWorker` | Just the sync worker |
-| `package:com.callvault.app & "TelephonyCallback"` | String search |
+| Filter                                           | What you see            |
+| ------------------------------------------------ | ----------------------- |
+| `package:com.callNest.app`                       | All callNest logs       |
+| `package:com.callNest.app level:ERROR`           | Only errors and crashes |
+| `package:com.callNest.app tag:CallSyncWorker`    | Just the sync worker    |
+| `package:com.callNest.app & "TelephonyCallback"` | String search           |
 
 ### CLI alternative
 
 ```bash
 adb logcat -c                                     # clear buffer
-adb logcat -s "CallVault:*" "AndroidRuntime:E"   # tail forever
+adb logcat -s "callNest:*" "AndroidRuntime:E"   # tail forever
 ```
 
 ## React DevTools equivalent — Layout Inspector
@@ -55,7 +55,7 @@ adb logcat -s "CallVault:*" "AndroidRuntime:E"   # tail forever
 **Tools → Layout Inspector**.
 
 1. With the app running on a phone/emulator, click "Start a new live inspection."
-2. Pick `com.callvault.app`.
+2. Pick `com.callNest.app`.
 3. You see a tree of every Composable currently on screen, with its state.
 
 Roughly equivalent to React DevTools' "Components" tab. You can:
@@ -66,9 +66,9 @@ Roughly equivalent to React DevTools' "Components" tab. You can:
 
 ## Database Inspector
 
-CallVault stores everything in a local SQLite database called `callvault.db`. To browse it live:
+callNest stores everything in a local SQLite database called `callNest.db`. To browse it live:
 
-**Tools → App Inspection → Database Inspector → pick `com.callvault.app` → `callvault.db`.**
+**Tools → App Inspection → Database Inspector → pick `com.callNest.app` → `callNest.db`.**
 
 You can:
 
@@ -96,7 +96,7 @@ This is the equivalent of opening DBeaver or pgAdmin against your local Postgres
 
 ## The Network tab equivalent
 
-CallVault is **offline-first**. The only outbound network call is to a `versions.json` URL for self-update. So the network inspector mostly just sits there.
+callNest is **offline-first**. The only outbound network call is to a `versions.json` URL for self-update. So the network inspector mostly just sits there.
 
 If you do need it:
 
@@ -107,6 +107,7 @@ If you do need it:
 Same panel, third tab: **Background Task Inspector**.
 
 Shows every WorkManager job:
+
 - `CallSyncWorker` — the call-log sync (every 15 min by default).
 - `DailyBackupWorker` — 2 AM daily.
 - `UpdateCheckWorker` — weekly.
@@ -138,19 +139,19 @@ Logcat shows a stack trace starting with `FATAL EXCEPTION`. The line numbers in 
 
 Common patterns to look for:
 
-| Stack trace top says… | Usually means |
-|-----------------------|---------------|
-| `SecurityException` in CallLog or Contacts | A permission isn't granted. Check Settings → Apps → CallVault → Permissions. |
-| `IllegalStateException: Cannot find ...` | Hilt graph misconfigured. Look for missing `@Inject` or `@Provides`. |
-| `NullPointerException` deep in Compose | A `mutableStateOf(null)` consumer didn't handle null. |
-| Worker `Result.failure()` | Check the worker's body in Logcat — the `Timber.e(...)` will tell you. |
-| `ANR` (App Not Responding) | You blocked the main thread. Wrap heavy work in `Dispatchers.IO` via coroutines. |
+| Stack trace top says…                      | Usually means                                                                    |
+| ------------------------------------------ | -------------------------------------------------------------------------------- |
+| `SecurityException` in CallLog or Contacts | A permission isn't granted. Check Settings → Apps → callNest → Permissions.      |
+| `IllegalStateException: Cannot find ...`   | Hilt graph misconfigured. Look for missing `@Inject` or `@Provides`.             |
+| `NullPointerException` deep in Compose     | A `mutableStateOf(null)` consumer didn't handle null.                            |
+| Worker `Result.failure()`                  | Check the worker's body in Logcat — the `Timber.e(...)` will tell you.           |
+| `ANR` (App Not Responding)                 | You blocked the main thread. Wrap heavy work in `Dispatchers.IO` via coroutines. |
 
 ## Common things to check when stuff doesn't work
 
-- **App permissions**: Settings → Apps → CallVault → Permissions. Did the user deny call log or contacts?
-- **Overlay permission** (for the floating bubble): Settings → Apps → CallVault → "Display over other apps".
-- **Battery whitelist** (for the foreground service to stay alive): Settings → Battery → "Don't optimize" for CallVault. Many OEMs need extra steps — see `app/src/main/assets/docs/12-oem-battery.md`.
+- **App permissions**: Settings → Apps → callNest → Permissions. Did the user deny call log or contacts?
+- **Overlay permission** (for the floating bubble): Settings → Apps → callNest → "Display over other apps".
+- **Battery whitelist** (for the foreground service to stay alive): Settings → Battery → "Don't optimize" for callNest. Many OEMs need extra steps — see `app/src/main/assets/docs/12-oem-battery.md`.
 - **Database state**: open Database Inspector and verify rows exist where you expect.
 - **DataStore state**: in Database Inspector, browse `Preferences` (it's a sub-tab). All settings live there.
 
