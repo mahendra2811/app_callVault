@@ -290,7 +290,13 @@ class SettingsDataStore @Inject constructor(
         val K_DEMO_SEED_DISMISSED = booleanPreferencesKey("demoSeedDismissedOnce")
         val K_AI_DIGEST = booleanPreferencesKey("aiDigestEnabled")
         val K_ANTHROPIC_API_KEY = stringPreferencesKey("anthropicApiKey")
+        val K_HAS_USED_ACCOUNT = booleanPreferencesKey("hasUsedAccount")
     }
+
+    /** Set true after the first successful sign-in/sign-up. Returning signed-out users skip
+     *  the Welcome picker and go straight to Login. */
+    val hasUsedAccount: Flow<Boolean> = ds.data.read(K_HAS_USED_ACCOUNT, false)
+    suspend fun setHasUsedAccount(v: Boolean) = write(K_HAS_USED_ACCOUNT, v)
 
     /** User-added message templates as a JSON array of `{id,label,body}`. Built-ins are NOT stored here. */
     val messageTemplatesJson: Flow<String> = ds.data.read(K_MESSAGE_TEMPLATES_JSON, "[]")

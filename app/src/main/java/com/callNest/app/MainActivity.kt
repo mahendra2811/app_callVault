@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.callNest.app.data.auth.AppLockState
 import com.callNest.app.data.auth.SupabaseClientProvider
@@ -28,10 +27,8 @@ import io.github.jan.supabase.auth.handleDeeplinks
 import com.callNest.app.ui.theme.CallNestTheme
 import com.callNest.app.ui.theme.SageColors
 import com.callNest.app.util.PermissionManager
-import com.callNest.app.util.SplashGate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 /**
@@ -45,7 +42,6 @@ import javax.inject.Inject
 class MainActivity : FragmentActivity() {
 
     @Inject lateinit var permissionManager: PermissionManager
-    @Inject lateinit var splashGate: SplashGate
     @Inject lateinit var driveAuthManager: DriveAuthManager
     @Inject lateinit var supabase: SupabaseClientProvider
     @Inject lateinit var appLockState: AppLockState
@@ -54,15 +50,8 @@ class MainActivity : FragmentActivity() {
     private val deepLinkChannel = Channel<String>(capacity = 4, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
-        splashScreen.setKeepOnScreenCondition { !splashGate.isReady.value }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // After 800ms, hand off the system splash to the in-app Compose splash.
-        lifecycleScope.launch {
-            delay(800)
-            splashGate.markReady()
-        }
         resolveInitialDeepLink(intent)?.let { deepLinkChannel.trySend(it) }
         if (intent?.isSupabaseAuthLink() == true) {
             supabase.client.handleDeeplinks(intent)

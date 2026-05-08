@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.ui.res.painterResource
+import com.callNest.app.R
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,7 +65,7 @@ fun ActionBar(
             }
         )
         NeoIconButton(
-            icon = Icons.AutoMirrored.Filled.Chat,
+            painter = painterResource(R.drawable.ic_whatsapp),
             contentDescription = "WhatsApp",
             onClick = { quickReplyOpen = true },
         )

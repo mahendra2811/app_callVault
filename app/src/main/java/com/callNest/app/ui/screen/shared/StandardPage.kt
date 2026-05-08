@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.callNest.app.ui.components.neo.NeoCard
 import com.callNest.app.ui.components.neo.NeoIconButton
 import com.callNest.app.ui.components.neo.NeoPageHeader
@@ -112,11 +113,9 @@ fun StandardPage(
                 modifier = Modifier
                     .fillMaxSize()
                     .then(if (scrollable) Modifier.verticalScroll(scrollState) else Modifier)
-                    .padding(
-                        horizontal = Spacing.PageHorizontal,
-                        vertical = Spacing.SectionGap
-                    ),
-                verticalArrangement = Arrangement.spacedBy(Spacing.SectionGap),
+                    .padding(horizontal = Spacing.PageHorizontal)
+                    .padding(top = Spacing.Xs, bottom = 0.dp),
+                verticalArrangement = Arrangement.spacedBy(Spacing.Lg),
                 content = content
             )
         }

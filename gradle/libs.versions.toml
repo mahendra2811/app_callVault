@@ -38,6 +38,7 @@ posthog = "3.7.4"
 firebaseBom = "33.7.0"
 googleServices = "4.4.2"
 biometric = "1.1.0"
+sentry = "7.18.0"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -125,8 +126,11 @@ posthog-android = { module = "com.posthog:posthog-android", version.ref = "posth
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+
+sentry-android = { module = "io.sentry:sentry-android", version.ref = "sentry" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

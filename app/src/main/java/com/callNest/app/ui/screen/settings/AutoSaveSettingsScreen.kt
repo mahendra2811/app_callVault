@@ -143,13 +143,8 @@ private fun AutoSaveSettingsContent(
                 NeoToggle(checked = state.includeSimTag, onChange = onIncludeSimTag)
             }
 
-            // Suffix
-            NeoTextField(
-                value = state.suffix,
-                onChange = onSuffix,
-                label = stringResource(R.string.auto_save_suffix_label),
-                placeholder = stringResource(R.string.auto_save_suffix_hint)
-            )
+            // Suffix is brand-locked to "callNest" and applied silently when saving;
+            // no UI surface anymore. (See AutoSaveContactUseCase.BRAND_SUFFIX.)
 
             // Live preview
             NeoSurface(

@@ -15,6 +15,7 @@ import com.callNest.app.data.work.DailySummaryWorker
 import com.callNest.app.data.work.StaleLeadNudgeWorker
 import com.callNest.app.util.RealTimeServiceController
 import dagger.hilt.android.HiltAndroidApp
+import io.sentry.android.core.SentryAndroid
 import javax.inject.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.first
@@ -58,6 +59,7 @@ class CallNestApp : Application(), Configuration.Provider {
         MainScope().launch {
             settingsDataStore.analyticsConsent.collect { granted ->
                 analytics.setConsent(granted)
+                if (granted) initSentryIfConfigured()
             }
         }
         pushTokenSync.start()
@@ -89,6 +91,24 @@ class CallNestApp : Application(), Configuration.Provider {
                 Timber.w(t, "RealTime service evaluate failed at startup")
             }
         }
+    }
+
+    @Volatile private var sentryInited = false
+    private fun initSentryIfConfigured() {
+        if (sentryInited) return
+        val dsn = BuildConfig.SENTRY_DSN
+        if (dsn.isBlank()) return
+        runCatching {
+            SentryAndroid.init(this) { opts ->
+                opts.dsn = dsn
+                opts.isDebug = BuildConfig.DEBUG
+                opts.environment = if (BuildConfig.DEBUG) "debug" else "release"
+                opts.release = "${BuildConfig.APPLICATION_ID}@${BuildConfig.VERSION_NAME}+${BuildConfig.VERSION_CODE}"
+                opts.tracesSampleRate = 0.0
+                opts.isSendDefaultPii = false
+            }
+            sentryInited = true
+        }.onFailure { Timber.w(it, "Sentry init failed") }
     }
 
     private fun registerNotificationChannels(context: Context) {

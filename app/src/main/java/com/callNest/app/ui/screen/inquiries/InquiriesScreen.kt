@@ -169,8 +169,14 @@ fun InquiriesScreen(
     }
 
     convertTarget?.let { target ->
+        // The auto-save format embeds the brand prefix + SIM tag; strip those before
+        // showing the user a "rename" prompt — they want a clean starting point, not chrome.
+        val cleanInitial = (target.displayName ?: target.normalizedNumber)
+            .substringAfterLast('|')
+            .trim()
+            .ifEmpty { target.normalizedNumber }
         ConvertDialog(
-            initialName = target.displayName ?: target.normalizedNumber,
+            initialName = cleanInitial,
             onCancel = { convertTarget = null },
             onConfirm = { newName ->
                 viewModel.convert(target.normalizedNumber, newName)

@@ -2,6 +2,34 @@
 
 All notable changes to callNest are documented in this file.
 
+## [1.0.0] — First signed release (2026-05-08)
+
+### Built
+- Signed release APK at `~/Releases/CallNest-1.0.0.apk`. Size **21 MB** (22,337,523 bytes). SHA-256 `7bf3eb60b72b91fd8699d901ce96b045dace7efd05fec5e649830f3317032cf3`. Verified launches on device.
+
+### Fixed (release-build blockers)
+- **Manifest lint vital**: `WorkManagerInitializer` removed via `tools:node="remove"` since `CallNestApp` implements `Configuration.Provider`. Was blocking `lintVitalRelease` / `assembleRelease`.
+- **Sentry auto-init crash**: `SentryInitProvider` ContentProvider was running before `CallNestApp.onCreate` and throwing `IllegalArgumentException: DSN is required` because `SENTRY_DSN` is blank. Disabled via `<meta-data android:name="io.sentry.auto-init" android:value="false" />`. Manual init in `CallNestApp.initSentryIfConfigured()` is now the only path.
+- **R8 OOM**: bumped `org.gradle.jvmargs` to `-Xmx6144m -XX:MaxMetaspaceSize=1024m` (was 2 GB; insufficient for R8 + Compose + POI + iText).
+- **R8 missing classes**: added `-dontwarn` rules in `proguard-rules.pro` for `org.osgi.**`, `aQute.bnd.annotation.**`, `org.apache.logging.log4j.**`, `com.microsoft.schemas.**`, `com.graphbuilder.**`, `java.awt.**`, `javax.imageio.**`, `org.slf4j.**`, `javax.servlet.**`, `org.conscrypt.**`, `org.bouncycastle.**`, `org.openjsse.**`, `org.brotli.dec.**`, `com.github.luben.zstd.**`, `io.sentry.**`. All transitive references in POI / iText / Sentry that don't ship on Android.
+- **Manifest URLs** updated from placeholder `callNest.app/dl/...` to `callnest.pooniya.com/...` for `UPDATE_MANIFEST_STABLE_URL`, `UPDATE_MANIFEST_BETA_URL`, and the `versions-stable.json` `url` field in `scripts/release.sh`.
+
+### Decisions
+- **`applicationId` kept as `com.callvault.app`** (legacy from before brand rename). Changing to `com.callNest.app` would require regenerating Firebase / FCM project credentials. Package name is invisible to users (only the `app_name` "Call Nest" shows). Will revisit if a future Firebase project gets created from scratch.
+
+## [Unreleased] — Release prep batch (2026-05-08)
+
+### Added
+
+- **`scripts/release.sh`** — one-shot signed-build script. Validates `keystore.properties`, supports `--bump-{patch,minor,major}` / `--version X.Y.Z`, runs `./gradlew clean assembleRelease`, copies APK to `~/Releases/CallNest-<version>.apk`, generates `versions-stable.json` (versionCode/Name, sha256, size, releaseNotes from CHANGELOG) for the in-app self-update mechanism.
+- **Sentry crash reporting** (consent-gated). New `SENTRY_DSN` BuildConfig field sourced from env / `local.properties`. `CallNestApp.initSentryIfConfigured()` runs only when `analyticsConsent` is true and the DSN is non-blank; sets `release` to `applicationId@versionName+versionCode`, `tracesSampleRate=0`, `isSendDefaultPii=false`. Library: `io.sentry:sentry-android:7.18.0`.
+- **`docs/privacy-policy.html`** — DPDP-friendly hosted privacy policy. Discloses every data flow (Supabase email/auth, opt-in PostHog + Sentry, FCM token, Anthropic BYOK, on-device call log/contacts, Drive backup), permissions explained, grievance officer named. Drop-in for GitHub Pages / Cloudflare Pages.
+- **`.github/workflows/release.yml`** — GitHub Actions CI. Triggers on `git tag v*` push: decodes keystore from `KEYSTORE_BASE64` secret, runs signed `assembleRelease`, attaches `CallNest-<version>.apk` + sha256 to a GitHub Release. Required secrets documented in `RELEASE-PLAN.md`.
+
+### Changed
+
+- **`assets/docs/15-privacy.md`** rewritten to match the hosted policy. Now correctly discloses Supabase auth, FCM, opt-in Sentry/PostHog analytics, and Anthropic BYOK — was previously stale ("no telemetry SDK in the build").
+
 ## [Unreleased] — All four deferrals shipped (2026-05-07)
 
 ### Added

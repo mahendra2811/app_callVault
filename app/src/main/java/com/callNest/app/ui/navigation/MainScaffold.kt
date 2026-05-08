@@ -265,7 +265,7 @@ fun MainScaffold(
                     .fillMaxWidth()
                     .background(SageColors.Canvas)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .padding(horizontal = 12.dp).padding(top = 0.dp, bottom = 2.dp)
             ) {
                 NeoTabBar(
                     tabs = neoTabs,
@@ -405,7 +405,19 @@ fun MainScaffold(
                         val authViewModel: AuthViewModel = hiltViewModel()
                         MoreScreen(
                             navController = rootNavController,
-                            onSignOut = { authViewModel.signOut() }
+                            onSignOut = {
+                                // Fire VM (clears Supabase session, resets analytics, etc.)
+                                authViewModel.signOut()
+                                // Optimistically pop everything and land on auth.
+                                // The outer LaunchedEffect on authState would do this too,
+                                // but doing it here avoids the brief flash where the user
+                                // still sees "Main" while sessionStatus propagates.
+                                rootNavController.navigate(
+                                    com.callNest.app.ui.screen.auth.AuthDestinations.GRAPH
+                                ) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
                         )
                     }
                 }

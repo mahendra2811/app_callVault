@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Call Nest — Privacy Policy</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 760px; margin: 0 auto; padding: 24px 18px 64px; line-height: 1.55; color: #1e1f22; }
+  h1 { font-size: 1.85rem; margin-bottom: 0.2rem; }
+  h2 { margin-top: 2rem; font-size: 1.25rem; }
+  .meta { color: #666; margin-bottom: 1.5rem; }
+  code { background: #f1f1f1; padding: 1px 6px; border-radius: 4px; font-size: 0.92em; }
+  ul { padding-left: 1.2rem; }
+  .box { background: #f7f8fa; border-left: 4px solid #68D800; padding: 12px 16px; border-radius: 6px; margin: 1rem 0; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #15171a; color: #e7e9ec; }
+    code { background: #2a2d31; }
+    .box { background: #1d1f23; }
+  }
+</style>
+</head>
+<body>
+<h1>Call Nest — Privacy Policy</h1>
+<p class="meta">Last updated: 2026-05-08 · Effective date: 2026-05-08</p>
+
+<p>Call Nest ("the app", "we") is a sales-call management tool for small business owners. This policy explains what data the app handles, where it goes, and the choices you have. This policy is written to align with India's Digital Personal Data Protection Act, 2023 (DPDP).</p>
+
+<div class="box">
+<strong>Short version.</strong> Most of your data — call log, contacts, notes, tags — never leaves your phone. The only things that go off-device are: your email (for sign-in), an opt-in anonymised crash & analytics signal, and a push token so we can send follow-up reminders. You can turn analytics off, sign out, and delete your account at any time.
+</div>
+
+<h2>1. Data we process on your device</h2>
+<ul>
+  <li><strong>Call log</strong> (<code>READ_CALL_LOG</code>) — Read locally to list, tag, and score inquiry calls. Never uploaded.</li>
+  <li><strong>Contacts</strong> (<code>READ_CONTACTS</code>, <code>WRITE_CONTACTS</code>) — Read to match callers; written only when you enable auto-save of unsaved numbers into a Call Nest contact group.</li>
+  <li><strong>Phone numbers, notes, tags, follow-up dates, lead scores</strong> — Stored in an encrypted on-device database.</li>
+  <li><strong>Backups</strong> — If you enable Drive backup, an encrypted snapshot of your Call Nest data is uploaded to your own Google Drive's app-specific folder. We don't have access to it.</li>
+</ul>
+
+<h2>2. Data that leaves your device</h2>
+<ul>
+  <li><strong>Email + auth token</strong> — When you sign in, your email is stored at our auth provider, <a href="https://supabase.com/privacy">Supabase</a>, to identify your account.</li>
+  <li><strong>FCM push token</strong> — A device-specific token from <a href="https://firebase.google.com/support/privacy">Firebase Cloud Messaging</a> is stored against your account so we can deliver follow-up reminders. The token is not personally identifying on its own.</li>
+  <li><strong>Crash reports & analytics (opt-in)</strong> — Disabled by default. If you enable "Help improve Call Nest" in Settings, anonymised crash stack traces (via <a href="https://sentry.io/privacy/">Sentry</a>) and screen-level usage events (via <a href="https://posthog.com/privacy">PostHog</a>) are sent. We do not send phone numbers, contact names, notes, or call content. You can turn this off any time.</li>
+  <li><strong>AI features (BYOK, optional)</strong> — Some AI features (e.g. weekly digest summaries) require you to paste your own Anthropic API key. When you use them, the relevant text is sent directly from your device to Anthropic. We never see this data. Your API key is stored encrypted on your device.</li>
+</ul>
+
+<h2>3. What we don't do</h2>
+<ul>
+  <li>We do not sell or rent your data.</li>
+  <li>We do not upload your call log, contacts, or notes to our servers.</li>
+  <li>We do not run ads, ad SDKs, or third-party trackers beyond the opt-in analytics named above.</li>
+  <li>We do not attempt to identify you across other apps or websites.</li>
+</ul>
+
+<h2>4. Permissions, explained</h2>
+<ul>
+  <li><code>READ_CALL_LOG</code> — Required for the core feature: listing your calls.</li>
+  <li><code>READ_CONTACTS</code> / <code>WRITE_CONTACTS</code> — To match callers and (optionally) auto-save unsaved numbers.</li>
+  <li><code>READ_PHONE_STATE</code> — To detect SIM slot for tagging.</li>
+  <li><code>POST_NOTIFICATIONS</code> — Follow-up reminders, hot-lead alerts.</li>
+  <li><code>SYSTEM_ALERT_WINDOW</code> — Optional. The floating in-call bubble that shows caller context.</li>
+  <li><code>FOREGROUND_SERVICE</code> — Real-time call detection.</li>
+  <li><code>USE_BIOMETRIC</code> — Optional app-lock with fingerprint / device PIN.</li>
+  <li><code>INTERNET</code> — Sign-in, push token registration, opt-in analytics, optional AI calls, self-update check.</li>
+</ul>
+
+<h2>5. Retention</h2>
+<p>On-device data lives until you delete the app or clear its data. Server-side data (email, push token) is retained while your account is active. When you delete your account, we delete it from our auth provider and the linked push tokens within 30 days.</p>
+
+<h2>6. Your rights (DPDP)</h2>
+<ul>
+  <li><strong>Access</strong> — Most of your data already lives on your device; export it anytime via Settings → Backup or via Excel/CSV/PDF export.</li>
+  <li><strong>Correction & deletion</strong> — Edit or delete any record on-device. Account deletion request via the email below clears server-side data.</li>
+  <li><strong>Withdraw consent</strong> — Turn off "Help improve Call Nest" in Settings to stop analytics & crash reports.</li>
+  <li><strong>Grievance officer</strong> — As required by §10 of the DPDP, complaints can be addressed to the contact below; we will acknowledge within 7 days.</li>
+</ul>
+
+<h2>7. Security</h2>
+<p>On-device data is stored in an encrypted Room database. Sensitive secrets (e.g. Anthropic API key) are stored using <code>EncryptedSharedPreferences</code> (Android Keystore-backed AES-256-GCM). Network traffic uses TLS 1.2+.</p>
+
+<h2>8. Children</h2>
+<p>Call Nest is not directed at children under 18 and we do not knowingly collect data from them.</p>
+
+<h2>9. Changes to this policy</h2>
+<p>We will update this page if we change how data is handled. Material changes will be announced inside the app on next launch.</p>
+
+<h2>10. Contact</h2>
+<p>
+  Grievance Officer: <strong>Mahendra Puniya</strong><br/>
+  Email: <a href="mailto:mahendra.puniya@primathon.in">mahendra.puniya@primathon.in</a><br/>
+  Address: Primathon, India.
+</p>
+
+</body>
+</html>

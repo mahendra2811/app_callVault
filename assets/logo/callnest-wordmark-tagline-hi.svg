@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="800" height="240">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&amp;family=Hind:wght@500;600&amp;display=swap');
+      .wm  { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+             font-weight: 700; font-size: 110px; letter-spacing: -3px; fill: #1F2937; }
+      .tag { font-family: 'Hind', 'Plus Jakarta Sans', system-ui, sans-serif;
+             font-weight: 500; font-size: 26px; letter-spacing: 0.2px; fill: #6B7280; }
+    </style>
+  </defs>
+  <circle cx="438" cy="42" r="10" fill="#68D800"/>
+  <text x="60" y="135" class="wm">callNest</text>
+  <line x1="60" y1="170" x2="120" y2="170" stroke="#68D800" stroke-width="3" stroke-linecap="round"/>
+  <text x="60" y="212" class="tag">हर कॉल — एक मौका।</text>
+</svg>

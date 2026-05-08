@@ -59,3 +59,27 @@
 
 # --- Project entities ---
 -keep class com.callNest.app.data.local.entity.** { *; }
+
+# --- Apache POI / log4j2 transitive references that don't ship on Android ---
+-dontwarn org.osgi.**
+-dontwarn aQute.bnd.annotation.**
+-dontwarn org.apache.logging.log4j.**
+-dontwarn org.brotli.dec.**
+-dontwarn com.github.luben.zstd.**
+
+# --- Sentry (auto-init disabled in manifest, but keep classes referenced via reflection) ---
+-keep class io.sentry.** { *; }
+-dontwarn io.sentry.**
+
+# --- Supabase / Ktor / OkHttp transitive optional deps ---
+-dontwarn org.slf4j.**
+-dontwarn javax.servlet.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
+
+# --- POI VML / extra Microsoft schema classes pruned out of poi-ooxml-lite ---
+-dontwarn com.microsoft.schemas.**
+-dontwarn com.graphbuilder.**
+-dontwarn java.awt.**
+-dontwarn javax.imageio.**

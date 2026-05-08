@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -55,6 +56,39 @@ fun NeoIconButton(
                 imageVector = icon,
                 contentDescription = contentDescription,
                 tint = if (enabled) SageColors.TextPrimary else SageColors.TextTertiary
+            )
+        }
+    }
+}
+
+/** Painter overload — for brand assets like the WhatsApp glyph that aren't in `Icons.*`. */
+@Composable
+fun NeoIconButton(
+    painter: Painter,
+    onClick: () -> Unit,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    size: Dp = 48.dp,
+    enabled: Boolean = true,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    NeoSurface(
+        modifier = modifier
+            .size(size)
+            .clickable(
+                enabled = enabled,
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            ),
+        shape = CircleShape,
+        color = SageColors.Surface,
+    ) {
+        Box(modifier = Modifier.padding(12.dp), contentAlignment = Alignment.Center) {
+            Icon(
+                painter = painter,
+                contentDescription = contentDescription,
+                tint = if (enabled) SageColors.TextPrimary else SageColors.TextTertiary,
             )
         }
     }

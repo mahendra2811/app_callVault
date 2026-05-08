@@ -74,7 +74,7 @@ fun SplashScreen(
             )
         } else {
             Image(
-                painter = painterResource(R.drawable.cv_logo),
+                painter = painterResource(R.drawable.ic_callnest_logo),
                 contentDescription = stringResource(R.string.cv_splash_brand),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(160.dp),
@@ -94,7 +94,7 @@ private fun SplashScreenPreview() {
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painter = painterResource(R.drawable.cv_logo),
+                painter = painterResource(R.drawable.ic_callnest_logo),
                 contentDescription = stringResource(R.string.cv_splash_brand),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(160.dp),

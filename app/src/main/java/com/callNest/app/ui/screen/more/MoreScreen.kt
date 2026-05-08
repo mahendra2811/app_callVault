@@ -89,6 +89,9 @@ fun MoreScreen(
         MoreRow("🏷️", "Tags", IconTagsTint) { navController.navigate(Destinations.Tags.route) }
     )
     val automation = listOf(
+        MoreRow("💬", stringResource(R.string.quickreply_manage), IconCallsTint) {
+            navController.navigate(Destinations.Templates.route)
+        },
         MoreRow("🪄", "Auto-tag rules", IconTagsTint) { navController.navigate(Destinations.AutoTagRules.route) },
         MoreRow("🎯", "Lead scoring", IconStatsTint) { navController.navigate(Destinations.LeadScoringSettings.route) },
         MoreRow("✨", "Real-time features", IconCallsTint) { navController.navigate(Destinations.RealTimeSettings.route) },
@@ -175,7 +178,7 @@ private fun MoreRowView(row: MoreRow) {
         onClick = row.onClick
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 0.5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             NeoSurface(

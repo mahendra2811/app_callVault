@@ -34,6 +34,7 @@ sealed interface AuthEvent {
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val analytics: AnalyticsTracker,
+    private val settings: com.callNest.app.data.prefs.SettingsDataStore,
 ) : ViewModel() {
 
     private val eventChannel = Channel<AuthEvent>(capacity = 8, onBufferOverflow = BufferOverflow.DROP_OLDEST)
@@ -48,6 +49,7 @@ class AuthViewModel @Inject constructor(
     fun signIn(email: String, password: String) = launchOp {
         authRepository.signInWithEmail(email.trim(), password)
             .onSuccess {
+                settings.setHasUsedAccount(true)
                 analytics.identifyOnSignIn(authState.value)
                 analytics.track("auth_sign_in_success")
                 eventChannel.trySend(AuthEvent.SignedIn)
@@ -57,6 +59,7 @@ class AuthViewModel @Inject constructor(
     fun signUp(email: String, password: String, displayName: String?) = launchOp {
         authRepository.signUpWithEmail(email.trim(), password, displayName?.trim())
             .onSuccess {
+                settings.setHasUsedAccount(true)
                 analytics.track("auth_sign_up_success")
                 eventChannel.trySend(AuthEvent.SignedUp)
             }.onFailure { fail("auth_sign_up_failure", it) }

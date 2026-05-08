@@ -63,7 +63,7 @@ fun FirstSyncPage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 32.dp),
+            .padding(horizontal = 24.dp).padding(top = 4.dp, bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -90,11 +90,24 @@ fun FirstSyncPage(
                 )
             }
             done -> {
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(R.drawable.ic_callnest_logo),
+                    contentDescription = null,
+                    modifier = Modifier.height(120.dp),
+                )
+                Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.onboarding_first_sync_done),
                     color = NeoColors.OnBase,
                     style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.brand_tagline),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
                 )
             }
             else -> {

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 180" width="800" height="180">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap');
+      .wm { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            font-weight: 700; font-size: 110px; letter-spacing: -3px; fill: #1F2937; }
+    </style>
+  </defs>
+  <!-- Brand-green dot above the N — accent dot mirrors the call-dot motif from the logo -->
+  <circle cx="438" cy="42" r="10" fill="#68D800"/>
+  <text x="60" y="135" class="wm">callNest</text>
+</svg>

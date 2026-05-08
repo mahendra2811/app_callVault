@@ -3,6 +3,7 @@ package com.callNest.app.ui.components.neo
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -59,29 +60,43 @@ fun NeoButton(
         NeoButtonVariant.Tertiary -> com.callNest.app.ui.theme.SageColors.TextSecondary
     }
     val fillColor: Color = when (variant) {
+        NeoButtonVariant.Primary -> com.callNest.app.ui.theme.SageColors.TextPrimary
         NeoButtonVariant.Tertiary -> com.callNest.app.ui.theme.SageColors.Canvas
         else -> com.callNest.app.ui.theme.SageColors.Surface
     }
+    val effectiveLabelColor: Color = when (variant) {
+        NeoButtonVariant.Primary -> com.callNest.app.ui.theme.SageColors.Surface
+        else -> labelColor
+    }
+    val borderColor: Color = when (variant) {
+        NeoButtonVariant.Primary -> com.callNest.app.ui.theme.SageColors.TextPrimary
+        NeoButtonVariant.Secondary -> com.callNest.app.ui.theme.SageColors.TextSecondary
+        NeoButtonVariant.Tertiary -> com.callNest.app.ui.theme.SageColors.TextTertiary
+    }
+    val shape = RoundedCornerShape(14.dp)
 
     NeoSurface(
         modifier = modifier
-            .clickable(enabled = enabled, onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
+            .clickable(enabled = enabled, onClick = onClick)
+            .border(width = 1.5.dp, color = borderColor, shape = shape),
+        shape = shape,
         color = fillColor
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             if (icon != null) {
-                Icon(imageVector = icon, contentDescription = null, tint = labelColor)
+                Icon(imageVector = icon, contentDescription = null, tint = effectiveLabelColor)
                 Spacer(modifier = Modifier.width(8.dp))
             }
             Text(
                 text = text,
-                color = if (enabled) labelColor else com.callNest.app.ui.theme.SageColors.TextTertiary,
-                style = MaterialTheme.typography.labelLarge
+                color = if (enabled) effectiveLabelColor else com.callNest.app.ui.theme.SageColors.TextTertiary,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                )
             )
         }
     }

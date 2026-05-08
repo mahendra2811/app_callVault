@@ -60,7 +60,8 @@ class AutoSaveContactUseCase @Inject constructor(
 
         val prefix = settings.autoSavePrefix.first()
         val includeSimTag = settings.autoSaveIncludeSimTag.first()
-        val suffix = settings.autoSaveSuffix.first()
+        // Brand-locked suffix; user-editable suffix UI was retired. Stored value is ignored.
+        val suffix = BRAND_SUFFIX
         val phoneLabel = settings.autoSavePhoneLabel.first()
         val phoneLabelCustom = settings.autoSavePhoneLabelCustom.first()
         val groupName = settings.autoSaveContactGroupName.first()
@@ -151,4 +152,9 @@ class AutoSaveContactUseCase @Inject constructor(
             source = null,
             updatedAt = now
         )
+
+    companion object {
+        /** Suffix appended to every auto-saved contact name. Locked to the app brand. */
+        const val BRAND_SUFFIX = "callNest"
+    }
 }

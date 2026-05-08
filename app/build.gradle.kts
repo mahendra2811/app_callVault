@@ -36,7 +36,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.callNest.app"
+        applicationId = "com.callvault.app"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -52,12 +52,12 @@ android {
         buildConfigField(
             "String",
             "UPDATE_MANIFEST_STABLE_URL",
-            "\"https://callNest.app/dl/versions-stable.json\""
+            "\"https://callnest.pooniya.com/versions-stable.json\""
         )
         buildConfigField(
             "String",
             "UPDATE_MANIFEST_BETA_URL",
-            "\"https://callNest.app/dl/versions-beta.json\""
+            "\"https://callnest.pooniya.com/versions-beta.json\""
         )
 
         buildConfigField("String", "SUPABASE_URL", "\"${envOrLocal("SUPABASE_URL")}\"")
@@ -65,6 +65,7 @@ android {
         buildConfigField("String", "POSTHOG_API_KEY", "\"${envOrLocal("POSTHOG_API_KEY")}\"")
         buildConfigField("String", "POSTHOG_HOST", "\"${envOrLocal("POSTHOG_HOST", "https://us.i.posthog.com")}\"")
         buildConfigField("String", "GOOGLE_OAUTH_WEB_CLIENT_ID", "\"${envOrLocal("GOOGLE_OAUTH_WEB_CLIENT_ID")}\"")
+        buildConfigField("String", "SENTRY_DSN", "\"${envOrLocal("SENTRY_DSN")}\"")
     }
 
     signingConfigs {
@@ -81,7 +82,6 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            applicationIdSuffix = ".debug"
             isDebuggable = true
         }
         release {
@@ -223,8 +223,11 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.analytics)
 
     implementation(libs.androidx.biometric)
+
+    implementation(libs.sentry.android)
 
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)

@@ -30,11 +30,21 @@ fun BulkSaveProgressDialog(
     progress: BulkSaveProgress,
     onDismiss: () -> Unit
 ) {
-    if (progress is BulkSaveProgress.Idle) return
     NeoDialog(
         onDismissRequest = onDismiss,
         body = {
             when (progress) {
+                is BulkSaveProgress.Idle -> {
+                    Text(
+                        text = stringResource(R.string.bulk_save_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = NeoColors.OnBase,
+                    )
+                    Spacer(Modifier.height(Spacing.Md))
+                    androidx.compose.material3.LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 is BulkSaveProgress.Running -> {
                     Text(
                         text = stringResource(R.string.bulk_save_title),
@@ -97,7 +107,6 @@ fun BulkSaveProgressDialog(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                BulkSaveProgress.Idle -> Unit
             }
         }
     )

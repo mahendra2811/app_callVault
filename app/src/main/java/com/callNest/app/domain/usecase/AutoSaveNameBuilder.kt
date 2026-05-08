@@ -4,11 +4,13 @@ package com.callNest.app.domain.usecase
  * Pure function that builds the display name used when auto-saving an
  * unknown caller (spec §8.4).
  *
- * Format: `{prefix}( -s1| -s2)? +<E164>{suffix}`.
+ * Format: `{prefix}( -s1| -s2)? +<E164>( {suffix})?`.
  *
- * Examples (prefix=`callNest`, includeSimTag=true, suffix=`""`):
- * - SIM 1, +919876543210 → `callNest-s1 +919876543210`
- * - No SIM info, +447700900000 → `callNest +447700900000`
+ * A single space separates the number from the suffix when the suffix is non-empty.
+ *
+ * Examples (prefix=`callNest`, includeSimTag=true, suffix=`callNest`):
+ * - SIM 1, +919876543210 → `callNest-s1 +919876543210 callNest`
+ * - No SIM info, +447700900000 → `callNest +447700900000 callNest`
  *
  * Stays a top-level object so it can be unit-tested with zero Android
  * dependencies.
@@ -42,7 +44,10 @@ object AutoSaveNameBuilder {
             append(tag)
             append(' ')
             append(number)
-            if (safeSuffix.isNotEmpty()) append(safeSuffix)
+            if (safeSuffix.isNotEmpty()) {
+                append(' ')
+                append(safeSuffix)
+            }
         }
     }
 

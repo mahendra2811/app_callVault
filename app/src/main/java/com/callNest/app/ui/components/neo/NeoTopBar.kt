@@ -87,7 +87,7 @@ fun NeoTopBar(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.cv_logo),
+                                    painter = painterResource(R.drawable.ic_callnest_logo),
                                     contentDescription = null,
                                     contentScale = ContentScale.Fit,
                                     modifier = Modifier.fillMaxSize()

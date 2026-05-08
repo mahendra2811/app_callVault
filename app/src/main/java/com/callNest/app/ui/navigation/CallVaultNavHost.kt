@@ -108,6 +108,8 @@ fun CallNestNavHost(
 
     val onboardingComplete by settings.onboardingComplete
         .collectAsStateWithLifecycle(initialValue = false)
+    val hasUsedAccount by settings.hasUsedAccount
+        .collectAsStateWithLifecycle(initialValue = false)
     val permState by permissionManager.state.collectAsState()
     val authState by authRepository.state
         .collectAsStateWithLifecycle(initialValue = AuthState.Loading)
@@ -131,10 +133,10 @@ fun CallNestNavHost(
         modifier = modifier
     ) {
         composable(Destinations.Splash.route) {
-            var splashFinished by rememberSaveable { mutableStateOf(false) }
-            SplashScreen(onFinished = { splashFinished = true })
-            LaunchedEffect(splashFinished, authState) {
-                if (splashFinished && authState !is AuthState.Loading) {
+            // Tiny inline loader (logo + ring), no full-screen splash.
+            com.callNest.app.ui.components.LogoLoader()
+            LaunchedEffect(authState) {
+                if (authState !is AuthState.Loading) {
                     val target = if (authState is AuthState.SignedIn) {
                         postLoginRoute()
                     } else {
@@ -153,6 +155,7 @@ fun CallNestNavHost(
                     popUpTo(0) { inclusive = true }
                 }
             },
+            startAtLogin = hasUsedAccount,
         )
         composable(Destinations.Onboarding.route) {
             OnboardingScreen(
@@ -348,11 +351,10 @@ fun CallNestNavHost(
     LaunchedEffect(authState) {
         if (authState is AuthState.SignedOut) {
             val current = navController.currentBackStackEntry?.destination?.route
-            if (current != null &&
-                current != Destinations.Login.route &&
-                current != Destinations.Splash.route
-            ) {
-                navController.navigate(Destinations.Login.route) {
+            // Don't bounce if we're already inside the auth graph or the splash loader.
+            val inAuthGraph = current?.startsWith("auth/") == true || current == AuthDestinations.GRAPH
+            if (current != null && current != Destinations.Splash.route && !inAuthGraph) {
+                navController.navigate(AuthDestinations.GRAPH) {
                     popUpTo(0) { inclusive = true }
                 }
             }

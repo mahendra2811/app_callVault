@@ -76,17 +76,23 @@ fun LockScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(
-            imageVector = Icons.Default.Lock,
+        androidx.compose.foundation.Image(
+            painter = androidx.compose.ui.res.painterResource(
+                id = com.callNest.app.R.drawable.ic_callnest_logo
+            ),
             contentDescription = null,
-            modifier = Modifier.size(72.dp),
-            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(120.dp),
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(4.dp))
         Text(
-            "callNest",
+            "Call Nest",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
+        )
+        Text(
+            stringResource(com.callNest.app.R.string.brand_tagline),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(8.dp))
         Text(

@@ -40,10 +40,12 @@ Last refreshed: 2026-05-01.
 
 ## P3 — Nice-to-haves before public sideload
 
-- [ ] Real privacy policy text (`assets/docs/15-privacy.md`) and terms.
+- [x] Real privacy policy text (`assets/docs/15-privacy.md`) and hosted page (`docs/privacy-policy.html`, also at https://callnest.pooniya.com/privacy). ✅ 2026-05-08.
 - [ ] Real screenshots in `docs/screenshots/`.
-- [ ] ProGuard / R8 release-mode validation.
-- [ ] CI workflow file (`.github/workflows/android.yml`) for `lint + assembleDebug` on push.
+- [ ] ProGuard / R8 release-mode validation (needs keystore — blocked on P0 #2).
+- [x] CI workflow `.github/workflows/release.yml` — signed `assembleRelease` on `v*` tag push, attaches APK to GitHub Release. ✅ 2026-05-08.
+- [x] Release script `scripts/release.sh` — version bump + signed build + `versions-stable.json` for in-app self-update. ✅ 2026-05-08.
+- [x] Sentry crash reporting wired (consent-gated via `analyticsConsent`, no PII, traces=0). ✅ 2026-05-08.
 - [ ] Defensive parsing fuzz tests for update manifest schema.
 - [ ] Remove dead `LazyColumnItemsScopeShim` helper in `StatsScreen.kt` (Sprint 8 leftover; harmless).
 

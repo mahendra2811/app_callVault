@@ -18,10 +18,10 @@ object Spacing {
     val Xxxl = 48.dp
 
     /** Horizontal padding applied to every screen body. */
-    val PageHorizontal = 16.dp
+    val PageHorizontal = 10.dp
 
     /** Gap below NeoTopBar before the page header. */
-    val PageTopHeader = 8.dp
+    val PageTopHeader = 4.dp
 
     /** Vertical gap between scroll sections. */
     val SectionGap = 24.dp

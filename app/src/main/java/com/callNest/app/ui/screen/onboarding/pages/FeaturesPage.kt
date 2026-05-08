@@ -54,7 +54,7 @@ fun FeaturesPage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 32.dp),
+            .padding(horizontal = 24.dp).padding(top = 4.dp, bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -65,31 +65,42 @@ fun FeaturesPage(
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(24.dp))
+        // All three rows share the brand-green tint for consistency with the new logo.
+        val brand = MaterialTheme.colorScheme.primary
         FeatureRow(
             icon = Icons.AutoMirrored.Filled.PhoneCallback,
             title = stringResource(R.string.onboarding_features_capture_title),
             body = stringResource(R.string.onboarding_features_capture_body),
-            iconTint = IconCallsTint,
+            iconTint = brand,
         )
         Spacer(Modifier.height(12.dp))
         FeatureRow(
             icon = Icons.Filled.PersonAddAlt1,
             title = stringResource(R.string.onboarding_features_autosave_title),
             body = stringResource(R.string.onboarding_features_autosave_body),
-            iconTint = IconInquiriesTint,
+            iconTint = brand,
         )
         Spacer(Modifier.height(12.dp))
         FeatureRow(
             icon = Icons.Filled.Insights,
             title = stringResource(R.string.onboarding_features_insights_title),
             body = stringResource(R.string.onboarding_features_insights_body),
-            iconTint = IconStatsTint,
+            iconTint = brand,
         )
         Spacer(Modifier.height(32.dp))
+        Text(
+            text = stringResource(R.string.brand_tagline),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(16.dp))
         NeoButton(
             text = stringResource(R.string.onboarding_continue),
             onClick = onContinue,
-            variant = NeoButtonVariant.Primary
+            variant = NeoButtonVariant.Primary,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

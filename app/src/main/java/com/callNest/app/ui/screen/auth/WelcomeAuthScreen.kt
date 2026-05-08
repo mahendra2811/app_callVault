@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.callNest.app.R
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,24 +35,22 @@ fun WelcomeAuthScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Spacer(Modifier.height(64.dp))
+        Spacer(Modifier.height(48.dp))
         androidx.compose.foundation.Image(
             painter = androidx.compose.ui.res.painterResource(
-                id = com.callNest.app.R.mipmap.ic_launcher
+                id = R.drawable.ic_callnest_logo
+            ),
+            contentDescription = stringResource(R.string.auth_welcome_brand),
+            modifier = Modifier.size(180.dp),
+        )
+        Spacer(Modifier.height(8.dp))
+        // Wordmark + localized tagline as a single lockup. Auto-swaps via drawable-hi/.
+        androidx.compose.foundation.Image(
+            painter = androidx.compose.ui.res.painterResource(
+                id = R.drawable.img_wordmark_tagline
             ),
             contentDescription = null,
-            modifier = Modifier.size(96.dp),
-        )
-        Text(
-            stringResource(R.string.auth_welcome_brand),
-            style = MaterialTheme.typography.displayMedium,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            stringResource(R.string.auth_welcome_tagline),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.weight(1f))
         Button(onClick = onSignUp, modifier = Modifier.fillMaxWidth()) {

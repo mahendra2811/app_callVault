@@ -15,12 +15,19 @@ import androidx.navigation.navigation
  *     // ... your existing main_graph
  * }
  */
-/** Installs the auth nav graph; call from a top-level [androidx.navigation.compose.NavHost]. */
+/**
+ * Installs the auth nav graph; call from a top-level [androidx.navigation.compose.NavHost].
+ *
+ * @param startAtLogin when true, the graph opens directly on the Login screen instead of the
+ *   Welcome picker. Used for returning users (signed out + has previously used the app).
+ */
 fun NavGraphBuilder.authGraph(
     navController: NavHostController,
     onAuthenticated: () -> Unit,
+    startAtLogin: Boolean = false,
 ) {
-    navigation(startDestination = AuthDestinations.WELCOME, route = AuthDestinations.GRAPH) {
+    val start = if (startAtLogin) AuthDestinations.LOGIN else AuthDestinations.WELCOME
+    navigation(startDestination = start, route = AuthDestinations.GRAPH) {
         composable(AuthDestinations.WELCOME) {
             WelcomeAuthScreen(
                 onSignIn = { navController.navigate(AuthDestinations.LOGIN) },
