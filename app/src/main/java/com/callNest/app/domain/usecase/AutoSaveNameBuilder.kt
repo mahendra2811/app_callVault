@@ -31,7 +31,10 @@ object AutoSaveNameBuilder {
         suffix: String,
         normalizedNumber: String
     ): String {
-        val safePrefix = prefix.trim().ifEmpty { "callNest" }
+        // Empty prefix stays empty — no silent fallback to "callNest", which
+        // combined with the brand-locked suffix produced "callNest +91X
+        // callNest" double-tagging on every auto-saved row.
+        val safePrefix = prefix.trim()
         val safeSuffix = suffix.trim()
         val tag = when {
             includeSimTag && simSlot == 0 -> "-s1"
@@ -40,9 +43,14 @@ object AutoSaveNameBuilder {
         }
         val number = normalizedNumber.trim()
         return buildString {
-            append(safePrefix)
-            append(tag)
-            append(' ')
+            if (safePrefix.isNotEmpty()) {
+                append(safePrefix)
+                append(tag)
+                append(' ')
+            } else if (tag.isNotEmpty()) {
+                append(tag.trimStart('-'))
+                append(' ')
+            }
             append(number)
             if (safeSuffix.isNotEmpty()) {
                 append(' ')

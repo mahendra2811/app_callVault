@@ -1,5 +1,9 @@
 package com.callNest.app.ui.screen.settings
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,10 +26,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.callNest.app.R
@@ -56,10 +62,33 @@ fun AutoSaveSettingsScreen(
     viewModel: AutoSaveSettingsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val simFilter by viewModel.simFilterState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val writePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        viewModel.setEnabled(granted)
+    }
+    val onToggleEnabled: (Boolean) -> Unit = { wantsOn ->
+        if (!wantsOn) {
+            viewModel.setEnabled(false)
+        } else {
+            val hasWrite = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+            if (hasWrite) {
+                viewModel.setEnabled(true)
+            } else {
+                writePermissionLauncher.launch(Manifest.permission.WRITE_CONTACTS)
+            }
+        }
+    }
     AutoSaveSettingsContent(
         state = state,
+        simFilter = simFilter,
         onBack = onBack,
-        onToggleEnabled = viewModel::setEnabled,
+        onToggleEnabled = onToggleEnabled,
         onPrefix = viewModel::setPrefix,
         onIncludeSimTag = viewModel::setIncludeSimTag,
         onSuffix = viewModel::setSuffix,
@@ -68,6 +97,8 @@ fun AutoSaveSettingsScreen(
         onPhoneLabel = viewModel::setPhoneLabel,
         onPhoneLabelCustom = viewModel::setPhoneLabelCustom,
         onRegion = viewModel::setRegion,
+        onIncludeSim1 = viewModel::setIncludeSim1,
+        onIncludeSim2 = viewModel::setIncludeSim2,
         modifier = modifier
     )
 }
@@ -75,6 +106,7 @@ fun AutoSaveSettingsScreen(
 @Composable
 private fun AutoSaveSettingsContent(
     state: AutoSaveSettingsUiState,
+    simFilter: SimFilterState = SimFilterState(),
     onBack: () -> Unit,
     onToggleEnabled: (Boolean) -> Unit,
     onPrefix: (String) -> Unit,
@@ -85,13 +117,16 @@ private fun AutoSaveSettingsContent(
     onPhoneLabel: (String) -> Unit,
     onPhoneLabelCustom: (String) -> Unit,
     onRegion: (String) -> Unit,
+    onIncludeSim1: (Boolean) -> Unit = {},
+    onIncludeSim2: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     StandardPage(
         title = stringResource(R.string.cv_autosave_title),
         description = stringResource(R.string.cv_autosave_description),
         emoji = "💡",
-        onBack = onBack
+        onBack = onBack,
+        helpArticleId = "03-auto-save"
     ) {
         Column(
             modifier = Modifier
@@ -100,26 +135,58 @@ private fun AutoSaveSettingsContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Master toggle
-            Row(
+            // Master toggle is temporarily replaced with a "Coming soon" card.
+            // For v1.0.0 auto-save is manual-only — see Inquiries tab for the
+            // Save-now flow. Restore by uncommenting the Row below.
+            NeoSurface(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                elevation = NeoElevation.ConcaveSmall,
+                shape = RoundedCornerShape(14.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = stringResource(R.string.auto_save_master_toggle),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = SageColors.TextPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "Coming soon",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = NeoColors.AccentBlue,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
                     Text(
-                        text = stringResource(R.string.auto_save_master_toggle),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = SageColors.TextPrimary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = stringResource(R.string.auto_save_master_subtitle),
+                        text = "Auto-save is temporarily manual. Open Inquiries and tap Save now (per row or bulk).",
                         style = MaterialTheme.typography.bodySmall,
                         color = SageColors.TextSecondary
                     )
                 }
-                NeoToggle(checked = state.enabled, onChange = onToggleEnabled)
             }
+            @Suppress("UNUSED_EXPRESSION") run { onToggleEnabled }
+            // Row(
+            //     modifier = Modifier.fillMaxWidth(),
+            //     verticalAlignment = Alignment.CenterVertically
+            // ) {
+            //     Column(modifier = Modifier.weight(1f)) {
+            //         Text(
+            //             text = stringResource(R.string.auto_save_master_toggle),
+            //             style = MaterialTheme.typography.titleSmall,
+            //             color = SageColors.TextPrimary,
+            //             fontWeight = FontWeight.SemiBold
+            //         )
+            //         Text(
+            //             text = stringResource(R.string.auto_save_master_subtitle),
+            //             style = MaterialTheme.typography.bodySmall,
+            //             color = SageColors.TextSecondary
+            //         )
+            //     }
+            //     NeoToggle(checked = state.enabled, onChange = onToggleEnabled)
+            // }
 
             // Prefix
             NeoTextField(
@@ -141,6 +208,35 @@ private fun AutoSaveSettingsContent(
                     modifier = Modifier.weight(1f)
                 )
                 NeoToggle(checked = state.includeSimTag, onChange = onIncludeSimTag)
+            }
+
+            // Per-SIM include filter — opt out of one SIM line entirely while
+            // keeping the other flowing into auto-save.
+            Column {
+                Text(
+                    text = "Apply auto-save to",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = SageColors.TextSecondary,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "SIM 1 calls",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SageColors.TextPrimary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    NeoToggle(checked = simFilter.includeSim1, onChange = onIncludeSim1)
+                }
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "SIM 2 calls",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SageColors.TextPrimary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    NeoToggle(checked = simFilter.includeSim2, onChange = onIncludeSim2)
+                }
             }
 
             // Suffix is brand-locked to "callNest" and applied silently when saving;

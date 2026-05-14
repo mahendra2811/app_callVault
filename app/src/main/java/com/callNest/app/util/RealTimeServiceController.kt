@@ -28,9 +28,14 @@ class RealTimeServiceController @Inject constructor(
     suspend fun evaluateAndApply() {
         val bubble = settings.floatingBubbleEnabled.first()
         val popup = settings.postCallPopupEnabled.first()
-        val want = bubble || popup
+        // Auto-save needs the same phone-state stream to trigger an immediate
+        // sync after a call ends, so the service must run even when both
+        // overlay toggles are off (overlays still require canDrawOverlays).
+        val autoSave = settings.autoSaveEnabled.first()
+        val wantOverlay = bubble || popup
         val canOverlay = Settings.canDrawOverlays(context)
-        if (want && canOverlay) {
+        val want = (wantOverlay && canOverlay) || autoSave
+        if (want) {
             CallEnrichmentService.start(context)
         } else {
             CallEnrichmentService.stop(context)

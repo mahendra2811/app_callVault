@@ -1,6 +1,11 @@
 package com.callNest.app.ui.screen.calls
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,17 +72,13 @@ fun CallsScreen(
     onOpenRealTimeSettings: () -> Unit = {},
     onOpenExport: () -> Unit = {},
     onOpenBackup: () -> Unit = {},
-    onOpenUpdateAvailable: () -> Unit = {},
-    onOpenUpdateSettings: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
     onOpenDocs: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: CallsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val updateState by viewModel.updateState.collectAsStateWithLifecycle()
     var filterSheetOpen by remember { mutableStateOf(false) }
-    var bannerDismissed by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
     NeoScaffold(
@@ -97,7 +98,7 @@ fun CallsScreen(
                     )
                     NeoIconButton(
                         icon = Icons.Filled.FilterList,
-                        onClick = { filterSheetOpen = true },
+                        onClick = { filterSheetOpen = !filterSheetOpen },
                         contentDescription = "Filter calls",
                         size = 40.dp
                     )
@@ -162,7 +163,9 @@ fun CallsScreen(
             Spacer(Modifier.width(8.dp))
             NeoIconButton(
                 icon = Icons.Filled.FilterList,
-                onClick = { filterSheetOpen = true },
+                // Toggle the inline filter panel instead of always opening
+                // a modal — tap again to collapse.
+                onClick = { filterSheetOpen = !filterSheetOpen },
                 contentDescription = "Filter calls",
                 size = 36.dp,
             )
@@ -175,6 +178,24 @@ fun CallsScreen(
                 size = 36.dp,
             )
         }
+        // Quick-filter chip bar — phone-app style. Replaces hunting through
+        // the deep filter sheet for the four filters real users actually use.
+        QuickFilterChips(
+            current = state.filter,
+            onApply = viewModel::setFilter
+        )
+        // Inline horizontal filter panel — opens under the chip strip when
+        // the toolbar FilterList button is tapped. Replaces the old modal
+        // bottom sheet that sometimes failed to open on Samsung One UI.
+        CallsFilterPanel(
+            visible = filterSheetOpen,
+            initial = state.filter,
+            onDismiss = { filterSheetOpen = false },
+            onApply = { newFilter ->
+                viewModel.setFilter(newFilter)
+                filterSheetOpen = false
+            }
+        )
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = viewModel::refresh,
@@ -204,17 +225,8 @@ fun CallsScreen(
                         state = listState,
                         modifier = Modifier.fillMaxSize().padding(top = 4.dp)
                     ) {
-                        val u = updateState
-                        if (u is com.callNest.app.domain.repository.UpdateState.Available &&
-                            !u.isSkipped && !bannerDismissed) {
-                            item("update-banner") {
-                                com.callNest.app.ui.screen.calls.components.UpdateBanner(
-                                    state = u,
-                                    onView = onOpenUpdateAvailable,
-                                    onDismiss = { bannerDismissed = true }
-                                )
-                            }
-                        }
+                        // Update banner removed — users now download new
+                        // versions from https://callnest.pooniya.com.
                         if (state.pinnedSectionVisible && state.pinnedUnsaved.isNotEmpty()) {
                             item("pinned") {
                                 UnsavedPinnedSection(
@@ -269,19 +281,8 @@ fun CallsScreen(
         }
     }
 
-    if (filterSheetOpen) {
-        // The sheet ViewModel-less because all state lives in the screen-level VM.
-        // We pass repository through ScreenEntryPoint via Hilt — exposed by VM injection.
-        // For Sprint 3, we re-use the VM's filter and apply it here.
-        CallsFilterSheetHost(
-            initial = state.filter,
-            onDismiss = { filterSheetOpen = false },
-            onApply = {
-                viewModel.setFilter(it)
-                filterSheetOpen = false
-            }
-        )
-    }
+    // Old modal bottom sheet removed — replaced by inline CallsFilterPanel
+    // earlier in this Column (see comment near the QuickFilterChips row).
 
     LaunchedEffect(state.errorMessage) {
         if (state.errorMessage != null) {
@@ -327,6 +328,89 @@ private fun androidx.compose.foundation.lazy.LazyListScope.renderGroupedByDate(
                 },
                 onToggleBookmark = { viewModel.swipeRight(row.call.systemId) },
                 selected = row.call.systemId in state.selectedIds
+            )
+        }
+    }
+}
+
+/**
+ * Quick-filter chip strip shown above the call list. Each chip toggles one
+ * preset slice of [FilterState] — no deep dialog, no hunting through tabs.
+ * Tapping a chip a second time clears its filter.
+ */
+@Composable
+private fun QuickFilterChips(
+    current: com.callNest.app.domain.model.FilterState,
+    onApply: (com.callNest.app.domain.model.FilterState) -> Unit
+) {
+    val today = remember {
+        val zone = java.time.ZoneId.systemDefault()
+        val start = java.time.LocalDate.now(zone).atStartOfDay(zone).toInstant().toEpochMilli()
+        val end = start + 24L * 60 * 60 * 1000 - 1
+        start to end
+    }
+    val isAll = current == com.callNest.app.domain.model.FilterState()
+    val isSaved = current.onlySaved
+    val isUnsaved = current.onlyUnsaved
+    val isMissed = current.callTypes == setOf(3)
+    val isFollowUp = current.onlyWithFollowUp
+    val isToday = current.dateFrom == today.first && current.dateTo == today.second
+    val isHot = (current.minLeadScore ?: 0) >= 70
+
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        QuickChip("All", isAll) { onApply(com.callNest.app.domain.model.FilterState()) }
+        QuickChip("Saved", isSaved) {
+            onApply(if (isSaved) com.callNest.app.domain.model.FilterState() else current.copy(onlySaved = true, onlyUnsaved = false))
+        }
+        QuickChip("Unsaved", isUnsaved) {
+            onApply(if (isUnsaved) com.callNest.app.domain.model.FilterState() else current.copy(onlyUnsaved = true, onlySaved = false))
+        }
+        QuickChip("Missed", isMissed) {
+            onApply(if (isMissed) current.copy(callTypes = emptySet()) else current.copy(callTypes = setOf(3)))
+        }
+        QuickChip("Today", isToday) {
+            onApply(if (isToday) current.copy(dateFrom = null, dateTo = null) else current.copy(dateFrom = today.first, dateTo = today.second))
+        }
+        QuickChip("Follow-ups", isFollowUp) {
+            onApply(current.copy(onlyWithFollowUp = !isFollowUp))
+        }
+        QuickChip("Hot leads", isHot) {
+            onApply(current.copy(minLeadScore = if (isHot) null else 70))
+        }
+    }
+}
+
+@Composable
+private fun QuickChip(label: String, selected: Boolean, onTap: () -> Unit) {
+    val bg = if (selected) com.callNest.app.ui.theme.NeoColors.AccentBlue
+             else com.callNest.app.ui.theme.SageColors.SurfaceAlt
+    val fg = if (selected) androidx.compose.ui.graphics.Color.White
+             else com.callNest.app.ui.theme.SageColors.TextPrimary
+    com.callNest.app.ui.components.neo.NeoSurface(
+        modifier = Modifier
+            .height(32.dp)
+            .clickable(onClick = onTap),
+        elevation = com.callNest.app.ui.theme.NeoElevation.Flat,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+        color = bg
+    ) {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .padding(horizontal = 14.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.Text(
+                text = label,
+                color = fg,
+                style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
             )
         }
     }

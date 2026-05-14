@@ -26,4 +26,7 @@ interface FilterPresetDao {
 
     @Query("SELECT * FROM filter_presets WHERE id = :id")
     suspend fun getById(id: Long): FilterPresetEntity?
+
+    @Query("DELETE FROM filter_presets")
+    suspend fun deleteAll()
 }

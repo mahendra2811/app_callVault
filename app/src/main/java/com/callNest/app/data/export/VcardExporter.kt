@@ -36,23 +36,25 @@ class VcardExporter @Inject constructor(
             ?: "callNest-${stamp()}.vcf"
         val target = if (destination is ExportDestination.PickedUri) destination
         else ExportDestination.Downloads(fileName)
-        val (uri, stream) = shared.openOutputStream(target, "text/vcard")
-        OutputStreamWriter(stream, Charsets.UTF_8).use { w ->
-            byNumber.forEach { (number, group) ->
-                val name = group.firstNotNullOfOrNull { it.contactMeta?.displayName }
-                    ?: group.firstNotNullOfOrNull { it.call.cachedName }
-                    ?: number
-                val notes = group.flatMap { it.notes }.joinToString(" | ") { it.content }
-                w.write("BEGIN:VCARD\n")
-                w.write("VERSION:3.0\n")
-                w.write("FN:${escape(name)}\n")
-                w.write("TEL;TYPE=CELL:${escape(number)}\n")
-                if (notes.isNotEmpty()) w.write("NOTE:${escape(notes)}\n")
-                w.write("END:VCARD\n")
+        val handle = shared.openOutputStream(target, "text/vcard")
+        shared.writeAndCommit(handle) { stream ->
+            OutputStreamWriter(stream, Charsets.UTF_8).use { w ->
+                byNumber.forEach { (number, group) ->
+                    val name = group.firstNotNullOfOrNull { it.contactMeta?.displayName }
+                        ?: group.firstNotNullOfOrNull { it.call.cachedName }
+                        ?: number
+                    val notes = group.flatMap { it.notes }.joinToString(" | ") { it.content }
+                    w.write("BEGIN:VCARD\n")
+                    w.write("VERSION:3.0\n")
+                    w.write("FN:${escape(name)}\n")
+                    w.write("TEL;TYPE=CELL:${escape(number)}\n")
+                    if (notes.isNotEmpty()) w.write("NOTE:${escape(notes)}\n")
+                    w.write("END:VCARD\n")
+                }
+                w.flush()
             }
-            w.flush()
         }
-        return ExportResult(uri, fileName, shared.sizeOf(uri), "vcf")
+        return ExportResult(handle.uri, fileName, shared.sizeOf(handle.uri), "vcf")
     }
 
     /** vCard escapes: `\` `,` `;` and newlines. */

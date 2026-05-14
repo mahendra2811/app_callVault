@@ -112,8 +112,10 @@ fun CallRowItem(
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 1
                     )
+                    Spacer(Modifier.width(8.dp))
+                    SavedUnsavedPill(isUnsaved = row.isUnsaved)
                     if (row.call.leadScore > 0) {
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(6.dp))
                         LeadScoreBadge(score = row.call.leadScore)
                     }
                 }
@@ -142,6 +144,26 @@ fun CallRowItem(
                 )
             }
         }
+    }
+}
+
+/** Saved / Unsaved chip — answers the user's "is this number in my contacts?" at a glance. */
+@Composable
+private fun SavedUnsavedPill(isUnsaved: Boolean) {
+    val color = if (isUnsaved) NeoColors.AccentBlue else SageColors.TextSecondary
+    val label = if (isUnsaved) "Unsaved" else "Saved"
+    NeoSurface(
+        elevation = NeoElevation.Flat,
+        shape = CircleShape,
+        color = color.copy(alpha = if (isUnsaved) 0.15f else 0.08f)
+    ) {
+        Text(
+            text = label,
+            color = color,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+        )
     }
 }
 

@@ -16,6 +16,9 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 /**
  * Multi-sheet Excel exporter built with Apache POI XSSF.
@@ -37,29 +40,52 @@ class ExcelExporter @Inject constructor(
         filter: ExportFilter,
         columns: ExportColumns,
         destination: ExportDestination
-    ): ExportResult {
+    ): ExportResult = withContext(Dispatchers.IO) {
         val rows = shared.queryCalls(filter)
         val fileName = (destination as? ExportDestination.Downloads)?.fileName
             ?: "callNest-${stamp()}.xlsx"
         val target = if (destination is ExportDestination.PickedUri) destination
         else ExportDestination.Downloads(fileName)
-        val (uri, stream) = shared.openOutputStream(
+        val handle = shared.openOutputStream(
             target,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        XSSFWorkbook().use { wb ->
+        // XSSFWorkbook (in-memory). SXSSF would stream to disk and use less
+        // RAM, but its internal call chain triggers org.apache.poi.ss.util
+        // .SheetUtil, which static-references java.awt and crashes on
+        // Android with NoClassDefFoundError. For typical SMB users with
+        // <5000 calls, in-memory is fine; the IS_PENDING dance + try/catch
+        // still guards against the 0-byte / partial-write issues.
+        val wb = XSSFWorkbook()
+        try {
             val bold = boldHeaderStyle(wb)
             val dateStyle = wb.createCellStyle().apply {
                 dataFormat = wb.creationHelper.createDataFormat().getFormat("yyyy-mm-dd hh:mm")
             }
             writeCallsSheet(wb, rows, columns, bold, dateStyle)
+            // Single combined "Contacts" sheet kept for back-compat; split
+            // saved vs unsaved on two extra sheets so the user can hand
+            // either bucket to a team-mate without filtering manually.
             writeContactsSheet(wb, rows, bold)
+            writeContactsBucketSheet(wb, rows, bold, "Saved contacts", savedFilter = true)
+            writeContactsBucketSheet(wb, rows, bold, "Unsaved inquiries", savedFilter = false)
             writeTagsSummarySheet(wb, rows, bold)
             writeStatsSheet(wb, filter, bold)
-            wb.write(stream)
+            handle.stream.use { out ->
+                wb.write(out)
+                out.flush()
+            }
+            shared.commit(handle)
+            ExportResult(handle.uri, fileName, shared.sizeOf(handle.uri), "xlsx")
+        } catch (t: Throwable) {
+            Timber.e(t, "Excel export failed (${rows.size} rows)")
+            runCatching { handle.stream.close() }
+            shared.abort(handle)
+            throw t
+        } finally {
+            // XSSFWorkbook has no dispose() — only close().
+            runCatching { wb.close() }
         }
-        stream.close()
-        return ExportResult(uri, fileName, shared.sizeOf(uri), "xlsx")
     }
 
     private fun writeCallsSheet(
@@ -135,6 +161,61 @@ class ExcelExporter @Inject constructor(
             r.createCell(8).setCellValue(m.computedLeadScore.toDouble())
             r.createCell(9).setCellValue(Date(m.firstCallDate.toEpochMilliseconds()).toString())
             r.createCell(10).setCellValue(Date(m.lastCallDate.toEpochMilliseconds()).toString())
+        }
+    }
+
+    /**
+     * Emit a contacts sheet filtered to either saved (in OS contacts) or
+     * unsaved (unknown / unsaved inquiry) numbers. A number that has no
+     * ContactMeta row at all is treated as unsaved.
+     */
+    private fun writeContactsBucketSheet(
+        wb: Workbook,
+        rows: List<CallWithRelations>,
+        headerStyle: CellStyle,
+        sheetName: String,
+        savedFilter: Boolean
+    ) {
+        val sheet = wb.createSheet(sheetName)
+        writeHeader(
+            sheet,
+            listOf(
+                "Number", "Display Name", "Total Calls", "Incoming",
+                "Outgoing", "Missed", "Lead Score", "Last Call", "Tags"
+            ),
+            headerStyle
+        )
+
+        // Group calls by normalized number so we still emit one row per
+        // contact even when the meta table is empty.
+        val byNumber = rows.groupBy { it.call.normalizedNumber }
+        val filtered = byNumber.entries.filter { (_, group) ->
+            val meta = group.firstNotNullOfOrNull { it.contactMeta }
+            val isSaved = meta?.isInSystemContacts == true
+            if (savedFilter) isSaved else !isSaved
+        }
+
+        filtered.forEachIndexed { i, (number, group) ->
+            val r = sheet.createRow(i + 1)
+            val meta = group.firstNotNullOfOrNull { it.contactMeta }
+            val displayName = meta?.displayName
+                ?: group.firstNotNullOfOrNull { it.call.cachedName }
+                ?: ""
+            val incoming = group.count { it.call.type.name == "INCOMING" }
+            val outgoing = group.count { it.call.type.name == "OUTGOING" }
+            val missed = group.count { it.call.type.name == "MISSED" }
+            val lastCallMs = group.maxOf { it.call.date.toEpochMilliseconds() }
+            val score = meta?.computedLeadScore ?: 0
+            val tagsCsv = group.flatMap { it.tags }.map { it.name }.distinct().joinToString(", ")
+            r.createCell(0).setCellValue(number)
+            r.createCell(1).setCellValue(displayName)
+            r.createCell(2).setCellValue(group.size.toDouble())
+            r.createCell(3).setCellValue(incoming.toDouble())
+            r.createCell(4).setCellValue(outgoing.toDouble())
+            r.createCell(5).setCellValue(missed.toDouble())
+            r.createCell(6).setCellValue(score.toDouble())
+            r.createCell(7).setCellValue(Date(lastCallMs).toString())
+            r.createCell(8).setCellValue(tagsCsv)
         }
     }
 

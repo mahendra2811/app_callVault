@@ -23,6 +23,9 @@ interface DocFeedbackDao {
         FROM doc_feedback WHERE articleId = :articleId
     """)
     suspend fun summary(articleId: String): DocFeedbackSummary?
+
+    @Query("DELETE FROM doc_feedback")
+    suspend fun deleteAll()
 }
 
 data class DocFeedbackSummary(val helpful: Int, val notHelpful: Int)

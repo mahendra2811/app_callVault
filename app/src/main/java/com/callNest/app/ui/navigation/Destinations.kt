@@ -57,8 +57,6 @@ sealed class Destinations(val route: String) {
         fun routeFor(ruleId: Long): String = "auto_tag_rules/edit/$ruleId"
     }
 
-    /** Sprint 6 — Lead scoring settings (master toggle + 6 sliders). */
-    data object LeadScoringSettings : Destinations("settings/lead_scoring")
 
     /** Sprint 7 — Real-time features (floating bubble + post-call popup). */
     data object RealTimeSettings : Destinations("settings/real_time")
@@ -69,20 +67,12 @@ sealed class Destinations(val route: String) {
     /** Sprint 9 — Backup & restore landing screen. */
     data object Backup : Destinations("backup")
 
-    /** Sprint 10 — Full-screen update available / progress / install. */
-    data object UpdateAvailable : Destinations("update")
-
-    /** Sprint 10 — Update settings (channel, auto-check, manual). */
-    data object UpdateSettings : Destinations("settings/updates")
-
     /** Sprint 11 — Master Settings screen (progressive disclosure). */
     data object Settings : Destinations("settings")
 
     /** Quick-reply templates manager (built-ins + user-added). */
     data object Templates : Destinations("settings/templates")
 
-    /** Lead pipeline Kanban (5-column funnel). */
-    data object Pipeline : Destinations("pipeline")
 
     /** CSV contact import. */
     data object CsvImport : Destinations("csv_import")
@@ -116,9 +106,9 @@ sealed class MainTabRoute(
     val label: String,
     val emoji: String
 ) {
-    data object Home : MainTabRoute("home", "Home", "🏠")
     data object Calls : MainTabRoute("calls", "Calls", "📞")
-    data object Pipeline : MainTabRoute("pipeline_tab", "Pipeline", "📊")
+    data object Insights : MainTabRoute("insights", "Insights", "📈")
     data object Inquiries : MainTabRoute("inquiries", "Inquiries", "📥")
     data object More : MainTabRoute("more", "More", "☰")
+    // Home + Pipeline retired for v1.0.0. Re-add here to re-enable.
 }

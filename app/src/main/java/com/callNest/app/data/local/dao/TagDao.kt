@@ -106,6 +106,14 @@ interface TagDao {
 
     @Query("SELECT COUNT(*) FROM call_tag_cross_ref WHERE tagId = :tagId")
     suspend fun countForTag(tagId: Long): Int
+
+    /** Wipe all user-created tags. Seeded system tags survive. */
+    @Query("DELETE FROM tags WHERE isSystem = 0")
+    suspend fun deleteAllUserCreated()
+
+    /** Drop every call ↔ tag mapping — leaves the tag table intact. */
+    @Query("DELETE FROM call_tag_cross_ref")
+    suspend fun deleteAllCrossRefs()
 }
 
 /** Projection row for [TagDao.observeUsageCounts]. */

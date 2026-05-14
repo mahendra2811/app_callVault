@@ -53,12 +53,16 @@ fun WelcomeAuthScreen(
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.weight(1f))
-        Button(onClick = onSignUp, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.auth_welcome_create_account))
-        }
-        OutlinedButton(onClick = onSignIn, modifier = Modifier.fillMaxWidth()) {
+        // Sign-up is hidden for v1.0.0; only the sign-in path is enabled.
+        // The signup screen + AuthDestinations.SIGNUP route remain registered
+        // so this can be restored by un-commenting once the flow is finalised.
+        Button(onClick = onSignIn, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.auth_welcome_have_account))
         }
+        // Button(onClick = onSignUp, modifier = Modifier.fillMaxWidth()) {
+        //     Text(stringResource(R.string.auth_welcome_create_account))
+        // }
+        @Suppress("UNUSED_EXPRESSION") run { onSignUp }
         // Google sign-in — uncomment once GOOGLE_OAUTH_WEB_CLIENT_ID is configured.
         // OutlinedButton(onClick = onGoogle, modifier = Modifier.fillMaxWidth()) { Text("Continue with Google") }
     }

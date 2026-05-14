@@ -23,4 +23,7 @@ interface PipelineStageDao {
 
     @Query("DELETE FROM pipeline_stage WHERE normalizedNumber = :number")
     suspend fun delete(number: String)
+
+    @Query("DELETE FROM pipeline_stage")
+    suspend fun deleteAll()
 }

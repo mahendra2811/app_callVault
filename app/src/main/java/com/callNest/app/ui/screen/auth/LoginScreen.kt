@@ -66,14 +66,18 @@ fun LoginScreen(
                 onImeAction = { if (canSubmit) viewModel.signIn(email, password) },
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                TextButton(onClick = onForgotPassword) {
-                    Text(stringResource(R.string.auth_login_forgot))
-                }
-            }
+            // Forgot-password + sign-up entry points are intentionally hidden
+            // for v1.0.0 (server-side flows not finalised). The screens are
+            // still registered in AuthNavGraph; restore the surfaces here when
+            // the flows are ready.
+            // Row(
+            //     modifier = Modifier.fillMaxWidth(),
+            //     horizontalArrangement = Arrangement.End,
+            // ) {
+            //     TextButton(onClick = onForgotPassword) {
+            //         Text(stringResource(R.string.auth_login_forgot))
+            //     }
+            // }
 
             PrimaryAuthButton(
                 text = stringResource(R.string.auth_login_submit),
@@ -82,16 +86,17 @@ fun LoginScreen(
                 busy = busy,
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(stringResource(R.string.auth_login_new_here), style = MaterialTheme.typography.bodyMedium)
-                TextButton(onClick = onCreateAccount) {
-                    Text(stringResource(R.string.auth_welcome_create_account))
-                }
-            }
+            // Row(
+            //     modifier = Modifier.fillMaxWidth(),
+            //     horizontalArrangement = Arrangement.Center,
+            //     verticalAlignment = Alignment.CenterVertically,
+            // ) {
+            //     Text(stringResource(R.string.auth_login_new_here), style = MaterialTheme.typography.bodyMedium)
+            //     TextButton(onClick = onCreateAccount) {
+            //         Text(stringResource(R.string.auth_welcome_create_account))
+            //     }
+            // }
+            @Suppress("UNUSED_EXPRESSION") run { onForgotPassword; onCreateAccount }
         }
     }
 }

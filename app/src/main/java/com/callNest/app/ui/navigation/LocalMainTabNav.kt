@@ -41,8 +41,9 @@ fun popToHome(rootNav: NavController, innerNav: NavController?) {
         launchSingleTop = true
         restoreState = true
     }
+    // Home tab retired; route "popToHome" to Calls instead.
     if (innerNav != null) {
-        innerNav.navigate(MainTabRoute.Home.route) {
+        innerNav.navigate(MainTabRoute.Calls.route) {
             popUpTo(innerNav.graph.startDestinationId) { saveState = true }
             launchSingleTop = true
             restoreState = true

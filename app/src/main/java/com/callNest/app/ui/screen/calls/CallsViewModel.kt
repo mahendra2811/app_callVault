@@ -11,8 +11,6 @@ import com.callNest.app.domain.model.Tag
 import com.callNest.app.domain.repository.CallRepository
 import com.callNest.app.domain.repository.ContactRepository
 import com.callNest.app.domain.repository.TagRepository
-import com.callNest.app.domain.repository.UpdateRepository
-import com.callNest.app.domain.repository.UpdateState
 import com.callNest.app.domain.usecase.SyncProgress
 import com.callNest.app.domain.usecase.SyncProgressBus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,12 +84,8 @@ class CallsViewModel @Inject constructor(
     private val contactRepo: ContactRepository,
     private val settings: SettingsDataStore,
     private val syncScheduler: SyncScheduler,
-    private val syncProgressBus: SyncProgressBus,
-    updateRepo: UpdateRepository
+    private val syncProgressBus: SyncProgressBus
 ) : ViewModel() {
-
-    /** Sprint 10/11 — surface update lifecycle so the Calls screen can show a banner. */
-    val updateState: StateFlow<UpdateState> = updateRepo.state
 
     private val _filter = MutableStateFlow(FilterState())
     val filter: StateFlow<FilterState> = _filter.asStateFlow()

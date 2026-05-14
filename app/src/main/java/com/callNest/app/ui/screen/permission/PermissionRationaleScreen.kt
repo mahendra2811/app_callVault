@@ -44,7 +44,8 @@ fun PermissionRationaleScreen(
     StandardPage(
         title = stringResource(R.string.cv_permission_rationale_title),
         description = stringResource(R.string.cv_permission_rationale_description),
-        emoji = "🔐"
+        emoji = "🔐",
+        helpArticleId = "02-permissions"
     ) {
         Text(
             text = stringResource(R.string.permission_rationale_title),

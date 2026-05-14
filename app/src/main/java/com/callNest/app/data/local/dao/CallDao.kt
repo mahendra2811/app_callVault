@@ -31,6 +31,9 @@ interface CallDao {
     @Query("DELETE FROM calls WHERE normalizedNumber = :number")
     suspend fun deleteForNumber(number: String)
 
+    @Query("DELETE FROM calls")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM calls WHERE systemId = :id")
     suspend fun getById(id: Long): CallEntity?
 
@@ -264,6 +267,16 @@ interface CallDao {
 
     @Query("SELECT COUNT(*) FROM calls WHERE date BETWEEN :from AND :to AND type = 3")
     suspend fun missedCount(from: Long, to: Long): Int
+
+    /** Count of follow-ups whose scheduled time falls today and aren't done. */
+    @Query("""
+        SELECT COUNT(*) FROM calls
+        WHERE followUpDate IS NOT NULL
+          AND followUpDoneAt IS NULL
+          AND deletedAt IS NULL
+          AND followUpDate BETWEEN :from AND :to
+    """)
+    suspend fun followUpsDueCount(from: Long, to: Long): Int
 }
 
 /** Projection: day-bucket epoch-ms → call count. */

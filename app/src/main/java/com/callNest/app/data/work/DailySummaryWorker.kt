@@ -15,9 +15,12 @@ import androidx.work.WorkerParameters
 import com.callNest.app.CallNestApp
 import com.callNest.app.MainActivity
 import com.callNest.app.R
+import com.callNest.app.data.local.dao.CallDao
+import com.callNest.app.data.local.dao.ContactMetaDao
 import com.callNest.app.data.prefs.SettingsDataStore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -34,7 +37,9 @@ import timber.log.Timber
 class DailySummaryWorker @AssistedInject constructor(
     @Assisted private val ctx: Context,
     @Assisted params: WorkerParameters,
-    private val settings: SettingsDataStore
+    private val settings: SettingsDataStore,
+    private val callDao: CallDao,
+    private val contactMetaDao: ContactMetaDao
 ) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result {
@@ -42,10 +47,16 @@ class DailySummaryWorker @AssistedInject constructor(
             if (!settings.dailySummaryEnabled.first()) {
                 return Result.success()
             }
-            // Stats are computed from latest cache; the parent screen recomputes
-            // accurate values when the user opens the digest. Keeping the worker
-            // dependency-light avoids tight coupling with use cases.
-            postNotification()
+            val (from, to) = todayWindowMs()
+            val total = runCatching { callDao.totalCount(from, to) }.getOrDefault(0)
+            val missed = runCatching { callDao.missedCount(from, to) }.getOrDefault(0)
+            val unsaved = runCatching {
+                contactMetaDao.unsavedCountInRange(from, to)
+            }.getOrDefault(0)
+            val followUps = runCatching {
+                callDao.followUpsDueCount(from, to)
+            }.getOrDefault(0)
+            postNotification(total, missed, unsaved, followUps)
             schedule(ctx) // chain
             Result.success()
         } catch (t: Throwable) {
@@ -54,7 +65,14 @@ class DailySummaryWorker @AssistedInject constructor(
         }
     }
 
-    private fun postNotification() {
+    private fun todayWindowMs(): Pair<Long, Long> {
+        val zone = ZoneId.systemDefault()
+        val start = LocalDate.now(zone).atStartOfDay(zone).toInstant().toEpochMilli()
+        val end = start + 24L * 60 * 60 * 1000 - 1
+        return start to end
+    }
+
+    private fun postNotification(total: Int, missed: Int, unsaved: Int, followUps: Int) {
         val intent = Intent(ctx, MainActivity::class.java).apply {
             putExtra("route", "daily_summary")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -63,10 +81,17 @@ class DailySummaryWorker @AssistedInject constructor(
             ctx, 1101, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        val body = buildString {
+            append("$total calls")
+            if (missed > 0) append(" · $missed missed")
+            if (unsaved > 0) append(" · $unsaved unsaved")
+            if (followUps > 0) append(" · $followUps follow-up${if (followUps == 1) "" else "s"} due")
+        }
         val n: Notification = NotificationCompat.Builder(ctx, CallNestApp.CHANNEL_DAILY_SUMMARY)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Today on callNest")
-            .setContentText("Open for today's call summary, follow-ups and unsaved.")
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setContentIntent(pi)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)

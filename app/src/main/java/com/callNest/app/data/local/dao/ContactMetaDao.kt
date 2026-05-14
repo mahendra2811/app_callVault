@@ -26,6 +26,9 @@ interface ContactMetaDao {
     @Query("DELETE FROM contact_meta WHERE normalizedNumber = :number")
     suspend fun deleteByNumber(number: String)
 
+    @Query("DELETE FROM contact_meta")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM contact_meta WHERE normalizedNumber = :number")
     fun observeByNumber(number: String): Flow<ContactMetaEntity?>
 

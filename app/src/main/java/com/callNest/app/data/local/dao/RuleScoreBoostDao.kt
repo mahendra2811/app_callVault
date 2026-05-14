@@ -37,4 +37,7 @@ interface RuleScoreBoostDao {
 
     @Query("SELECT IFNULL(SUM(delta), 0) FROM rule_score_boosts WHERE callSystemId = :callId")
     suspend fun totalForCall(callId: Long): Int
+
+    @Query("DELETE FROM rule_score_boosts")
+    suspend fun deleteAll()
 }

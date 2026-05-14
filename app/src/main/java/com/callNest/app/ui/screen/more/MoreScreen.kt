@@ -25,8 +25,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,21 +82,29 @@ fun MoreScreen(
         MoreRow("📈", stringResource(R.string.more_weekly_digest), IconStatsTint) {
             navController.navigate(Destinations.WeeklyDigest.route)
         },
-        MoreRow("📊", stringResource(R.string.pipeline_screen_title), IconStatsTint) {
-            navController.navigate(Destinations.Pipeline.route)
-        },
+        // Pipeline retired for v1.0.0.
         MoreRow("📥", stringResource(R.string.csv_import_screen_title), IconBackupTint) {
             navController.navigate(Destinations.CsvImport.route)
         },
         MoreRow("📤", "Export", IconBackupTint) { navController.navigate(Destinations.Export.route) },
         MoreRow("🏷️", "Tags", IconTagsTint) { navController.navigate(Destinations.Tags.route) }
     )
+    val ctx = LocalContext.current
+    val openWebsiteForUpdate: () -> Unit = {
+        runCatching {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://callnest.pooniya.com"))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            ctx.startActivity(intent)
+        }
+    }
     val automation = listOf(
         MoreRow("💬", stringResource(R.string.quickreply_manage), IconCallsTint) {
             navController.navigate(Destinations.Templates.route)
         },
         MoreRow("🪄", "Auto-tag rules", IconTagsTint) { navController.navigate(Destinations.AutoTagRules.route) },
-        MoreRow("🎯", "Lead scoring", IconStatsTint) { navController.navigate(Destinations.LeadScoringSettings.route) },
+        // Lead scoring is hidden for v1.0.0 — fixed standard weights are in
+        // ComputeLeadScoreUseCase. Restore by uncommenting once the UI is final.
+        // MoreRow("🎯", "Lead scoring", IconStatsTint) { navController.navigate(Destinations.LeadScoringSettings.route) },
         MoreRow("✨", "Real-time features", IconCallsTint) { navController.navigate(Destinations.RealTimeSettings.route) },
         MoreRow("💡", "Auto-save", IconInquiriesTint) { navController.navigate(Destinations.AutoSaveSettings.route) }
     )
@@ -101,8 +112,11 @@ fun MoreScreen(
         MoreRow("🚪", stringResource(R.string.more_logout), NeoColors.OnBaseMuted) { confirmLogout = true }
     )
     val app = listOf(
-        MoreRow("📊", "Stats", IconStatsTint) { navController.navigate(Destinations.Stats.route) },
-        MoreRow("🆙", "App updates", IconCallsTint) { navController.navigate(Destinations.UpdateSettings.route) },
+        // Stats moved into the new Insights bottom-nav tab.
+        // MoreRow("📊", "Stats", IconStatsTint) { navController.navigate(Destinations.Stats.route) },
+        // App updates now point users to the website where the latest signed
+        // APK lives (no in-app update flow for v1.0.0).
+        MoreRow("🆙", "Check for updates", IconCallsTint, onClick = openWebsiteForUpdate),
         MoreRow("📚", "Help & docs", IconHomeTint) { navController.navigate(Destinations.DocsList.route) },
         MoreRow("⚙️", "Settings", NeoColors.OnBaseMuted) { navController.navigate(Destinations.Settings.route) }
     )

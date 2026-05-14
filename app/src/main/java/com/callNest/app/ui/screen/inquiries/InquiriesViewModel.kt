@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.callNest.app.data.local.dao.CallDao
 import com.callNest.app.data.local.mapper.toDomain
+import com.callNest.app.data.prefs.SettingsDataStore
 import com.callNest.app.domain.model.ContactMeta
 import com.callNest.app.domain.repository.ContactRepository
+import com.callNest.app.domain.usecase.AutoSaveContactUseCase
+import com.callNest.app.domain.usecase.AutoSaveNameBuilder
 import com.callNest.app.domain.usecase.BulkSaveContactsUseCase
 import com.callNest.app.domain.usecase.BulkSaveProgress
 import com.callNest.app.domain.usecase.BulkSaveProgressBus
@@ -16,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -28,6 +32,8 @@ class InquiriesViewModel @Inject constructor(
     private val callDao: CallDao,
     private val convertToMyContact: ConvertToMyContactUseCase,
     private val bulkSave: BulkSaveContactsUseCase,
+    private val autoSave: AutoSaveContactUseCase,
+    private val settings: SettingsDataStore,
     bulkProgressBus: BulkSaveProgressBus
 ) : ViewModel() {
 
@@ -47,7 +53,12 @@ class InquiriesViewModel @Inject constructor(
     )
 
     val state: StateFlow<InquiriesUiState> =
-        combine(contactRepository.observeAutoSaved(), _query, _selected, _bulkMode) { rows, q, sel, mode ->
+        // Show every number that isn't in the OS contacts list — that's what
+        // "Inquiries" actually means to the user. Previously we filtered to
+        // `isAutoSaved=1`, which hid every unknown caller until our own
+        // auto-save loop had run successfully (and stayed empty for users
+        // who hadn't enabled auto-save at all).
+        combine(contactRepository.observeUnsaved(), _query, _selected, _bulkMode) { rows, q, sel, mode ->
             val filtered = if (q.isBlank()) rows else {
                 val needle = q.trim().lowercase()
                 rows.filter {
@@ -120,6 +131,53 @@ class InquiriesViewModel @Inject constructor(
             val calls = targets.mapNotNull { callDao.latestForNumber(it)?.toDomain() }
             bulkSave(calls)
             clearSelection()
+        }
+    }
+
+    /**
+     * Compute the exact display name the auto-save pipeline would generate
+     * for [number] using the current prefix / SIM-tag / suffix settings.
+     * Used by the Save-now confirmation dialog as a preview string.
+     */
+    suspend fun previewSavedName(number: String): String {
+        val call = callDao.latestForNumber(number)?.toDomain()
+        return AutoSaveNameBuilder.build(
+            prefix = settings.autoSavePrefix.first(),
+            includeSimTag = settings.autoSaveIncludeSimTag.first(),
+            simSlot = call?.simSlot,
+            suffix = AutoSaveContactUseCase.BRAND_SUFFIX,
+            normalizedNumber = number
+        )
+    }
+
+    /**
+     * Save one number now — bypasses the autoSaveEnabled flag (the user is
+     * explicitly opting in for this single contact via the Inquiries Save-now
+     * button).
+     */
+    fun saveOneNow(number: String) {
+        viewModelScope.launch {
+            val call = callDao.latestForNumber(number)?.toDomain() ?: return@launch
+            // Force-enable for this single invocation; restore prior value
+            // immediately so the user's toggle preference is preserved.
+            val wasEnabled = settings.autoSaveEnabled.first()
+            if (!wasEnabled) settings.setAutoSaveEnabled(true)
+            try { autoSave(call) } finally {
+                if (!wasEnabled) settings.setAutoSaveEnabled(false)
+            }
+        }
+    }
+
+    /** Save every unsaved inquiry now — runs the bulk pipeline against the full list. */
+    fun saveAllNow() {
+        viewModelScope.launch {
+            val calls = state.value.inquiries
+                .mapNotNull { callDao.latestForNumber(it.normalizedNumber)?.toDomain() }
+            val wasEnabled = settings.autoSaveEnabled.first()
+            if (!wasEnabled) settings.setAutoSaveEnabled(true)
+            try { bulkSave(calls) } finally {
+                if (!wasEnabled) settings.setAutoSaveEnabled(false)
+            }
         }
     }
 }

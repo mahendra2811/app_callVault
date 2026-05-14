@@ -83,7 +83,8 @@ fun BackupScreen(
         title = stringResource(R.string.cv_backup_title),
         description = stringResource(R.string.cv_backup_description),
         emoji = "💾",
-        onBack = onBack
+        onBack = onBack,
+        helpArticleId = "11-backup-restore"
     ) {
         Column(
             Modifier.fillMaxSize(),

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import timber.log.Timber
 import com.callNest.app.data.local.dao.CallDao
 import com.callNest.app.data.local.dao.ContactMetaDao
 import com.callNest.app.data.local.dao.NoteDao
@@ -127,18 +128,30 @@ class ExportShared @Inject constructor(
     }
 
     /**
+     * Handle returned from [openOutputStream]. Wraps the URI + stream + a
+     * "needs commit" flag so MediaStore writes on Android 10+ correctly
+     * clear `IS_PENDING` only on success.
+     */
+    data class WriteHandle(
+        val uri: Uri,
+        val stream: OutputStream,
+        val needsMediaStoreCommit: Boolean
+    )
+
+    /**
      * Open an OutputStream for [destination] with the given MIME type.
-     * Returns the resolved [Uri] alongside the stream — caller closes both.
+     * On Android 10+, files inserted into MediaStore.Downloads use
+     * `IS_PENDING=1`; commit with [commit] or [abort] after writing.
      */
     fun openOutputStream(
         destination: ExportDestination,
         mimeType: String
-    ): Pair<Uri, OutputStream> {
+    ): WriteHandle {
         return when (destination) {
             is ExportDestination.PickedUri -> {
                 val os = context.contentResolver.openOutputStream(destination.uri, "w")
                     ?: error("Couldn't open the picked location for writing.")
-                destination.uri to os
+                WriteHandle(destination.uri, os, needsMediaStoreCommit = false)
             }
             is ExportDestination.Downloads -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -146,20 +159,66 @@ class ExportShared @Inject constructor(
                         put(MediaStore.MediaColumns.DISPLAY_NAME, destination.fileName)
                         put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
                         put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                        put(MediaStore.MediaColumns.IS_PENDING, 1)
                     }
                     val uri = context.contentResolver.insert(
                         MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv
                     ) ?: error("Couldn't create the file in Downloads.")
-                    uri to (context.contentResolver.openOutputStream(uri, "w")
-                        ?: error("Couldn't open Downloads stream."))
+                    val os = context.contentResolver.openOutputStream(uri, "w")
+                        ?: error("Couldn't open Downloads stream.")
+                    WriteHandle(uri, os, needsMediaStoreCommit = true)
                 } else {
                     val downloads = Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                     if (!downloads.exists()) downloads.mkdirs()
                     val file = File(downloads, destination.fileName)
-                    Uri.fromFile(file) to FileOutputStream(file)
+                    WriteHandle(Uri.fromFile(file), FileOutputStream(file), needsMediaStoreCommit = false)
                 }
             }
+        }
+    }
+
+    /**
+     * Mark a MediaStore download as committed (clears `IS_PENDING`). No-op
+     * for SAF / direct-file destinations. Call after the stream is flushed
+     * and closed successfully.
+     */
+    fun commit(handle: WriteHandle) {
+        if (!handle.needsMediaStoreCommit) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+        runCatching {
+            val cv = ContentValues().apply {
+                put(MediaStore.MediaColumns.IS_PENDING, 0)
+            }
+            context.contentResolver.update(handle.uri, cv, null, null)
+        }.onFailure { Timber.w(it, "MediaStore commit failed for ${handle.uri}") }
+    }
+
+    /**
+     * Roll back a failed export — deletes the MediaStore pending entry so
+     * the user doesn't see a 0-byte file in Downloads.
+     */
+    fun abort(handle: WriteHandle) {
+        runCatching { context.contentResolver.delete(handle.uri, null, null) }
+            .onFailure { Timber.w(it, "Couldn't delete failed export ${handle.uri}") }
+    }
+
+    /**
+     * Run [block] with the handle's stream, then flush + close + commit on
+     * success, or abort + delete on failure. Returns the size on success.
+     */
+    inline fun <R> writeAndCommit(handle: WriteHandle, block: (OutputStream) -> R): R {
+        return try {
+            val result = handle.stream.use { os ->
+                val r = block(os)
+                os.flush()
+                r
+            }
+            commit(handle)
+            result
+        } catch (t: Throwable) {
+            abort(handle)
+            throw t
         }
     }
 

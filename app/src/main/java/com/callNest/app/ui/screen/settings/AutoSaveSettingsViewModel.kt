@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.callNest.app.data.prefs.SettingsDataStore
 import com.callNest.app.data.system.ContactGroupManager
+import com.callNest.app.data.work.SyncScheduler
 import com.callNest.app.domain.usecase.AutoSaveNameBuilder
+import com.callNest.app.util.RealTimeServiceController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
@@ -29,7 +31,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AutoSaveSettingsViewModel @Inject constructor(
     private val settings: SettingsDataStore,
-    private val groupManager: ContactGroupManager
+    private val groupManager: ContactGroupManager,
+    private val realTimeServiceController: RealTimeServiceController,
+    private val syncScheduler: SyncScheduler
 ) : ViewModel() {
 
     // ---- Local mutable state mirrors (debounced into DataStore) ----
@@ -41,6 +45,8 @@ class AutoSaveSettingsViewModel @Inject constructor(
     private val _phoneLabel = MutableStateFlow("Mobile")
     private val _phoneLabelCustom = MutableStateFlow("")
     private val _region = MutableStateFlow("IN")
+    private val _includeSim1 = MutableStateFlow(true)
+    private val _includeSim2 = MutableStateFlow(true)
 
     val state: StateFlow<AutoSaveSettingsUiState> = combine(
         _enabled,
@@ -92,6 +98,8 @@ class AutoSaveSettingsViewModel @Inject constructor(
             _phoneLabel.value = settings.autoSavePhoneLabel.first()
             _phoneLabelCustom.value = settings.autoSavePhoneLabelCustom.first()
             _region.value = settings.defaultRegion.first()
+            _includeSim1.value = settings.autoSaveIncludeSim1.first()
+            _includeSim2.value = settings.autoSaveIncludeSim2.first()
         }
         // Debounced persistence on each field. StateFlow is already distinct.
         wire(_enabled) { settings.setAutoSaveEnabled(it) }
@@ -102,6 +110,8 @@ class AutoSaveSettingsViewModel @Inject constructor(
         wire(_phoneLabel) { settings.setAutoSavePhoneLabel(it) }
         wire(_phoneLabelCustom) { settings.setAutoSavePhoneLabelCustom(it) }
         wire(_region) { settings.setDefaultRegion(it) }
+        wire(_includeSim1) { settings.setAutoSaveIncludeSim1(it) }
+        wire(_includeSim2) { settings.setAutoSaveIncludeSim2(it) }
     }
 
     private fun <T> wire(
@@ -113,9 +123,25 @@ class AutoSaveSettingsViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun setEnabled(v: Boolean) { _enabled.value = v }
+    fun setEnabled(v: Boolean) {
+        _enabled.value = v
+        // Persist immediately so the service controller sees the new value,
+        // bypassing the 400ms debounce on the wired flow.
+        viewModelScope.launch {
+            settings.setAutoSaveEnabled(v)
+            realTimeServiceController.evaluateAndApply()
+            if (v) {
+                // Fire one-off sync so any pre-existing unsaved numbers get
+                // picked up the moment the user flips auto-save ON, without
+                // waiting for the next periodic tick.
+                runCatching { syncScheduler.triggerOnce() }
+            }
+        }
+    }
     fun setPrefix(v: String) { _prefix.value = v }
     fun setIncludeSimTag(v: Boolean) { _includeSimTag.value = v }
+    fun setIncludeSim1(v: Boolean) { _includeSim1.value = v }
+    fun setIncludeSim2(v: Boolean) { _includeSim2.value = v }
     fun setSuffix(v: String) { _suffix.value = v }
     fun setGroupName(v: String) { _groupName.value = v }
     fun setPhoneLabel(v: String) { _phoneLabel.value = v }
@@ -138,10 +164,24 @@ class AutoSaveSettingsViewModel @Inject constructor(
         }
     }
 
+    /** Per-SIM include flags, exposed separately to keep the main combine() manageable. */
+    val simFilterState: StateFlow<SimFilterState> = combine(_includeSim1, _includeSim2) { s1, s2 ->
+        SimFilterState(includeSim1 = s1, includeSim2 = s2)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = SimFilterState()
+    )
+
     private companion object {
         const val DEBOUNCE_MS = 400L
     }
 }
+
+data class SimFilterState(
+    val includeSim1: Boolean = true,
+    val includeSim2: Boolean = true
+)
 
 private data class Quad<A, B, C, D>(val a: A, val b: B, val c: C, val d: D)
 

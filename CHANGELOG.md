@@ -2,6 +2,31 @@
 
 All notable changes to callNest are documented in this file.
 
+## [Unreleased] — Pass 2 sweep (2026-05-14)
+
+### Removed
+- **In-app self-update flow** — 12 files deleted (UpdateAvailableScreen, UpdateSettingsScreen, UpdateViewModel, UpdateSettingsViewModel, UpdateCheckWorker, UpdateChecker, UpdateRepositoryImpl, UpdateRepository interface, UpdateUseCases, UpdateDownloader, UpdateInstaller, UpdateManifest, UpdateNotifier, UpdateBanner). Users now download new versions from https://callnest.pooniya.com. Update badge + banner gone from MainScaffold and Calls.
+- **Pipeline + Lead-scoring UI** — PipelineScreen, PipelineViewModel, BulkBlastSheet, LeadScoringSettingsScreen + VM deleted; nav entries + More-page row removed. Backend `pipeline_stage` table kept as dead code for a future DB migration. ComputeLeadScoreUseCase still runs with fixed weights.
+
+### Added
+- **Saved / Unsaved badge** on every Calls row (`SavedUnsavedPill`).
+- **Quick-filter chip strip** above the Calls list: All · Saved · Unsaved · Missed · Today · Follow-ups · Hot leads.
+- **OS-contact live search** — SearchScreen now shows two sections (Contacts via `ContactsContract.Phone.CONTENT_FILTER_URI`, Calls via FTS).
+- **DayOfWeekBars** chart on Stats (derived from existing heatmap data).
+- **NeoHelpIcon** plumbed into `StandardPage` and wired into 6 screens (AutoSaveSettings, AutoTagRules, Stats, Backup, PermissionRationale, RealTimeSettings).
+- **Daily summary notification** now shows real counts: `N calls · M missed · K unsaved · F follow-ups due`.
+- **ResetAllDataUseCase** wipes all 13 user-data tables; system-seeded tags survive.
+- `deleteAll()` added to CallDao, ContactMetaDao, FilterPresetDao, AutoTagRuleDao, RuleScoreBoostDao, DocFeedbackDao, PipelineStageDao. TagDao got `deleteAllUserCreated()` + `deleteAllCrossRefs()`. CallDao got `followUpsDueCount()`.
+
+### Changed
+- **Convert dialog prefill** strips brand suffix + SIM tag + E.164 number — user types the contact's real name from a clean field.
+- Bottom nav re-confirmed at 4 tabs (Calls · Insights · Inquiries · More).
+
+### Deferred (tracked in TODO.md)
+- 5 of 6 Stats charts (SimUtilization, TagDistribution, SavedUnsavedTrend, ConversionFunnel, GeoBars) — each needs a new DAO query + StatsSnapshot field + ComputeStatsUseCase extension. Documented inline with TODO.
+- PDF chart-image embedding (blocked on charts above).
+- P2 quality bar (VM tests, DAO instr tests, lint sweep, perf check, a11y) — multi-day work, deferred to v1.1.
+
 ## [1.0.0] — First signed release (2026-05-08)
 
 ### Built

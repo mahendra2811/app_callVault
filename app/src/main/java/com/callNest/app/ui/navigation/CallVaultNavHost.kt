@@ -56,11 +56,8 @@ import com.callNest.app.ui.screen.splash.SplashScreen
 import com.callNest.app.ui.screen.stats.StatsScreen
 import com.callNest.app.ui.screen.tags.TagsManagerScreen
 import com.callNest.app.ui.screen.settings.AutoSaveSettingsScreen
-import com.callNest.app.ui.screen.settings.LeadScoringSettingsScreen
 import com.callNest.app.ui.screen.settings.RealTimeSettingsScreen
 import com.callNest.app.ui.screen.settings.SettingsScreen
-import com.callNest.app.ui.screen.settings.UpdateSettingsScreen
-import com.callNest.app.ui.screen.update.UpdateAvailableScreen
 import com.callNest.app.ui.theme.CallNestTheme
 import com.callNest.app.ui.theme.NeoColors
 import com.callNest.app.util.PermissionManager
@@ -106,8 +103,11 @@ fun CallNestNavHost(
     val permissionManager = entry.permissionManager()
     val authRepository = entry.authRepository()
 
+    // Loading-aware Flow collection — `null` means "not emitted yet, do NOT
+    // route based on this value or you'll bounce a returning user back to
+    // onboarding because the DataStore read raced with auth state".
     val onboardingComplete by settings.onboardingComplete
-        .collectAsStateWithLifecycle(initialValue = false)
+        .collectAsStateWithLifecycle(initialValue = null as Boolean?)
     val hasUsedAccount by settings.hasUsedAccount
         .collectAsStateWithLifecycle(initialValue = false)
     val permState by permissionManager.state.collectAsState()
@@ -117,7 +117,11 @@ fun CallNestNavHost(
     val navController = rememberNavController()
 
     fun postLoginRoute(): String = when {
-        !onboardingComplete -> Destinations.Onboarding.route
+        // If the DataStore flow hasn't emitted yet, default to Main rather
+        // than Onboarding — better to briefly show Main and let the user
+        // re-do onboarding via a Settings option than to wipe their state
+        // every time they cold-start the app.
+        onboardingComplete == false -> Destinations.Onboarding.route
         !permissionManager.isCriticalGranted() -> Destinations.PermissionRationale.route
         else -> Destinations.Main.route
     }
@@ -135,16 +139,20 @@ fun CallNestNavHost(
         composable(Destinations.Splash.route) {
             // Tiny inline loader (logo + ring), no full-screen splash.
             com.callNest.app.ui.components.LogoLoader()
-            LaunchedEffect(authState) {
-                if (authState !is AuthState.Loading) {
-                    val target = if (authState is AuthState.SignedIn) {
-                        postLoginRoute()
-                    } else {
-                        AuthDestinations.GRAPH
-                    }
-                    navController.navigate(target) {
-                        popUpTo(Destinations.Splash.route) { inclusive = true }
-                    }
+            // Splash stays visible until BOTH the auth state has settled
+            // AND the onboarding-complete flag has actually emitted from
+            // DataStore. Routing before the flag emits used to mis-route
+            // returning users back into onboarding on every cold start.
+            LaunchedEffect(authState, onboardingComplete) {
+                if (authState is AuthState.Loading) return@LaunchedEffect
+                if (onboardingComplete == null) return@LaunchedEffect
+                val target = if (authState is AuthState.SignedIn) {
+                    postLoginRoute()
+                } else {
+                    AuthDestinations.GRAPH
+                }
+                navController.navigate(target) {
+                    popUpTo(Destinations.Splash.route) { inclusive = true }
                 }
             }
         }
@@ -243,10 +251,6 @@ fun CallNestNavHost(
             BackHandler { toHome() }
             RuleEditorScreen(onBack = toHome)
         }
-        composable(Destinations.LeadScoringSettings.route) {
-            BackHandler { toHome() }
-            LeadScoringSettingsScreen(onBack = toHome)
-        }
         composable(Destinations.RealTimeSettings.route) {
             BackHandler { toHome() }
             RealTimeSettingsScreen(onBack = toHome)
@@ -291,28 +295,12 @@ fun CallNestNavHost(
                 }
             )
         }
-        composable(Destinations.UpdateAvailable.route) {
-            BackHandler { toHome() }
-            UpdateAvailableScreen(onClose = toHome)
-        }
-        composable(Destinations.UpdateSettings.route) {
-            BackHandler { toHome() }
-            UpdateSettingsScreen()
-        }
         composable(Destinations.Settings.route) {
             BackHandler { toHome() }
             SettingsScreen(navController = navController)
         }
         composable(Destinations.Templates.route) {
             com.callNest.app.ui.screen.templates.TemplatesScreen(onBack = { navController.popBackStack() })
-        }
-        composable(Destinations.Pipeline.route) {
-            com.callNest.app.ui.screen.pipeline.PipelineScreen(
-                onBack = { navController.popBackStack() },
-                onCardOpenCallDetail = { number ->
-                    navController.navigate(Destinations.CallDetail.routeFor(number))
-                },
-            )
         }
         composable(Destinations.CsvImport.route) {
             com.callNest.app.ui.screen.csvimport.CsvImportScreen(
@@ -363,7 +351,6 @@ fun CallNestNavHost(
 
     LaunchedEffect(initialDeepLink) {
         when (initialDeepLink) {
-            "update_available" -> navController.navigate(Destinations.UpdateAvailable.route)
             "daily_summary" -> navController.navigate(Destinations.Main.route)
             "weekly_digest" -> navController.navigate(Destinations.WeeklyDigest.route)
             AuthDestinations.RESET -> navController.navigate(AuthDestinations.RESET) {

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.callNest.app.data.local.dao.SearchHistoryDao
 import com.callNest.app.data.local.entity.SearchHistoryEntity
+import com.callNest.app.data.system.ContactsReader
 import com.callNest.app.domain.model.Call
 import com.callNest.app.domain.model.ContactMeta
 import com.callNest.app.domain.repository.CallRepository
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ import kotlinx.coroutines.launch
 data class SearchUiState(
     val query: String = "",
     val results: List<CallRow> = emptyList(),
+    val contactMatches: List<ContactsReader.ContactMatch> = emptyList(),
     val recent: List<String> = emptyList()
 )
 
@@ -43,6 +46,7 @@ data class SearchUiState(
 class SearchViewModel @Inject constructor(
     private val callRepo: CallRepository,
     private val contactRepo: ContactRepository,
+    private val contactsReader: ContactsReader,
     private val historyDao: SearchHistoryDao
 ) : ViewModel() {
 
@@ -56,12 +60,21 @@ class SearchViewModel @Inject constructor(
             else callRepo.searchFts(q)
         }
 
+    private val contactMatchesFlow = _query
+        .debounce(300L)
+        .flatMapLatest { q ->
+            flow {
+                emit(if (q.isBlank()) emptyList() else contactsReader.searchContacts(q, limit = 6))
+            }
+        }
+
     val state: StateFlow<SearchUiState> = combine(
         _query,
         resultsFlow,
         contactRepo.observeAll(),
-        historyDao.observeRecent(10)
-    ) { q, calls, contacts, recent ->
+        historyDao.observeRecent(10),
+        contactMatchesFlow
+    ) { q, calls, contacts, recent, contactMatches ->
         val byNumber: Map<String, ContactMeta> = contacts.associateBy { it.normalizedNumber }
         val rows = calls.map { call ->
             val meta = byNumber[call.normalizedNumber]
@@ -76,6 +89,7 @@ class SearchViewModel @Inject constructor(
         SearchUiState(
             query = q,
             results = rows,
+            contactMatches = contactMatches,
             recent = recent.map { it.query }
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SearchUiState())

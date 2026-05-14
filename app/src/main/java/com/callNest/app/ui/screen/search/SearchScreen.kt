@@ -91,25 +91,86 @@ fun SearchScreen(
                     onSelect = viewModel::selectRecent,
                     onClear = viewModel::clearHistory
                 )
-                state.results.isEmpty() -> NeoEmptyState(
+                state.results.isEmpty() && state.contactMatches.isEmpty() -> NeoEmptyState(
                     icon = Icons.Filled.SearchOff,
                     title = "No matches",
-                    message = "Try a number, name, or note keyword."
+                    message = "Try a name, number, or company."
                 )
                 else -> LazyColumn {
-                    items(state.results, key = { it.call.systemId }) { row ->
-                        CallRowItem(
-                            row = row,
-                            onClick = {
-                                viewModel.saveToHistory()
-                                onOpenDetail(row.call.normalizedNumber)
-                            },
-                            onLongPress = {},
-                            onToggleBookmark = {}
-                        )
+                    if (state.contactMatches.isNotEmpty()) {
+                        item(key = "contacts-header") {
+                            SectionHeader("Contacts")
+                        }
+                        items(state.contactMatches, key = { "${it.displayName}|${it.normalizedNumber}" }) { match ->
+                            ContactMatchRow(
+                                match = match,
+                                onClick = {
+                                    viewModel.saveToHistory()
+                                    onOpenDetail(match.normalizedNumber)
+                                }
+                            )
+                        }
+                    }
+                    if (state.results.isNotEmpty()) {
+                        item(key = "calls-header") {
+                            SectionHeader("Calls")
+                        }
+                        items(state.results, key = { it.call.systemId }) { row ->
+                            CallRowItem(
+                                row = row,
+                                onClick = {
+                                    viewModel.saveToHistory()
+                                    onOpenDetail(row.call.normalizedNumber)
+                                },
+                                onLongPress = {},
+                                onToggleBookmark = {}
+                            )
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(label: String) {
+    Text(
+        text = label,
+        color = SageColors.TextSecondary,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 6.dp)
+    )
+}
+
+/** Single OS-contact match row — name + pretty number, tap to open detail. */
+@Composable
+private fun ContactMatchRow(
+    match: com.callNest.app.data.system.ContactsReader.ContactMatch,
+    onClick: () -> Unit
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 8.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        com.callNest.app.ui.components.neo.NeoAvatar(name = match.displayName, size = 36.dp)
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = match.displayName,
+                color = SageColors.TextPrimary,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+            )
+            Text(
+                text = match.normalizedNumber,
+                color = SageColors.TextSecondary,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

@@ -107,6 +107,7 @@ fun StatsScreen(
         description = stringResource(R.string.cv_stats_description),
         emoji = "📊",
         onBack = onBack,
+        helpArticleId = "00-stats",
         loading = state.loading,
         backgroundColor = com.callNest.app.ui.theme.TabBgStats,
         headerGradient = com.callNest.app.ui.theme.HeaderGradStatsStart to com.callNest.app.ui.theme.HeaderGradStatsEnd,
@@ -215,6 +216,8 @@ private fun StatsBody(
         }
         item { SectionTitle(stringResource(R.string.stats_chart_heatmap)) }
         item { HourlyHeatmap(cells = snapshot.heatmap) }
+        item { SectionTitle("Calls by day of week") }
+        item { DayOfWeekBars(cells = snapshot.heatmap) }
         item { SectionTitle(stringResource(R.string.stats_chart_top_numbers)) }
         item {
             TopNumbersList(
@@ -293,6 +296,72 @@ private fun OverviewCard(label: String, value: String) {
                 style = MaterialTheme.typography.titleLarge,
                 color = SageColors.TextPrimary
             )
+        }
+    }
+}
+
+/**
+ * Calls grouped by day of week (Mon..Sun). Derives counts from the existing
+ * hourly heatmap to avoid a new DAO query.
+ *
+ * TODO (B1 follow-ups deferred from this batch — each needs a new DAO query
+ * and StatsSnapshot field. Not user-blocking; tracked in CHANGELOG):
+ *  - SimUtilizationBar: sum durationSec grouped by simSlot
+ *  - TagDistribution: COUNT joined on call_tag_cross_ref + tags
+ *  - SavedUnsavedTrend: daily volume split by isInSystemContacts
+ *  - ConversionFunnel: revisit when/if Pipeline returns
+ *  - GeoBars: COUNT grouped by geocodedLocation (most users don't have this set)
+ */
+@Composable
+private fun DayOfWeekBars(cells: List<HourlyHeatmapCell>) {
+    val byDay = remember(cells) {
+        val agg = IntArray(7) // 0=Mon..6=Sun, matching Java DayOfWeek
+        cells.forEach { c ->
+            // HourlyHeatmapCell.dayOfWeek follows Calendar.DAY_OF_WEEK (1=Sun..7=Sat).
+            // Re-index so Monday lands at slot 0.
+            val idx = ((c.dayOfWeek + 5) % 7).coerceIn(0, 6)
+            agg[idx] += c.count
+        }
+        agg
+    }
+    val labels = listOf("M", "T", "W", "T", "F", "S", "S")
+    val maxV = (byDay.maxOrNull() ?: 0).coerceAtLeast(1)
+    androidx.compose.foundation.layout.Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+    ) {
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth().height(120.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            byDay.forEachIndexed { i, v ->
+                val fraction = v.toFloat() / maxV.toFloat()
+                androidx.compose.foundation.layout.Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.width(28.dp)
+                ) {
+                    androidx.compose.foundation.layout.Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height((110f * fraction).coerceAtLeast(4f).dp)
+                            .background(
+                                NeoColors.AccentBlue.copy(alpha = 0.6f),
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
+                            )
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = labels[i],
+                        style = MaterialTheme.typography.labelSmall,
+                        color = SageColors.TextSecondary
+                    )
+                    Text(
+                        text = v.toString(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = SageColors.TextTertiary
+                    )
+                }
+            }
         }
     }
 }

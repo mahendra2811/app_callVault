@@ -43,20 +43,22 @@ class PdfExporter @Inject constructor(
             ?: "callNest-${stamp()}.pdf"
         val target = if (destination is ExportDestination.PickedUri) destination
         else ExportDestination.Downloads(fileName)
-        val (uri, stream) = shared.openOutputStream(target, "application/pdf")
-        PdfWriter(stream).use { pw ->
-            PdfDocument(pw).use { pdf ->
-                pdf.defaultPageSize = PageSize.A4
-                Document(pdf).use { doc ->
-                    cover(doc, filter, rows.size)
-                    doc.add(AreaBreak())
-                    totals(doc, filter)
-                    doc.add(AreaBreak())
-                    callsTable(doc, rows)
+        val handle = shared.openOutputStream(target, "application/pdf")
+        shared.writeAndCommit(handle) { stream ->
+            PdfWriter(stream).use { pw ->
+                PdfDocument(pw).use { pdf ->
+                    pdf.defaultPageSize = PageSize.A4
+                    Document(pdf).use { doc ->
+                        cover(doc, filter, rows.size)
+                        doc.add(AreaBreak())
+                        totals(doc, filter)
+                        doc.add(AreaBreak())
+                        callsTable(doc, rows)
+                    }
                 }
             }
         }
-        return ExportResult(uri, fileName, shared.sizeOf(uri), "pdf")
+        return ExportResult(handle.uri, fileName, shared.sizeOf(handle.uri), "pdf")
     }
 
     private fun cover(doc: Document, filter: ExportFilter, count: Int) {

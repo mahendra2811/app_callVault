@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.callNest.app.R
 import com.callNest.app.domain.model.ContactMeta
+import com.callNest.app.domain.usecase.AutoSaveContactUseCase.Companion.BRAND_SUFFIX
 import com.callNest.app.ui.components.neo.NeoAvatar
 import com.callNest.app.ui.components.neo.NeoButton
 import com.callNest.app.ui.components.neo.NeoEmptyState
@@ -48,6 +49,7 @@ import com.callNest.app.ui.theme.NeoColors
 import com.callNest.app.ui.theme.SageColors
 import com.callNest.app.ui.util.DateFormatter
 import com.callNest.app.ui.util.PhoneNumberFormatter
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 
 /**
@@ -62,6 +64,7 @@ import kotlinx.datetime.Instant
 fun InquiriesScreen(
     onBack: () -> Unit,
     onOpenDetail: (String) -> Unit,
+    onOpenAutoSaveSettings: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: InquiriesViewModel = hiltViewModel()
 ) {
@@ -71,6 +74,10 @@ fun InquiriesScreen(
 
     var convertTarget by remember { mutableStateOf<ContactMeta?>(null) }
     var showBulkDialog by remember { mutableStateOf(false) }
+    var saveTarget by remember { mutableStateOf<ContactMeta?>(null) }
+    var savePreview by remember { mutableStateOf("") }
+    var showSaveAllConfirm by remember { mutableStateOf(false) }
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
     NeoScaffold(
         modifier = modifier,
@@ -127,13 +134,56 @@ fun InquiriesScreen(
             )
             Spacer(Modifier.height(12.dp))
             if (state.inquiries.isEmpty()) {
-                NeoEmptyState(
-                    icon = Icons.Filled.Inbox,
-                    title = stringResource(R.string.inquiries_empty_title),
-                    message = stringResource(R.string.inquiries_empty_body),
-                    modifier = Modifier.fillMaxSize()
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    NeoEmptyState(
+                        icon = Icons.Filled.Inbox,
+                        title = "No unsaved numbers",
+                        message = "Every caller that isn't in your contacts will show up here.",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    NeoButton(
+                        text = "Open Auto-save settings",
+                        onClick = onOpenAutoSaveSettings
+                    )
+                }
             } else {
+                // Header strip: Save-all-now CTA + count + link to settings.
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "${state.inquiries.size} unsaved",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = SageColors.TextPrimary
+                        )
+                        Text(
+                            text = "Tap Save now to add to contacts. Long-press to bulk-select.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = SageColors.TextSecondary
+                        )
+                    }
+                    TextButton(onClick = onOpenAutoSaveSettings) {
+                        Text("Settings", color = SageColors.Sage)
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    NeoButton(
+                        text = "Save all now",
+                        onClick = { showSaveAllConfirm = true },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
                 val nowMs = remember(state.inquiries) { System.currentTimeMillis() }
                 val grouped = remember(state.inquiries, nowMs) {
                     state.inquiries
@@ -158,7 +208,12 @@ fun InquiriesScreen(
                                     else onOpenDetail(row.normalizedNumber)
                                 },
                                 onLongPress = { viewModel.enterBulkMode(row.normalizedNumber) },
-                                onConvert = { convertTarget = row }
+                                onSaveNow = {
+                                    coroutineScope.launch {
+                                        savePreview = viewModel.previewSavedName(row.normalizedNumber)
+                                        saveTarget = row
+                                    }
+                                }
                             )
                         }
                     }
@@ -169,12 +224,17 @@ fun InquiriesScreen(
     }
 
     convertTarget?.let { target ->
-        // The auto-save format embeds the brand prefix + SIM tag; strip those before
-        // showing the user a "rename" prompt — they want a clean starting point, not chrome.
-        val cleanInitial = (target.displayName ?: target.normalizedNumber)
-            .substringAfterLast('|')
+        // Strip the brand suffix + any "-s1/-s2" SIM tag + prefix from the
+        // prefilled name so the user types the contact's real name from a
+        // clean starting point ("Priya"), not "Priya callNest".
+        val raw = target.displayName ?: target.normalizedNumber
+        val cleanInitial = raw
+            .substringAfterLast('|')            // legacy format snapshot
+            .replace(Regex("\\s*${Regex.escape(BRAND_SUFFIX)}\\s*$"), "")  // brand suffix
+            .replace(Regex("\\s*-?s[12]\\s*"), " ")  // SIM tag fragments
+            .replace(Regex("\\+\\d+"), "")      // E.164 number
             .trim()
-            .ifEmpty { target.normalizedNumber }
+            .ifEmpty { "" }
         ConvertDialog(
             initialName = cleanInitial,
             onCancel = { convertTarget = null },
@@ -191,6 +251,97 @@ fun InquiriesScreen(
             onDismiss = { showBulkDialog = false }
         )
     }
+
+    // Per-row Save-now confirmation. Shows the exact name the contact will be
+    // saved under so the user knows what to expect before tapping Confirm.
+    saveTarget?.let { target ->
+        SaveConfirmDialog(
+            title = "Save this number?",
+            previewName = savePreview,
+            phoneNumber = PhoneNumberFormatter.pretty(target.normalizedNumber),
+            confirmLabel = "Save",
+            onCancel = { saveTarget = null },
+            onConfirm = {
+                viewModel.saveOneNow(target.normalizedNumber)
+                saveTarget = null
+            }
+        )
+    }
+
+    if (showSaveAllConfirm) {
+        SaveConfirmDialog(
+            title = "Save all ${state.inquiries.size} numbers?",
+            previewName = null,
+            phoneNumber = "Each number will be saved using your current Auto-save settings " +
+                "(prefix, SIM tag, suffix).",
+            confirmLabel = "Save all",
+            onCancel = { showSaveAllConfirm = false },
+            onConfirm = {
+                showSaveAllConfirm = false
+                showBulkDialog = true
+                viewModel.saveAllNow()
+            }
+        )
+    }
+}
+
+/**
+ * Confirmation dialog used before saving an unsaved inquiry. Shows the
+ * proposed display name so the user can see exactly what will land in their
+ * contacts.
+ */
+@Composable
+private fun SaveConfirmDialog(
+    title: String,
+    previewName: String?,
+    phoneNumber: String,
+    confirmLabel: String,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    com.callNest.app.ui.components.neo.NeoDialog(
+        onDismissRequest = onCancel,
+        header = {
+            Text(title, style = MaterialTheme.typography.titleLarge)
+        },
+        body = {
+            Spacer(Modifier.height(com.callNest.app.ui.theme.Spacing.Sm))
+            Text(
+                "Number",
+                style = MaterialTheme.typography.labelSmall,
+                color = SageColors.TextSecondary
+            )
+            Text(
+                phoneNumber,
+                style = MaterialTheme.typography.bodyMedium,
+                color = SageColors.TextPrimary
+            )
+            if (previewName != null) {
+                Spacer(Modifier.height(com.callNest.app.ui.theme.Spacing.Md))
+                Text(
+                    "Will be saved as",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = SageColors.TextSecondary
+                )
+                Text(
+                    previewName,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = NeoColors.AccentBlue,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        },
+        footer = {
+            TextButton(onClick = onCancel) {
+                Text(stringResource(R.string.inquiries_cancel))
+            }
+            Spacer(Modifier.width(com.callNest.app.ui.theme.Spacing.Sm))
+            com.callNest.app.ui.components.neo.NeoButton(
+                text = confirmLabel,
+                onClick = onConfirm
+            )
+        }
+    )
 }
 
 private enum class AgeBucket(val order: Int, val label: String) {
@@ -231,7 +382,7 @@ private fun BucketHeader(label: String, count: Int) {
     }
 }
 
-/** A single inquiry row (display name + count + last-call timestamp + convert CTA). */
+/** A single inquiry row — pretty number + "Unsaved" badge + Save-now CTA. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun InquiryRow(
@@ -239,12 +390,12 @@ private fun InquiryRow(
     selected: Boolean,
     onClick: () -> Unit,
     onLongPress: () -> Unit,
-    onConvert: () -> Unit
+    onSaveNow: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(72.dp)
             .combinedClickable(onClick = onClick, onLongClick = onLongPress)
             .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -253,23 +404,28 @@ private fun InquiryRow(
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = meta.displayName ?: PhoneNumberFormatter.pretty(meta.normalizedNumber),
+                text = PhoneNumberFormatter.pretty(meta.normalizedNumber),
                 color = if (selected) SageColors.Sage else SageColors.TextPrimary,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
-            Text(
-                text = stringResource(R.string.inquiries_total_calls, meta.totalCalls) +
-                    " · " + DateFormatter.rowTime(meta.lastCallDate),
-                color = SageColors.TextSecondary,
-                style = MaterialTheme.typography.bodySmall
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Unsaved",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = NeoColors.AccentBlue
+                )
+                Text(
+                    text = "  ·  " + stringResource(R.string.inquiries_total_calls, meta.totalCalls) +
+                        " · " + DateFormatter.rowTime(meta.lastCallDate),
+                    color = SageColors.TextSecondary,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
-        TextButton(onClick = onConvert) {
-            Text(
-                text = stringResource(R.string.inquiries_action_convert),
-                color = SageColors.Sage
-            )
+        TextButton(onClick = onSaveNow) {
+            Text(text = "Save now", color = SageColors.Sage)
         }
     }
 }
@@ -365,7 +521,7 @@ private fun InquiriesPopulatedPreview() {
                         selected = false,
                         onClick = {},
                         onLongPress = {},
-                        onConvert = {}
+                        onSaveNow = {}
                     )
                 }
             }

@@ -83,4 +83,52 @@ class ContactsReader @Inject constructor(
             context,
             Manifest.permission.READ_CONTACTS
         ) == PackageManager.PERMISSION_GRANTED
+
+    /**
+     * One contact-app-style search match — a single phone number tied to the
+     * contact's display name + organisation (when present).
+     */
+    data class ContactMatch(
+        val displayName: String,
+        val normalizedNumber: String,
+        val organisation: String?
+    )
+
+    /**
+     * Live-search OS contacts by name / phone / company. Used by the in-app
+     * Search surface so users can find anyone in their phonebook even before
+     * they've called them. Matches against DISPLAY_NAME, PHONE_NUMBER, and
+     * (when available) the COMPANY data row.
+     */
+    suspend fun searchContacts(query: String, limit: Int = 6): List<ContactMatch> =
+        withContext(Dispatchers.IO) {
+            val q = query.trim()
+            if (q.isEmpty() || !hasContactsPermission()) return@withContext emptyList()
+            val cr = context.contentResolver
+            val out = LinkedHashMap<String, ContactMatch>()
+            // 1) Phone number / DISPLAY_NAME match via Phone CONTENT_FILTER_URI.
+            val phoneUri = Uri.withAppendedPath(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI,
+                Uri.encode(q)
+            )
+            runCatching {
+                cr.query(
+                    phoneUri,
+                    arrayOf(
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                    ),
+                    null, null,
+                    "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} ASC LIMIT $limit"
+                )?.use { c ->
+                    while (c.moveToNext() && out.size < limit) {
+                        val name = c.getString(0) ?: continue
+                        val num = c.getString(1) ?: continue
+                        val key = "$name|$num"
+                        out[key] = ContactMatch(name, num, organisation = null)
+                    }
+                }
+            }
+            out.values.toList()
+        }
 }

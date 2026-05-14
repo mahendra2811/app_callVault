@@ -60,14 +60,24 @@ class SettingsDataStore @Inject constructor(
     suspend fun setLastSyncAt(v: Long) = write(K_LAST_SYNC_AT, v)
 
     // ---------- Auto-save ----------
-    val autoSaveEnabled: Flow<Boolean> = ds.data.read(K_AUTO_SAVE_ENABLED, true)
+    // Auto-save defaults OFF for v1.0.0 — manual Save-now is the only path.
+    val autoSaveEnabled: Flow<Boolean> = ds.data.read(K_AUTO_SAVE_ENABLED, false)
     suspend fun setAutoSaveEnabled(v: Boolean) = write(K_AUTO_SAVE_ENABLED, v)
 
-    val autoSavePrefix: Flow<String> = ds.data.read(K_AUTO_SAVE_PREFIX, "callNest")
+    // Default empty so the auto-saved name doesn't read "callNest +91X callNest"
+    // (suffix is brand-locked, see AutoSaveContactUseCase.BRAND_SUFFIX).
+    val autoSavePrefix: Flow<String> = ds.data.read(K_AUTO_SAVE_PREFIX, "")
     suspend fun setAutoSavePrefix(v: String) = write(K_AUTO_SAVE_PREFIX, v)
 
     val autoSaveIncludeSimTag: Flow<Boolean> = ds.data.read(K_AUTO_SAVE_INCLUDE_SIM_TAG, true)
     suspend fun setAutoSaveIncludeSimTag(v: Boolean) = write(K_AUTO_SAVE_INCLUDE_SIM_TAG, v)
+
+    /** Per-SIM auto-save filter: whether SIM 1 calls trigger auto-save. */
+    val autoSaveIncludeSim1: Flow<Boolean> = ds.data.read(K_AUTO_SAVE_INCLUDE_SIM1, true)
+    suspend fun setAutoSaveIncludeSim1(v: Boolean) = write(K_AUTO_SAVE_INCLUDE_SIM1, v)
+
+    val autoSaveIncludeSim2: Flow<Boolean> = ds.data.read(K_AUTO_SAVE_INCLUDE_SIM2, true)
+    suspend fun setAutoSaveIncludeSim2(v: Boolean) = write(K_AUTO_SAVE_INCLUDE_SIM2, v)
 
     val autoSaveSuffix: Flow<String> = ds.data.read(K_AUTO_SAVE_SUFFIX, "")
     suspend fun setAutoSaveSuffix(v: String) = write(K_AUTO_SAVE_SUFFIX, v)
@@ -221,6 +231,8 @@ class SettingsDataStore @Inject constructor(
         val K_AUTO_SAVE_ENABLED = booleanPreferencesKey("autoSaveEnabled")
         val K_AUTO_SAVE_PREFIX = stringPreferencesKey("autoSavePrefix")
         val K_AUTO_SAVE_INCLUDE_SIM_TAG = booleanPreferencesKey("autoSaveIncludeSimTag")
+        val K_AUTO_SAVE_INCLUDE_SIM1 = booleanPreferencesKey("autoSaveIncludeSim1")
+        val K_AUTO_SAVE_INCLUDE_SIM2 = booleanPreferencesKey("autoSaveIncludeSim2")
         val K_AUTO_SAVE_SUFFIX = stringPreferencesKey("autoSaveSuffix")
         val K_AUTO_SAVE_GROUP_NAME = stringPreferencesKey("autoSaveContactGroupName")
         val K_AUTO_SAVE_GROUP_ID = longPreferencesKey("autoSaveContactGroupId")

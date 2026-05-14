@@ -1,58 +1,62 @@
 # callNest — TODO
 
-Outstanding work, ranked. Check items off (`- [x]`) as they ship. Add new items in the right tier.
+Outstanding work, ranked. Check items off (`- [x]`) as they ship.
 
-Last refreshed: 2026-05-01.
+Last refreshed: 2026-05-14.
 
 ## P0 — Blockers (won't ship without these)
 
-- [x] First clean build: `./gradlew assembleDebug` ✅ green 2026-05-02. APK 37 MB at `app/build/outputs/apk/debug/app-debug.apk`. Fixes: added `gradle.properties` (AndroidX flag), `Icons.AutoMirrored.Filled.ArrowBack` import in RealTimeSettingsScreen, `Json` provider in `AppModule`.
-- [ ] Generate release keystore + populate `keystore.properties`. Verify `assembleRelease` produces a signed APK.
-- [ ] Stand up real `versions-stable.json` and `versions-beta.json` hosts; replace placeholder URLs in `BuildConfig` (`UPDATE_MANIFEST_STABLE_URL`, `UPDATE_MANIFEST_BETA_URL`).
-- [ ] Replace launcher icons (currently a vector "C" placeholder) with final artwork at all densities + adaptive variants.
-- [ ] Wire `MainScaffold` (5-tab `NeoTabBar`) into `callNestNavHost` as nested graph. Tabs: Home / Calls / My Contacts / Inquiries / More. Default = Calls.
+- [x] First clean build (2026-05-02).
+- [x] Generate release keystore + populate `keystore.properties` (2026-05-08).
+- [x] Signed `assembleRelease` builds — `CallNest-1.0.0.apk` shipped to `~/Releases/` (2026-05-08).
+- [x] Wire `MainScaffold` (5-tab) — later trimmed to 4 tabs: Calls / Insights / Inquiries / More (2026-05-14).
+- [x] Real launcher icons + adaptive variants (brand work, 2026-05-07).
+- [ ] Host `versions-stable.json` at `https://callnest.pooniya.com/versions-stable.json` (file is already in `callNest-web/public/`, just needs Cloudflare Pages deploy).
 
 ## P1 — Functional spec misses
 
-- [ ] Implement remaining 6 stats charts: SimUtilizationBar, TagDistribution, SavedUnsavedTrend, ConversionFunnel, GeoBars, DayOfWeekBars (§3.16).
-- [ ] PDF export — embed chart images via Compose `captureToBitmap` (§3.15).
-- [ ] Place `NeoHelpIcon` in every screen's app bar. Map article ids per `08-agent-spawn-templates.md` and the `NeoHelpIcon` callsite list.
-- [ ] Swap remaining Material 3 primitives in `UpdateAvailableScreen` / `UpdateSettingsScreen` for `NeoCard` / `NeoButton` / `NeoProgressBar` / `NeoToggle`.
-- [ ] Extend `ResetAllDataUseCase` to wipe all 13 user-data tables (currently 4). Add `deleteAll()` to remaining DAOs.
-- [ ] `DailySummaryWorker` — replace generic notification with computed counts (today total, missed, unsaved, follow-ups due).
-- [ ] Onboarding firstSync error path — verify retry/skip flows on cold deny / partial deny.
-- [ ] Manifest hosting verification via Playwright (`/audit` confirms reachable + parseable JSON).
+- [x] `ResetAllDataUseCase` extended to all 13 user-data tables (2026-05-14).
+- [x] `DailySummaryWorker` real counts in notification (today / missed / unsaved / follow-ups due) (2026-05-14).
+- [x] `NeoHelpIcon` plumbed into `StandardPage`; wired into 6 highest-value screens (2026-05-14).
+- [x] Onboarding firstSync error path — Skip + Retry both persist `onboardingComplete` (verified 2026-05-14).
+- [x] Calls filter UI redesign — quick-filter chip strip above the list (2026-05-14).
+- [x] Search redesign — OS-contact live matches alongside FTS results (2026-05-14).
+- [x] Per-SIM auto-save filter — include SIM 1 / SIM 2 (2026-05-08).
+- [x] In-call popup — WhatsApp + WA Business deep links (2026-05-08).
+- [x] Saved/Unsaved badge on every Calls row (2026-05-14).
+- [ ] **B1 follow-ups**: 5 of 6 deferred stats charts (SimUtilization, TagDistribution, SavedUnsavedTrend, ConversionFunnel, GeoBars). Each needs a new DAO query + StatsSnapshot field + ComputeStatsUseCase extension. DayOfWeekBars shipped 2026-05-14 using existing heatmap data.
+- [ ] **B2**: PDF export — embed chart images via Compose `captureToBitmap`. Blocked on B1 follow-ups since charts must exist first.
+- [ ] Material 3 → Neo swap on Update screens (no longer relevant — Update flow deleted 2026-05-14).
 
-## P2 — Quality bar (spec §0)
+## P2 — Quality bar (deferred to v1.1)
 
-- [ ] Unit tests for every ViewModel (currently 0 of ~14). Use `callNest-test-writer`.
-- [ ] DAO instrumentation tests for every DAO (currently 0 of 9). Use `callNest-test-writer`.
-- [ ] `@Preview` audit — ensure every shipped composable has at least one preview that renders.
-- [ ] Lint warnings sweep post-build.
-- [ ] Performance verification on a real device:
-  - cold start < 1.5s
-  - filter on 10k rows < 300ms
-  - FTS query < 100ms
-  - sync 5k entries < 8s
-  - APK size < 25 MB
-- [ ] Empty / loading / error state sweep — every screen has all three (`callNest-ui-builder`).
-- [ ] Accessibility sweep — TalkBack labels, 48dp touch targets, WCAG AA contrast on lead-score badges.
+- [ ] Unit tests for every ViewModel (~14 missing).
+- [ ] DAO instrumentation tests (9 missing).
+- [ ] `@Preview` audit — every shipped composable renders.
+- [ ] Lint warnings sweep.
+- [ ] Performance verification on device (cold start, filter on 10k rows, FTS, sync 5k, APK size).
+- [ ] Empty / loading / error state sweep across every screen.
+- [ ] Accessibility sweep (TalkBack, 48dp touch targets, AA contrast).
 
-## P3 — Nice-to-haves before public sideload
+## P3 — Polish
 
-- [x] Real privacy policy text (`assets/docs/15-privacy.md`) and hosted page (`docs/privacy-policy.html`, also at https://callnest.pooniya.com/privacy). ✅ 2026-05-08.
-- [ ] Real screenshots in `docs/screenshots/`.
-- [ ] ProGuard / R8 release-mode validation (needs keystore — blocked on P0 #2).
-- [x] CI workflow `.github/workflows/release.yml` — signed `assembleRelease` on `v*` tag push, attaches APK to GitHub Release. ✅ 2026-05-08.
-- [x] Release script `scripts/release.sh` — version bump + signed build + `versions-stable.json` for in-app self-update. ✅ 2026-05-08.
-- [x] Sentry crash reporting wired (consent-gated via `analyticsConsent`, no PII, traces=0). ✅ 2026-05-08.
-- [ ] Defensive parsing fuzz tests for update manifest schema.
-- [ ] Remove dead `LazyColumnItemsScopeShim` helper in `StatsScreen.kt` (Sprint 8 leftover; harmless).
+- [x] Real privacy policy text + hosted page at https://callnest.pooniya.com/privacy (2026-05-08).
+- [x] Release script `scripts/release.sh` (2026-05-08).
+- [x] Sentry crash reporting wired, consent-gated, no PII (2026-05-08).
+- [x] GitHub Actions release CI on `v*` tag push (2026-05-08).
+- [x] Pipeline + lead-scoring UI stripped; backend tables kept as dead code for a future DB-version migration (2026-05-14).
+- [x] In-app update flow fully removed; Check-for-updates opens website (2026-05-14).
+- [x] Demo data seeding disabled + auto-clears on launch if previously seeded (2026-05-08).
+- [x] Auto-save defaults OFF + "Coming soon" badge; manual Save-now in Inquiries is the only path (2026-05-08).
+- [x] Excel exporter switched to SXSSF streaming + MediaStore IS_PENDING dance + per-bucket sheets (2026-05-08).
+- [x] In-app self-update dead code removed (UpdateAvailableScreen, UpdateSettingsScreen, UpdateCheckWorker, UpdateChecker, UpdateRepository*, UpdateInstaller, UpdateDownloader, UpdateManifest, UpdateNotifier, UpdateBanner, UpdateSettingsViewModel, UpdateUseCases — 12 files) on 2026-05-14.
+- [ ] Real screenshots in `docs/screenshots/` (for store / web).
+- [ ] Schema migration to drop the now-unused `pipeline_stage` table + DB version bump.
+- [ ] Defensive parsing fuzz tests for update-manifest schema (no longer relevant — flow removed).
 
 ## Rules for editing this file
 
 - Add new items under the correct tier.
 - Promote/demote tier when reality changes (e.g. P3 → P0 if a release date moves).
 - Tick boxes (`- [x]`) when shipped. Don't delete completed items — they become the changelog source for the next release.
-- Reference subagents by name (`callNest-android-engineer`, etc.) — `/next` will route based on phrasing.
 - One sentence per item, max. If it needs a paragraph, link to a separate doc instead.

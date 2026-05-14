@@ -17,6 +17,7 @@ import com.callNest.app.data.service.overlay.OverlayManager
 import com.callNest.app.data.service.overlay.PostCallPayload
 import com.callNest.app.data.system.CallContextResolver
 import com.callNest.app.data.system.PhoneStateMonitor
+import com.callNest.app.data.work.SyncScheduler
 import com.callNest.app.domain.model.CallType
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class CallEnrichmentService : LifecycleService() {
     @Inject lateinit var overlayManager: OverlayManager
     @Inject lateinit var contextResolver: CallContextResolver
     @Inject lateinit var hotLeadNotifier: HotLeadNotifier
+    @Inject lateinit var syncScheduler: SyncScheduler
 
     private var monitorJob: Job? = null
     private var lastOffhookNumber: String? = null
@@ -91,6 +93,14 @@ class CallEnrichmentService : LifecycleService() {
                 }
                 PhoneStateMonitor.CallState.Idle -> {
                     overlayManager.hideBubble()
+                    // The call just ended — kick off a sync so the new
+                    // CallLog row gets imported AND the auto-save loop runs
+                    // immediately, instead of waiting for the next periodic
+                    // tick (default 15 min).
+                    if (sawOffhook) {
+                        runCatching { syncScheduler.triggerOnce() }
+                            .onFailure { Timber.w(it, "post-call sync trigger failed") }
+                    }
                     if (sawOffhook && popupOn) {
                         val number = lastOffhookNumber
                         sawOffhook = false

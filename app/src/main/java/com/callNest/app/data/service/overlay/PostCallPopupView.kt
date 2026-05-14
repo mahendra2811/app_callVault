@@ -79,74 +79,143 @@ class PostCallPopupView private constructor(context: Context) : FrameLayout(cont
     private fun build() {
         val card = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(20), dp(16), dp(20), dp(16))
+            setPadding(dp(20), dp(18), dp(20), dp(18))
+            elevation = dp(8).toFloat()
             background = GradientDrawable().apply {
                 cornerRadii = floatArrayOf(
-                    dp(20).toFloat(), dp(20).toFloat(),
-                    dp(20).toFloat(), dp(20).toFloat(),
+                    dp(24).toFloat(), dp(24).toFloat(),
+                    dp(24).toFloat(), dp(24).toFloat(),
                     0f, 0f, 0f, 0f
                 )
                 setColor(Color.parseColor("#FFFFFFFF"))
             }
         }
+
+        // Top row: title + sub on left, X close button on right.
+        val topRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val titleCol = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         val header = TextView(context).apply {
             text = (payload.displayName ?: payload.normalizedNumber)
-            setTextColor(Color.parseColor("#FF2A3441"))
+            setTextColor(Color.parseColor("#FF0F1722"))
             textSize = 18f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
         }
         val sub = TextView(context).apply {
             text = "${payload.callType} · ${formatDuration(payload.durationSec)}"
             setTextColor(Color.parseColor("#FF5C6A7A"))
             textSize = 13f
+            setPadding(0, dp(2), 0, 0)
         }
-        val chipsRow = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+        titleCol.addView(header)
+        titleCol.addView(sub)
+        val titleLp = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+        topRow.addView(titleCol, titleLp)
+
+        // X close button — circular grey background, ✕ glyph centred.
+        val closeIcon = TextView(context).apply {
+            text = "✕"
+            textSize = 18f
+            gravity = Gravity.CENTER
+            setTextColor(Color.parseColor("#FF5C6A7A"))
+            background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(Color.parseColor("#FFF1F1F4"))
+            }
+            setOnClickListener { dismissAndPersist() }
+            contentDescription = "Close"
+        }
+        topRow.addView(closeIcon, LinearLayout.LayoutParams(dp(36), dp(36)))
+
+        val chipsRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+        val chipsLp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(12)
+        }
         timerLabel = TextView(context).apply {
             setTextColor(Color.parseColor("#FF8492A3"))
-            textSize = 12f
+            textSize = 11f
+            setPadding(0, dp(8), 0, 0)
         }
         noteField = EditText(context).apply {
             hint = "Quick note…"
             inputType = InputType.TYPE_CLASS_TEXT
             setSingleLine(true)
-            setBackgroundColor(Color.parseColor("#FFF1F1F4"))
-            setPadding(dp(8), dp(8), dp(8), dp(8))
+            background = GradientDrawable().apply {
+                cornerRadius = dp(10).toFloat()
+                setColor(Color.parseColor("#FFF1F1F4"))
+            }
+            setPadding(dp(12), dp(10), dp(12), dp(10))
             setOnFocusChangeListener { _, _ -> resetCountdown() }
         }
-        val actions = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+        val noteLp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(12)
+        }
+        val actions = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+        val actionsLp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(12)
+        }
 
-        val saveContact = TextView(context).apply {
-            text = "Save contact"
-            setTextColor(Color.parseColor("#FF2A3441"))
-            setPadding(dp(8), dp(8), dp(8), dp(8))
-            setOnClickListener {
-                resetCountdown()
-                openMainActivityWithNumber()
+        fun pillButton(label: String, primary: Boolean, onTap: () -> Unit): TextView = TextView(context).apply {
+            text = label
+            textSize = 14f
+            gravity = Gravity.CENTER
+            setPadding(dp(16), dp(10), dp(16), dp(10))
+            if (primary) {
+                setTextColor(Color.WHITE)
+                background = GradientDrawable().apply {
+                    cornerRadius = dp(20).toFloat()
+                    setColor(Color.parseColor("#FF0F1722"))
+                }
+            } else {
+                setTextColor(Color.parseColor("#FF0F1722"))
+                background = GradientDrawable().apply {
+                    cornerRadius = dp(20).toFloat()
+                    setColor(Color.parseColor("#FFF1F1F4"))
+                }
             }
+            setOnClickListener { resetCountdown(); onTap() }
         }
-        val moreOptions = TextView(context).apply {
-            text = "More options"
-            setTextColor(Color.parseColor("#FF2A3441"))
-            setPadding(dp(8), dp(8), dp(8), dp(8))
-            setOnClickListener {
-                resetCountdown()
-                openMainActivityWithNumber()
-            }
-        }
-        val closeBtn = TextView(context).apply {
-            text = "Close"
-            setTextColor(Color.parseColor("#FF2A3441"))
-            setPadding(dp(8), dp(8), dp(8), dp(8))
-            setOnClickListener { dismissAndPersist() }
-        }
-        if (payload.isUnsaved) actions.addView(saveContact)
-        actions.addView(moreOptions)
-        actions.addView(closeBtn)
 
-        card.addView(header)
-        card.addView(sub)
-        card.addView(chipsRow)
-        card.addView(noteField, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-        card.addView(actions)
+        if (payload.isUnsaved) {
+            val saveLp = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dp(8) }
+            actions.addView(pillButton("Save contact", true) { openMainActivityWithNumber() }, saveLp)
+        }
+        val moreLp = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+        actions.addView(pillButton("More options", false) { openMainActivityWithNumber() }, moreLp)
+
+        // Second action row — WhatsApp + WhatsApp Business. We try the
+        // direct package first; fall back to plain wa.me so users without
+        // the package don't get a dead button.
+        val waRow = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+        val waLp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(8)
+        }
+        val waButtonLp = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dp(8) }
+        waRow.addView(
+            pillButton("WhatsApp", false) {
+                openWhatsApp(payload.normalizedNumber, business = false)
+            },
+            waButtonLp
+        )
+        val waBLp = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+        waRow.addView(
+            pillButton("WA Business", false) {
+                openWhatsApp(payload.normalizedNumber, business = true)
+            },
+            waBLp
+        )
+
+        card.addView(topRow)
+        card.addView(chipsRow, chipsLp)
+        card.addView(noteField, noteLp)
+        card.addView(actions, actionsLp)
+        card.addView(waRow, waLp)
         card.addView(timerLabel)
 
         addView(card, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))
@@ -224,6 +293,31 @@ class PostCallPopupView private constructor(context: Context) : FrameLayout(cont
         } else {
             onClose()
         }
+    }
+
+    /**
+     * Open WhatsApp (or WA Business) directly for [number]. We use the
+     * official `wa.me` deep link so users get the right "Open in app" sheet
+     * even if both apps are installed, but force the package when
+     * [business] is true so business users land in the right inbox.
+     */
+    private fun openWhatsApp(number: String, business: Boolean) {
+        val digits = number.replace("+", "").replace(Regex("\\s"), "")
+        val pkg = if (business) "com.whatsapp.w4b" else "com.whatsapp"
+        val direct = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://wa.me/$digits"))
+            .setPackage(pkg)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val opened = runCatching { context.startActivity(direct) }.isSuccess
+        if (!opened) {
+            // Fallback — no package, let the system picker decide.
+            runCatching {
+                context.startActivity(
+                    Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://wa.me/$digits"))
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
+        }
+        onClose()
     }
 
     private fun openMainActivityWithNumber() {

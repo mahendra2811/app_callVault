@@ -70,8 +70,15 @@ fun StandardPage(
     headerGradient: Pair<Color, Color>? = null,
     chromeless: Boolean = false,
     scrollable: Boolean = false,
+    /**
+     * Optional in-app docs article id (matches `assets/docs/<id>.md`).
+     * When set, a small "?" icon appears in the top-bar actions row that
+     * deep-links into the matching help article.
+     */
+    helpArticleId: String? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val rootNav = com.callNest.app.ui.navigation.LocalRootNav.current
     val scrollState = rememberScrollState()
     if (onBackToHome != null) {
         BackHandler { onBackToHome() }
@@ -88,7 +95,15 @@ fun StandardPage(
                     showBrand = showBrand,
                     navIcon = if (onBack != null) Icons.AutoMirrored.Filled.ArrowBack else null,
                     onNavClick = { onBack?.invoke() },
-                    actions = actions
+                    actions = {
+                        actions()
+                        if (helpArticleId != null && rootNav != null) {
+                            com.callNest.app.ui.components.neo.NeoHelpIcon(
+                                articleId = helpArticleId,
+                                navController = rootNav
+                            )
+                        }
+                    }
                 )
             }
         }

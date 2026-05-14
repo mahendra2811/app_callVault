@@ -19,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
@@ -53,29 +52,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.callNest.app.R
 import com.callNest.app.domain.repository.CallRepository
-import com.callNest.app.domain.repository.UpdateRepository
-import com.callNest.app.domain.repository.UpdateState
 import com.callNest.app.ui.components.neo.NeoIconButton
 import com.callNest.app.ui.components.neo.NeoTab
 import com.callNest.app.ui.components.neo.NeoTabBar
 import com.callNest.app.ui.components.neo.NeoTopBar
 import com.callNest.app.ui.screen.calls.CallsScreen
 import com.callNest.app.ui.screen.export.QuickExportSheet
-import com.callNest.app.ui.screen.home.HomeScreen
 import com.callNest.app.ui.screen.inquiries.InquiriesScreen
 import com.callNest.app.ui.screen.auth.AuthViewModel
 import com.callNest.app.ui.screen.more.MoreScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.callNest.app.ui.theme.IconCallsTint
-import com.callNest.app.ui.theme.IconHomeTint
-import com.callNest.app.ui.theme.IconStatsTint
-import com.callNest.app.ui.theme.TabBgStats
 import com.callNest.app.ui.theme.IconInquiriesTint
 import com.callNest.app.ui.theme.NeoColors
 import com.callNest.app.ui.theme.SageColors
 import com.callNest.app.ui.theme.Spacing
 import com.callNest.app.ui.theme.TabBgCalls
-import com.callNest.app.ui.theme.TabBgHome
 import com.callNest.app.ui.theme.TabBgInquiries
 import com.callNest.app.ui.theme.TabBgMore
 import dagger.hilt.EntryPoint
@@ -91,7 +83,6 @@ import kotlinx.coroutines.flow.map
 @InstallIn(SingletonComponent::class)
 interface MainScaffoldEntryPoint {
     fun callRepository(): CallRepository
-    fun updateRepository(): UpdateRepository
 }
 
 /**
@@ -118,41 +109,35 @@ fun MainScaffold(
         )
     }
     val callRepo = entry.callRepository()
-    val updateRepo = entry.updateRepository()
 
     val unsavedFlow = remember(callRepo) { callRepo.observeUnsavedLast7Days().map { it.size } }
     val unsavedCount by unsavedFlow.collectAsStateWithLifecycle(initialValue = 0)
-    val updateState by updateRepo.state.collectAsStateWithLifecycle()
 
-    val updateBadge = when (val s = updateState) {
-        is UpdateState.Available -> if (!s.isSkipped) 1 else null
-        else -> null
-    }
+    // Update badge removed — in-app update flow deleted; users get new
+    // builds from https://callnest.pooniya.com instead.
+    val updateBadge: Int? = null
 
     val innerNav = rememberNavController()
     val backStack by innerNav.currentBackStackEntryAsState()
     val currentRoute = backStack?.destination?.route ?: MainTabRoute.Calls.route
 
     val tabs = listOf(
-        MainTabRoute.Home,
         MainTabRoute.Calls,
-        MainTabRoute.Pipeline,
+        MainTabRoute.Insights,
         MainTabRoute.Inquiries,
         MainTabRoute.More
     )
     val selectedIndex = tabs.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
 
-    val homeLabel = stringResource(R.string.cv_tab_home)
     val callsLabel = stringResource(R.string.cv_tab_calls)
-    val pipelineLabel = stringResource(R.string.cv_tab_pipeline)
+    val insightsLabel = "Insights"
     val inquiriesLabel = stringResource(R.string.cv_tab_inquiries)
     val moreLabel = stringResource(R.string.cv_tab_more)
     val brand = stringResource(R.string.cv_main_brand)
 
     val neoTabs = listOf(
-        NeoTab(homeLabel, Icons.Filled.Home, activeTint = IconHomeTint),
         NeoTab(callsLabel, Icons.Filled.Call, activeTint = IconCallsTint),
-        NeoTab(pipelineLabel, Icons.Filled.BarChart, activeTint = IconStatsTint),
+        NeoTab(insightsLabel, Icons.Filled.BarChart, activeTint = NeoColors.AccentBlue),
         NeoTab(
             inquiriesLabel,
             Icons.Filled.Inbox,
@@ -166,11 +151,11 @@ fun MainScaffold(
     var quickExportOpen by rememberSaveable { mutableStateOf(false) }
     val saveableHolder = rememberSaveableStateHolder()
 
-    // Consume HomeNavRequest signal from popToHome calls in deep screens.
+    // popToHome callers now land on Calls (Home tab removed from bottom nav).
     LaunchedEffect(Unit) {
         HomeNavRequest.pending.collect { wantsHome ->
             if (wantsHome) {
-                innerNav.navigate(MainTabRoute.Home.route) {
+                innerNav.navigate(MainTabRoute.Calls.route) {
                     popUpTo(innerNav.graph.startDestinationId) { saveState = true }
                     launchSingleTop = true
                     restoreState = true
@@ -197,9 +182,8 @@ fun MainScaffold(
     }
 
     val currentTabBg = when (tabs[selectedIndex]) {
-        MainTabRoute.Home -> TabBgHome
         MainTabRoute.Calls -> TabBgCalls
-        MainTabRoute.Pipeline -> TabBgStats
+        MainTabRoute.Insights -> TabBgCalls
         MainTabRoute.Inquiries -> TabBgInquiries
         MainTabRoute.More -> TabBgMore
     }
@@ -299,35 +283,6 @@ fun MainScaffold(
                 navController = innerNav,
                 startDestination = MainTabRoute.Calls.route
             ) {
-                composable(MainTabRoute.Home.route) {
-                    saveableHolder.SaveableStateProvider(MainTabRoute.Home.route) {
-                        val switchTab: (String) -> Unit = { route ->
-                            if (route != currentRoute) {
-                                innerNav.navigate(route) {
-                                    popUpTo(innerNav.graph.startDestinationId) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        }
-                        HomeScreen(
-                            onNavigateCalls = { switchTab(MainTabRoute.Calls.route) },
-                            onNavigateInquiries = { switchTab(MainTabRoute.Inquiries.route) },
-                            onNavigateStats = {
-                                rootNavController.navigate(Destinations.Settings.route)
-                            },
-                            onNavigateBackup = {
-                                rootNavController.navigate(Destinations.Backup.route)
-                            },
-                            onNavigateQuickExport = {
-                                quickExportOpen = true
-                            },
-                            onNavigateFollowUps = {
-                                switchTab(MainTabRoute.Calls.route)
-                            },
-                        )
-                    }
-                }
                 composable(MainTabRoute.Calls.route) {
                     saveableHolder.SaveableStateProvider(MainTabRoute.Calls.route) {
                         CallsScreen(
@@ -353,9 +308,6 @@ fun MainScaffold(
                             onOpenAutoTagRules = {
                                 rootNavController.navigate(Destinations.AutoTagRules.route)
                             },
-                            onOpenLeadScoringSettings = {
-                                rootNavController.navigate(Destinations.LeadScoringSettings.route)
-                            },
                             onOpenRealTimeSettings = {
                                 rootNavController.navigate(Destinations.RealTimeSettings.route)
                             },
@@ -364,12 +316,6 @@ fun MainScaffold(
                             },
                             onOpenBackup = {
                                 rootNavController.navigate(Destinations.Backup.route)
-                            },
-                            onOpenUpdateAvailable = {
-                                rootNavController.navigate(Destinations.UpdateAvailable.route)
-                            },
-                            onOpenUpdateSettings = {
-                                rootNavController.navigate(Destinations.UpdateSettings.route)
                             },
                             onOpenSettings = {
                                 rootNavController.navigate(Destinations.Settings.route)
@@ -380,13 +326,15 @@ fun MainScaffold(
                         )
                     }
                 }
-                composable(MainTabRoute.Pipeline.route) {
-                    saveableHolder.SaveableStateProvider(MainTabRoute.Pipeline.route) {
-                        com.callNest.app.ui.screen.pipeline.PipelineScreen(
-                            onBack = null,
-                            onCardOpenCallDetail = { number ->
-                                rootNavController.navigate(Destinations.CallDetail.routeFor(number))
+                composable(MainTabRoute.Insights.route) {
+                    saveableHolder.SaveableStateProvider(MainTabRoute.Insights.route) {
+                        com.callNest.app.ui.screen.insights.InsightsScreen(
+                            onOpenStats = {
+                                rootNavController.navigate(Destinations.Stats.route)
                             },
+                            onOpenWeeklyDigest = {
+                                rootNavController.navigate(Destinations.WeeklyDigest.route)
+                            }
                         )
                     }
                 }
@@ -396,6 +344,9 @@ fun MainScaffold(
                             onBack = { /* no-op — tab root has no back */ },
                             onOpenDetail = { number ->
                                 rootNavController.navigate(Destinations.CallDetail.routeFor(number))
+                            },
+                            onOpenAutoSaveSettings = {
+                                rootNavController.navigate(Destinations.AutoSaveSettings.route)
                             }
                         )
                     }

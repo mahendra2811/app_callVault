@@ -71,9 +71,9 @@ class BackupManager @Inject constructor(
             ?: defaultBackupName()
         val target = if (destination is ExportDestination.PickedUri) destination
         else ExportDestination.Downloads(fileName)
-        val (uri, stream) = shared.openOutputStream(target, "application/octet-stream")
-        stream.use { it.write(cipher) }
-        return ExportResult(uri, fileName, cipher.size.toLong(), "cvb")
+        val handle = shared.openOutputStream(target, "application/octet-stream")
+        shared.writeAndCommit(handle) { it.write(cipher) }
+        return ExportResult(handle.uri, fileName, cipher.size.toLong(), "cvb")
     }
 
     /** Restore the database from [uri] using [passphrase]. */

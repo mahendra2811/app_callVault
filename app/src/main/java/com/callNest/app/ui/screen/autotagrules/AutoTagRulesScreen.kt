@@ -66,7 +66,8 @@ fun AutoTagRulesScreen(
         title = stringResource(R.string.cv_rules_title),
         description = stringResource(R.string.cv_rules_description),
         emoji = "🪄",
-        onBack = onBack
+        onBack = onBack,
+        helpArticleId = "05-tags-and-rules"
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (state.rules.isEmpty()) {

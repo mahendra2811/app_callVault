@@ -29,4 +29,7 @@ interface AutoTagRuleDao {
 
     @Query("SELECT * FROM auto_tag_rules WHERE id = :id")
     suspend fun getById(id: Long): AutoTagRuleEntity?
+
+    @Query("DELETE FROM auto_tag_rules")
+    suspend fun deleteAll()
 }

@@ -95,49 +95,71 @@ class FloatingBubbleView private constructor(context: Context) : FrameLayout(con
         removeAllViews()
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(16), dp(12), dp(16), dp(12))
+            setPadding(dp(16), dp(14), dp(16), dp(14))
+            elevation = dp(8).toFloat()
             background = GradientDrawable().apply {
-                cornerRadius = dp(16).toFloat()
+                cornerRadius = dp(20).toFloat()
                 setColor(Color.parseColor("#FFFFFFFF"))
             }
         }
+        // Header row: title + timer on the left, X close on the right.
+        val headerRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val titleCol = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         val title = TextView(context).apply {
             text = payload.displayName ?: payload.normalizedNumber
-            setTextColor(Color.parseColor("#FF2A3441"))
-            textSize = 16f
+            setTextColor(Color.parseColor("#FF0F1722"))
+            textSize = 15f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
         }
         val timer = TextView(context).apply {
             text = "00:00"
             setTextColor(Color.parseColor("#FF5C6A7A"))
-            textSize = 13f
+            textSize = 12f
+            setPadding(0, dp(2), 0, 0)
         }
+        titleCol.addView(title)
+        titleCol.addView(timer)
+        headerRow.addView(titleCol, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+
         val noteField = EditText(context).apply {
             hint = "Note this call…"
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             setSingleLine(false)
             minLines = 2
             maxLines = 4
-            setBackgroundColor(Color.parseColor("#FFF1F1F4"))
-            setPadding(dp(8), dp(8), dp(8), dp(8))
+            background = GradientDrawable().apply {
+                cornerRadius = dp(10).toFloat()
+                setColor(Color.parseColor("#FFF1F1F4"))
+            }
+            setPadding(dp(12), dp(10), dp(12), dp(10))
         }
-        val actions = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-        }
-        val close = TextView(context).apply {
-            text = "Close"
-            setPadding(dp(12), dp(8), dp(12), dp(8))
-            setTextColor(Color.parseColor("#FF2A3441"))
+
+        val closeIcon = TextView(context).apply {
+            text = "✕"
+            textSize = 16f
+            gravity = Gravity.CENTER
+            setTextColor(Color.parseColor("#FF5C6A7A"))
+            background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(Color.parseColor("#FFF1F1F4"))
+            }
+            contentDescription = "Close"
             setOnClickListener {
                 noteState.clear().append(noteField.text?.toString().orEmpty())
                 persistNoteIfAny()
                 onClose()
             }
         }
-        actions.addView(close)
-        container.addView(title)
-        container.addView(timer)
-        container.addView(noteField, LinearLayout.LayoutParams(dp(280), ViewGroup.LayoutParams.WRAP_CONTENT))
-        container.addView(actions)
+        headerRow.addView(closeIcon, LinearLayout.LayoutParams(dp(32), dp(32)))
+
+        container.addView(headerRow)
+        val noteLp = LinearLayout.LayoutParams(dp(280), ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(10)
+        }
+        container.addView(noteField, noteLp)
         addView(container, LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         card = container
 

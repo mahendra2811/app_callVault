@@ -75,7 +75,8 @@ fun RealTimeSettingsScreen(
         title = stringResource(R.string.cv_realtime_title_v2),
         description = stringResource(R.string.cv_realtime_description),
         emoji = "✨",
-        onBack = onBack
+        onBack = onBack,
+        helpArticleId = "07-floating-bubble"
     ) {
         Column(
             modifier = Modifier

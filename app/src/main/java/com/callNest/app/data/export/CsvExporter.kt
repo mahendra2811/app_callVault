@@ -31,33 +31,35 @@ class CsvExporter @Inject constructor(
         val resolved = if (destination is ExportDestination.Downloads) destination
         else ExportDestination.Downloads(fileName)
         val target = if (destination is ExportDestination.PickedUri) destination else resolved
-        val (uri, stream) = shared.openOutputStream(target, "text/csv")
-        OutputStreamWriter(stream, Charsets.UTF_8).use { w ->
-            // UTF-8 BOM so Excel detects the encoding.
-            w.write("﻿")
-            w.write(headerLine(columns))
-            w.write("\n")
-            val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-            rows.forEach { row ->
-                val cells = mutableListOf<String>()
-                if (columns.date) cells += df.format(Date(row.call.date.toEpochMilliseconds()))
-                if (columns.number) cells += row.call.normalizedNumber
-                if (columns.name) cells += (row.contactMeta?.displayName ?: row.call.cachedName ?: "")
-                if (columns.type) cells += row.call.type.name
-                if (columns.duration) cells += row.call.durationSec.toString()
-                if (columns.simSlot) cells += (row.call.simSlot?.toString() ?: "")
-                if (columns.tags) cells += row.tags.joinToString(", ") { it.name }
-                if (columns.notes) cells += row.notes.joinToString(" | ") { it.content }
-                if (columns.leadScore) cells += row.call.leadScore.toString()
-                if (columns.geocodedLocation) cells += (row.call.geocodedLocation ?: "")
-                if (columns.isBookmarked) cells += if (row.call.isBookmarked) "1" else "0"
-                if (columns.isArchived) cells += if (row.call.isArchived) "1" else "0"
-                w.write(cells.joinToString(",") { escape(it) })
+        val handle = shared.openOutputStream(target, "text/csv")
+        shared.writeAndCommit(handle) { stream ->
+            OutputStreamWriter(stream, Charsets.UTF_8).use { w ->
+                // UTF-8 BOM so Excel detects the encoding.
+                w.write("﻿")
+                w.write(headerLine(columns))
                 w.write("\n")
+                val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+                rows.forEach { row ->
+                    val cells = mutableListOf<String>()
+                    if (columns.date) cells += df.format(Date(row.call.date.toEpochMilliseconds()))
+                    if (columns.number) cells += row.call.normalizedNumber
+                    if (columns.name) cells += (row.contactMeta?.displayName ?: row.call.cachedName ?: "")
+                    if (columns.type) cells += row.call.type.name
+                    if (columns.duration) cells += row.call.durationSec.toString()
+                    if (columns.simSlot) cells += (row.call.simSlot?.toString() ?: "")
+                    if (columns.tags) cells += row.tags.joinToString(", ") { it.name }
+                    if (columns.notes) cells += row.notes.joinToString(" | ") { it.content }
+                    if (columns.leadScore) cells += row.call.leadScore.toString()
+                    if (columns.geocodedLocation) cells += (row.call.geocodedLocation ?: "")
+                    if (columns.isBookmarked) cells += if (row.call.isBookmarked) "1" else "0"
+                    if (columns.isArchived) cells += if (row.call.isArchived) "1" else "0"
+                    w.write(cells.joinToString(",") { escape(it) })
+                    w.write("\n")
+                }
+                w.flush()
             }
-            w.flush()
         }
-        return ExportResult(uri, fileName, shared.sizeOf(uri), "csv")
+        return ExportResult(handle.uri, fileName, shared.sizeOf(handle.uri), "csv")
     }
 
     private fun headerLine(c: ExportColumns): String {

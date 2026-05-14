@@ -54,9 +54,9 @@ class JsonExporter @Inject constructor(
             ?: "callNest-${stamp()}.json"
         val target = if (destination is ExportDestination.PickedUri) destination
         else ExportDestination.Downloads(fileName)
-        val (uri, stream) = shared.openOutputStream(target, "application/json")
-        stream.use { it.write(bytes) }
-        return ExportResult(uri, fileName, bytes.size.toLong(), "json")
+        val handle = shared.openOutputStream(target, "application/json")
+        shared.writeAndCommit(handle) { it.write(bytes) }
+        return ExportResult(handle.uri, fileName, bytes.size.toLong(), "json")
     }
 
     /** Build the full dump as raw bytes (used by the backup pipeline). */

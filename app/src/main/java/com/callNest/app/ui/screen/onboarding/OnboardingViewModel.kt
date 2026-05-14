@@ -88,10 +88,22 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    /** Advance to the next page, clamped to the last index. */
+    /**
+     * Advance to the next page, clamped to the last index. Once the user
+     * leaves the PermissionsPage (index 2 → 3) we persist `onboardingComplete`
+     * so a backgrounded/killed app never throws them back into onboarding —
+     * even if FirstSync errors out. The FirstSyncPage itself is a one-time
+     * convenience, not a gate.
+     */
     fun next() {
-        _uiState.update {
-            it.copy(currentPage = (it.currentPage + 1).coerceAtMost(pageCount - 1))
+        _uiState.update { st ->
+            val newPage = (st.currentPage + 1).coerceAtMost(pageCount - 1)
+            // PermissionsPage is index 2; advancing past it = onboarding is
+            // effectively done.
+            if (st.currentPage == 2 && newPage == 3) {
+                viewModelScope.launch { settings.setOnboardingComplete(true) }
+            }
+            st.copy(currentPage = newPage)
         }
     }
 

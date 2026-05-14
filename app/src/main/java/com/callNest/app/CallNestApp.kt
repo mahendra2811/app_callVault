@@ -10,7 +10,6 @@ import androidx.work.Configuration
 import com.callNest.app.data.analytics.AnalyticsTracker
 import com.callNest.app.data.prefs.SettingsDataStore
 import com.callNest.app.data.push.PushTokenSync
-import com.callNest.app.data.work.UpdateCheckWorker
 import com.callNest.app.data.work.DailySummaryWorker
 import com.callNest.app.data.work.StaleLeadNudgeWorker
 import com.callNest.app.util.RealTimeServiceController
@@ -67,12 +66,20 @@ class CallNestApp : Application(), Configuration.Provider {
         MainScope().launch {
             try {
                 if (settingsDataStore.onboardingComplete.first()) {
-                    runCatching { demoSeeder.seedIfNeeded() }
-                        .onFailure { Timber.w(it, "DemoSeeder.seedIfNeeded failed") }
+                    // Demo seeding is disabled for v1.0.0 — production users
+                    // see only real call data. Existing seeded rows can be
+                    // cleared via the "Clear demo" banner in Pipeline.
+                    // runCatching { demoSeeder.seedIfNeeded() }
+                    //     .onFailure { Timber.w(it, "DemoSeeder.seedIfNeeded failed") }
+                    runCatching {
+                        if (settingsDataStore.demoSeedActive.first()) {
+                            demoSeeder.clearDemo()
+                        }
+                    }.onFailure { Timber.w(it, "DemoSeeder.clearDemo failed") }
                     realTimeServiceController.evaluateAndApply()
                     // Sprint 10/11 — background workers gated on onboarding completion.
-                    runCatching { UpdateCheckWorker.schedule(this@CallNestApp) }
-                        .onFailure { Timber.w(it, "UpdateCheckWorker.schedule failed") }
+                    // UpdateCheckWorker removed — users now download from
+                    // https://callnest.pooniya.com/download instead.
                     if (settingsDataStore.dailySummaryEnabled.first()) {
                         runCatching { DailySummaryWorker.schedule(this@CallNestApp) }
                             .onFailure { Timber.w(it, "DailySummaryWorker.schedule failed") }

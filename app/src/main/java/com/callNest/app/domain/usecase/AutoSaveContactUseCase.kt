@@ -50,6 +50,13 @@ class AutoSaveContactUseCase @Inject constructor(
 
     suspend operator fun invoke(call: Call): Result {
         if (!settings.autoSaveEnabled.first()) return Result.SkippedDisabled
+        // Per-SIM filter — let the user opt out of one SIM (e.g. personal
+        // line) while keeping the other (business line) flowing into auto-save.
+        when (call.simSlot) {
+            0 -> if (!settings.autoSaveIncludeSim1.first()) return Result.SkippedDisabled
+            1 -> if (!settings.autoSaveIncludeSim2.first()) return Result.SkippedDisabled
+            else -> Unit
+        }
         val number = call.normalizedNumber
         if (!isValidForAutoSave(number)) return Result.SkippedInvalidNumber
 
