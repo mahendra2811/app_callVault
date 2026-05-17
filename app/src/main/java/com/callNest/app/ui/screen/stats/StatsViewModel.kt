@@ -2,10 +2,14 @@ package com.callNest.app.ui.screen.stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.callNest.app.data.export.ExportColumns
+import com.callNest.app.data.export.ExportDestination
+import com.callNest.app.data.export.ExportFilter
 import com.callNest.app.data.prefs.SettingsDataStore
 import com.callNest.app.domain.model.DateRange
 import com.callNest.app.domain.model.StatsSnapshot
 import com.callNest.app.domain.usecase.ComputeStatsUseCase
+import com.callNest.app.domain.usecase.ExportToPdfUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /** UI state for the Stats screen. */
 data class StatsUiState(
@@ -33,7 +38,8 @@ data class StatsUiState(
 @HiltViewModel
 class StatsViewModel @Inject constructor(
     private val computeStats: ComputeStatsUseCase,
-    private val settings: SettingsDataStore
+    private val settings: SettingsDataStore,
+    private val exportToPdf: ExportToPdfUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(StatsUiState())
@@ -98,11 +104,27 @@ class StatsViewModel @Inject constructor(
         _state.value = _state.value.copy(sortByDuration = !_state.value.sortByDuration)
     }
 
-    /** Stub for the bottom "Export PDF" button — wired in Sprint 9. */
+    /** Generate the Stats PDF for the currently selected range. */
     fun exportPdf() {
-        _state.value = _state.value.copy(
-            exportToast = "Export available after Sprint 9."
-        )
+        val range = _state.value.range
+        viewModelScope.launch {
+            _state.value = _state.value.copy(exportToast = "Generating PDF…")
+            try {
+                val result = exportToPdf(
+                    filter = ExportFilter(range = range),
+                    columns = ExportColumns(),
+                    destination = ExportDestination.Downloads("callNest-stats-${System.currentTimeMillis()}.pdf")
+                )
+                _state.value = _state.value.copy(
+                    exportToast = "Saved to Downloads · ${result.fileName}"
+                )
+            } catch (t: Throwable) {
+                Timber.w(t, "Stats PDF export failed")
+                _state.value = _state.value.copy(
+                    exportToast = "Couldn't export PDF. ${t.message ?: "Unknown error"}"
+                )
+            }
+        }
     }
 
     /** Clear the one-shot export toast after the snackbar consumes it. */

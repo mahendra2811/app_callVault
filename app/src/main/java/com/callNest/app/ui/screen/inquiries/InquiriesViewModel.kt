@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.callNest.app.data.local.dao.CallDao
 import com.callNest.app.data.local.mapper.toDomain
 import com.callNest.app.data.prefs.SettingsDataStore
+import com.callNest.app.data.work.SyncScheduler
 import com.callNest.app.domain.model.ContactMeta
 import com.callNest.app.domain.repository.ContactRepository
 import com.callNest.app.domain.usecase.AutoSaveContactUseCase
@@ -34,8 +35,12 @@ class InquiriesViewModel @Inject constructor(
     private val bulkSave: BulkSaveContactsUseCase,
     private val autoSave: AutoSaveContactUseCase,
     private val settings: SettingsDataStore,
+    private val syncScheduler: SyncScheduler,
     bulkProgressBus: BulkSaveProgressBus
 ) : ViewModel() {
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
@@ -178,6 +183,18 @@ class InquiriesViewModel @Inject constructor(
             try { bulkSave(calls) } finally {
                 if (!wasEnabled) settings.setAutoSaveEnabled(false)
             }
+        }
+    }
+
+    /** Pull-to-refresh: re-syncs the call log so brand-new inquiries land. */
+    fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            runCatching { syncScheduler.triggerOnce() }
+            // Sync runs on the worker — give it a brief beat so the spinner
+            // isn't a flicker. The contact-meta Flow keeps the UI live.
+            kotlinx.coroutines.delay(800)
+            _isRefreshing.value = false
         }
     }
 }

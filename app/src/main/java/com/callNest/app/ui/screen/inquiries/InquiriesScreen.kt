@@ -43,6 +43,8 @@ import com.callNest.app.ui.components.neo.NeoSearchBar
 import com.callNest.app.ui.components.neo.NeoTextField
 import com.callNest.app.ui.components.neo.NeoPageHeader
 import com.callNest.app.ui.components.neo.NeoTopBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import com.callNest.app.ui.screen.shared.NeoScaffold
 import com.callNest.app.ui.theme.CallNestTheme
 import com.callNest.app.ui.theme.NeoColors
@@ -59,7 +61,7 @@ import kotlinx.datetime.Instant
  * "Bulk save" (re-runs auto-save against the current call snapshot) and
  * "Convert all" (promotes every selected row to My Contacts).
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun InquiriesScreen(
     onBack: () -> Unit,
@@ -71,6 +73,7 @@ fun InquiriesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
     val bulkProgress by viewModel.bulkProgress.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     var convertTarget by remember { mutableStateOf<ContactMeta?>(null) }
     var showBulkDialog by remember { mutableStateOf(false) }
@@ -115,6 +118,11 @@ fun InquiriesScreen(
             }
         } else null
     ) {
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::refresh,
+            modifier = Modifier.fillMaxSize()
+        ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Phase III — page header (emoji + title + description) hidden. Restore by uncommenting.
             /*
@@ -220,6 +228,7 @@ fun InquiriesScreen(
                 }
             }
             }
+        }
         }
     }
 

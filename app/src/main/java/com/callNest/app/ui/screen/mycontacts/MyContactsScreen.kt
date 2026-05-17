@@ -34,6 +34,8 @@ import com.callNest.app.ui.components.neo.NeoChip
 import com.callNest.app.ui.components.neo.NeoEmptyState
 import com.callNest.app.ui.components.neo.NeoSearchBar
 import com.callNest.app.ui.components.neo.NeoTopBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import com.callNest.app.ui.screen.shared.NeoScaffold
 import com.callNest.app.ui.screen.shared.StandardPage
 import com.callNest.app.ui.theme.CallNestTheme
@@ -49,6 +51,7 @@ import kotlinx.datetime.Instant
  * @param onBack pop the navigation stack.
  * @param onOpenDetail navigate to call detail for [ContactMeta.normalizedNumber].
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyContactsScreen(
     onBack: () -> Unit,
@@ -58,6 +61,7 @@ fun MyContactsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     StandardPage(
         title = stringResource(R.string.cv_mycontacts_title),
@@ -65,6 +69,11 @@ fun MyContactsScreen(
         emoji = "👥",
         onBack = onBack
     ) {
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::refresh,
+            modifier = Modifier.fillMaxSize()
+        ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(Modifier.height(8.dp))
             NeoSearchBar(
@@ -92,6 +101,7 @@ fun MyContactsScreen(
                     }
                 }
             }
+        }
         }
     }
 }

@@ -2,7 +2,31 @@
 
 All notable changes to callNest are documented in this file.
 
-## [Unreleased] — Pass 2 sweep (2026-05-14)
+## [Unreleased]
+
+_Nothing yet._
+
+## [1.0.1] — Tester drop (2026-05-14)
+
+**Build artefacts**
+- `CallNest-1.0.1.apk` — 21.3 MB (22,318,363 bytes)
+- SHA-256: `6c342198e31453617fd401e7e33ea115d67e466010b5995820517b90f9357f94`
+- versionCode 2
+- Distributed via https://callnest.pooniya.com/apk/callnest-latest.apk
+
+**Highlights since 1.0.0** (full breakdown in the sections below):
+- Spotlight-style Search overlay (rebuilt from scratch)
+- New Insights tab with today snapshot + 7-day trend + top callers + day-of-week + lead-quality bar
+- Pull-to-refresh on every data screen
+- Quick-filter chip strip + inline horizontal filter panel on Calls
+- Saved/Unsaved badge on every call row
+- Per-SIM auto-save filter
+- WhatsApp + WhatsApp Business buttons on the post-call popup
+- Excel export 0-byte / SheetUtil crash fixed
+- Stats Export PDF actually works now
+- Auto-save name no longer reads "callNest +91X callNest"
+
+## [1.0.1 detail] — Pass 2 sweep (2026-05-14)
 
 ### Removed
 - **In-app self-update flow** — 12 files deleted (UpdateAvailableScreen, UpdateSettingsScreen, UpdateViewModel, UpdateSettingsViewModel, UpdateCheckWorker, UpdateChecker, UpdateRepositoryImpl, UpdateRepository interface, UpdateUseCases, UpdateDownloader, UpdateInstaller, UpdateManifest, UpdateNotifier, UpdateBanner). Users now download new versions from https://callnest.pooniya.com. Update badge + banner gone from MainScaffold and Calls.

@@ -29,6 +29,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -126,6 +127,11 @@ fun StatsScreen(
             )
         }
     ) {
+        PullToRefreshBox(
+            isRefreshing = state.loading,
+            onRefresh = viewModel::refresh,
+            modifier = Modifier.fillMaxSize()
+        ) {
         Box(modifier = Modifier.fillMaxSize()) {
             when {
                 state.loading && state.snapshot == null -> {
@@ -163,6 +169,7 @@ fun StatsScreen(
                 hostState = snackHost,
                 modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp)
             )
+        }
         }
     }
 

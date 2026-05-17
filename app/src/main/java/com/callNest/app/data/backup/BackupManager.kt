@@ -149,12 +149,20 @@ class BackupManager @Inject constructor(
 
     /** Truncate every user-data table — runs inside the restore transaction. */
     private fun wipeAll() {
+        // Order matters only for human readability; SQLite has no FK
+        // cascades configured for these tables. FTS shadow tables
+        // (call_fts, note_fts) are managed by triggers and rebuild on
+        // insert — leave them alone.
         val tables = listOf(
-            "call_tag_cross_ref", "note_history", "notes", "calls", "tags",
-            "contact_meta", "filter_presets", "auto_tag_rules"
+            "call_tag_cross_ref", "rule_score_boosts",
+            "note_history", "notes", "calls", "tags",
+            "contact_meta", "filter_presets", "auto_tag_rules",
+            "pipeline_stage", "search_history", "skipped_updates", "doc_feedback"
         )
         tables.forEach { t ->
-            db.openHelper.writableDatabase.execSQL("DELETE FROM $t")
+            runCatching {
+                db.openHelper.writableDatabase.execSQL("DELETE FROM $t")
+            }
         }
         // Reset autoincrement counters where applicable.
         db.openHelper.writableDatabase.execSQL("DELETE FROM sqlite_sequence WHERE 1=1")

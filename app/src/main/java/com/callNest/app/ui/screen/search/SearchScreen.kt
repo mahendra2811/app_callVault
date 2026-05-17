@@ -1,222 +1,420 @@
 package com.callNest.app.ui.screen.search
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.SearchOff
+import androidx.compose.material.icons.filled.Note
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.callNest.app.ui.components.neo.NeoEmptyState
-import com.callNest.app.ui.components.neo.NeoIconButton
-import com.callNest.app.ui.components.neo.NeoSearchBar
-import com.callNest.app.ui.components.neo.NeoSurface
-import com.callNest.app.ui.screen.calls.CallRowItem
-import com.callNest.app.ui.screen.shared.NeoScaffold
+import com.callNest.app.data.system.ContactsReader
+import com.callNest.app.domain.model.Call
+import com.callNest.app.domain.model.Note
 import com.callNest.app.ui.theme.NeoColors
 import com.callNest.app.ui.theme.SageColors
-import com.callNest.app.ui.theme.NeoElevation
+import com.callNest.app.ui.util.PhoneNumberFormatter
 
 /**
- * Full-screen search overlay with the search bar serving as its own top bar.
+ * macOS Spotlight-style search overlay.
  *
- * - Empty query → recent searches list with a Clear button.
- * - Non-empty → debounced FTS search via [SearchViewModel]; rows render as
- *   the same [CallRowItem] used by the Calls list.
+ * - Centered floating card with auto-focused single-line input
+ * - Live results in three sections (Contacts · Calls · Notes), debounced 200ms
+ * - Dim scrim behind the card; tap outside or hit back to dismiss
+ * - X icon clears the query; X with empty query closes the screen
  */
 @Composable
 fun SearchScreen(
     onBack: () -> Unit,
     onOpenDetail: (String) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val focusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
 
-    NeoScaffold(
-        modifier = modifier,
-        topBar = {
-            NeoSurface(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = NeoElevation.ConvexSmall,
-                shape = RoundedCornerShape(0.dp)
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboard?.show()
+    }
+
+    BackHandler {
+        viewModel.saveToHistory()
+        onBack()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.45f))
+            .clickable(
+                indication = null,
+                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
             ) {
-                Row(
+                viewModel.saveToHistory()
+                onBack()
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 80.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Search card — consumes its own clicks so taps inside don't dismiss.
+            AnimatedVisibility(
+                visible = true,
+                enter = fadeIn() + scaleIn(initialScale = 0.95f),
+                exit = fadeOut() + scaleOut(targetScale = 0.95f)
+            ) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .shadow(elevation = 24.dp, shape = RoundedCornerShape(20.dp))
+                        .background(Color.White, shape = RoundedCornerShape(20.dp))
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                        ) { /* swallow */ }
                 ) {
-                    NeoIconButton(
-                        icon = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        onClick = onBack
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    NeoSearchBar(
-                        query = state.query,
-                        onQueryChange = viewModel::setQuery,
-                        placeholder = "Try a number, name, or note keyword",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-        }
-    ) {
-        Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
-            Spacer(modifier = Modifier.height(8.dp))
-            when {
-                state.query.isBlank() -> RecentList(
-                    recent = state.recent,
-                    onSelect = viewModel::selectRecent,
-                    onClear = viewModel::clearHistory
-                )
-                state.results.isEmpty() && state.contactMatches.isEmpty() -> NeoEmptyState(
-                    icon = Icons.Filled.SearchOff,
-                    title = "No matches",
-                    message = "Try a name, number, or company."
-                )
-                else -> LazyColumn {
-                    if (state.contactMatches.isNotEmpty()) {
-                        item(key = "contacts-header") {
-                            SectionHeader("Contacts")
-                        }
-                        items(state.contactMatches, key = { "${it.displayName}|${it.normalizedNumber}" }) { match ->
-                            ContactMatchRow(
-                                match = match,
-                                onClick = {
+                    Column {
+                        // Input row.
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = null,
+                                tint = SageColors.TextSecondary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            BasicTextField(
+                                value = state.query,
+                                onValueChange = viewModel::setQuery,
+                                singleLine = true,
+                                textStyle = TextStyle(
+                                    fontSize = 22.sp,
+                                    color = SageColors.TextPrimary,
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                cursorBrush = SolidColor(NeoColors.AccentBlue),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(onSearch = {
                                     viewModel.saveToHistory()
-                                    onOpenDetail(match.normalizedNumber)
+                                    keyboard?.hide()
+                                }),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .focusRequester(focusRequester),
+                                decorationBox = { inner ->
+                                    if (state.query.isEmpty()) {
+                                        Text(
+                                            text = "Search calls, contacts, notes…",
+                                            color = SageColors.TextTertiary,
+                                            fontSize = 22.sp
+                                        )
+                                    }
+                                    inner()
+                                }
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clickable {
+                                        if (state.query.isEmpty()) {
+                                            viewModel.saveToHistory()
+                                            onBack()
+                                        } else {
+                                            viewModel.clearQuery()
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "Close search",
+                                    tint = SageColors.TextSecondary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+
+                        // Results / recents.
+                        if (state.query.isBlank()) {
+                            RecentsBlock(
+                                recent = state.recent,
+                                onSelect = viewModel::selectRecent,
+                                onClear = viewModel::clearHistory
+                            )
+                        } else {
+                            ResultsBlock(
+                                state = state,
+                                onOpenDetail = { number ->
+                                    viewModel.saveToHistory()
+                                    onOpenDetail(number)
                                 }
                             )
                         }
                     }
-                    if (state.results.isNotEmpty()) {
-                        item(key = "calls-header") {
-                            SectionHeader("Calls")
-                        }
-                        items(state.results, key = { it.call.systemId }) { row ->
-                            CallRowItem(
-                                row = row,
-                                onClick = {
-                                    viewModel.saveToHistory()
-                                    onOpenDetail(row.call.normalizedNumber)
-                                },
-                                onLongPress = {},
-                                onToggleBookmark = {}
-                            )
-                        }
-                    }
                 }
+            }
+
+            Spacer(Modifier.height(8.dp))
+            // Hint pill — visible only when the card is empty + idle.
+            if (state.query.isBlank() && state.recent.isEmpty()) {
+                Text(
+                    text = "Tip: type a name, number, or note keyword",
+                    color = Color.White.copy(alpha = 0.75f),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }
 }
 
 @Composable
-private fun SectionHeader(label: String) {
-    Text(
-        text = label,
-        color = SageColors.TextSecondary,
-        style = MaterialTheme.typography.labelLarge,
-        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 6.dp)
-    )
+private fun RecentsBlock(
+    recent: List<String>,
+    onSelect: (String) -> Unit,
+    onClear: () -> Unit
+) {
+    if (recent.isEmpty()) return
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Recent",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = SageColors.TextSecondary,
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
+            )
+            Text(
+                text = "Clear",
+                style = MaterialTheme.typography.labelMedium,
+                color = NeoColors.AccentBlue,
+                modifier = Modifier
+                    .clickable(onClick = onClear)
+                    .padding(8.dp)
+            )
+        }
+        recent.take(8).forEach { q ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onSelect(q) }
+                    .padding(horizontal = 8.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.History,
+                    contentDescription = null,
+                    tint = SageColors.TextTertiary,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = q,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = SageColors.TextPrimary
+                )
+            }
+        }
+    }
 }
 
-/** Single OS-contact match row — name + pretty number, tap to open detail. */
 @Composable
-private fun ContactMatchRow(
-    match: com.callNest.app.data.system.ContactsReader.ContactMatch,
+private fun ResultsBlock(
+    state: SearchUiState,
+    onOpenDetail: (String) -> Unit
+) {
+    if (state.isEmpty) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "No matches for “${state.query}”",
+                style = MaterialTheme.typography.bodyMedium,
+                color = SageColors.TextSecondary
+            )
+        }
+        return
+    }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(max = 480.dp)
+            .padding(bottom = 8.dp)
+    ) {
+        if (state.contacts.isNotEmpty()) {
+            item("h-contacts") { SectionHeader("Contacts", state.contacts.size) }
+            items(state.contacts, key = { "c|${it.normalizedNumber}|${it.displayName}" }) { c ->
+                ResultRow(
+                    icon = Icons.Filled.Person,
+                    title = c.displayName,
+                    subtitle = PhoneNumberFormatter.pretty(c.normalizedNumber),
+                    onClick = { onOpenDetail(c.normalizedNumber) }
+                )
+            }
+        }
+        if (state.calls.isNotEmpty()) {
+            item("h-calls") { SectionHeader("Calls", state.calls.size) }
+            items(state.calls, key = { "call|${it.systemId}" }) { call ->
+                ResultRow(
+                    icon = Icons.Filled.Call,
+                    title = call.cachedName?.takeIf { it.isNotBlank() }
+                        ?: PhoneNumberFormatter.pretty(call.normalizedNumber),
+                    subtitle = "${call.type.name.lowercase()} · ${PhoneNumberFormatter.pretty(call.normalizedNumber)}",
+                    onClick = { onOpenDetail(call.normalizedNumber) }
+                )
+            }
+        }
+        if (state.notes.isNotEmpty()) {
+            item("h-notes") { SectionHeader("Notes", state.notes.size) }
+            items(state.notes, key = { "n|${it.id}" }) { note ->
+                ResultRow(
+                    icon = Icons.Filled.Note,
+                    title = note.content.take(60),
+                    subtitle = note.normalizedNumber?.let { PhoneNumberFormatter.pretty(it) } ?: "Note",
+                    onClick = { note.normalizedNumber?.let(onOpenDetail) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(label: String, count: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label.uppercase(),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = SageColors.TextTertiary
+        )
+        Spacer(Modifier.weight(1f))
+        Text(
+            text = count.toString(),
+            style = MaterialTheme.typography.labelSmall,
+            color = SageColors.TextTertiary
+        )
+    }
+}
+
+@Composable
+private fun ResultRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    subtitle: String,
     onClick: () -> Unit
 ) {
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 10.dp),
+            .padding(horizontal = 18.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        com.callNest.app.ui.components.neo.NeoAvatar(name = match.displayName, size = 36.dp)
-        Spacer(Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = match.displayName,
-                color = SageColors.TextPrimary,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-            )
-            Text(
-                text = match.normalizedNumber,
-                color = SageColors.TextSecondary,
-                style = MaterialTheme.typography.bodySmall
+        Box(
+            modifier = Modifier
+                .size(34.dp)
+                .background(SageColors.SurfaceAlt, RoundedCornerShape(10.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = NeoColors.AccentBlue,
+                modifier = Modifier.size(18.dp)
             )
         }
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                color = SageColors.TextPrimary,
+                maxLines = 1
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = SageColors.TextSecondary,
+                maxLines = 1
+            )
+        }
+        Text(
+            text = "›",
+            style = MaterialTheme.typography.titleLarge,
+            color = SageColors.TextTertiary
+        )
     }
 }
 
-@Composable
-private fun RecentList(recent: List<String>, onSelect: (String) -> Unit, onClear: () -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                "Recent searches",
-                color = SageColors.TextSecondary,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(1f)
-            )
-            if (recent.isNotEmpty()) {
-                TextButton(onClick = onClear) { Text("Clear") }
-            }
-        }
-        if (recent.isEmpty()) {
-            Text(
-                "Your recent searches will appear here.",
-                color = SageColors.TextTertiary,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                recent.forEach { q ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelect(q) }
-                            .padding(vertical = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        NeoIconButton(
-                            icon = Icons.Filled.History,
-                            contentDescription = "Recent search",
-                            onClick = { onSelect(q) },
-                            size = 32.dp
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(q, color = SageColors.TextPrimary)
-                    }
-                }
-            }
-        }
-    }
-}
+@Suppress("unused") private fun unusedCallRef(): Call? = null
+@Suppress("unused") private fun unusedNoteRef(): Note? = null
+@Suppress("unused") private fun unusedContactRef(): ContactsReader.ContactMatch? = null

@@ -18,7 +18,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,6 +50,7 @@ import com.callNest.app.ui.theme.SageColors
  * deep-link to the Weekly Digest. Replaces the old 2-card index that just
  * routed to other screens.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsightsScreen(
     onOpenStats: () -> Unit,
@@ -58,6 +61,11 @@ fun InsightsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     NeoScaffold(modifier = modifier) {
+        PullToRefreshBox(
+            isRefreshing = state.loading,
+            onRefresh = viewModel::refresh,
+            modifier = Modifier.fillMaxSize()
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -101,6 +109,7 @@ fun InsightsScreen(
                 onClick = onOpenStats
             )
             Spacer(Modifier.height(8.dp))
+        }
         }
     }
 }

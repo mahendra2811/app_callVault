@@ -6,10 +6,9 @@ import com.callNest.app.data.local.dao.SearchHistoryDao
 import com.callNest.app.data.local.entity.SearchHistoryEntity
 import com.callNest.app.data.system.ContactsReader
 import com.callNest.app.domain.model.Call
-import com.callNest.app.domain.model.ContactMeta
+import com.callNest.app.domain.model.Note
 import com.callNest.app.domain.repository.CallRepository
-import com.callNest.app.domain.repository.ContactRepository
-import com.callNest.app.ui.screen.calls.CallRow
+import com.callNest.app.domain.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,26 +25,30 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/** UI state for the Search screen. */
+/**
+ * State for the Spotlight-style search overlay.
+ */
 data class SearchUiState(
     val query: String = "",
-    val results: List<CallRow> = emptyList(),
-    val contactMatches: List<ContactsReader.ContactMatch> = emptyList(),
+    val contacts: List<ContactsReader.ContactMatch> = emptyList(),
+    val calls: List<Call> = emptyList(),
+    val notes: List<Note> = emptyList(),
     val recent: List<String> = emptyList()
-)
+) {
+    val isEmpty: Boolean get() = contacts.isEmpty() && calls.isEmpty() && notes.isEmpty()
+    val total: Int get() = contacts.size + calls.size + notes.size
+}
 
 /**
- * Drives the full-screen Search overlay.
- *
- * Debounces the query at 300ms and runs [CallRepository.searchFts]; the
- * result is decorated with display-name + unsaved metadata for the same
- * row component used by the Calls list.
+ * Drives the macOS-Spotlight-style search overlay. Three live result
+ * sections — OS Contacts (top), recent Calls (middle), Notes (bottom).
+ * Each section is debounced 200ms and capped to its own limit.
  */
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val callRepo: CallRepository,
-    private val contactRepo: ContactRepository,
+    private val noteRepo: NoteRepository,
     private val contactsReader: ContactsReader,
     private val historyDao: SearchHistoryDao
 ) : ViewModel() {
@@ -53,52 +56,46 @@ class SearchViewModel @Inject constructor(
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
-    private val resultsFlow = _query
-        .debounce(300L)
+    private val callsFlow = _query
+        .debounce(200L)
         .flatMapLatest { q ->
-            if (q.isBlank()) flowOf(emptyList<Call>())
-            else callRepo.searchFts(q)
+            if (q.isBlank()) flowOf(emptyList<Call>()) else callRepo.searchFts(q)
         }
 
-    private val contactMatchesFlow = _query
-        .debounce(300L)
+    private val contactsFlow = _query
+        .debounce(200L)
         .flatMapLatest { q ->
-            flow {
-                emit(if (q.isBlank()) emptyList() else contactsReader.searchContacts(q, limit = 6))
-            }
+            flow { emit(if (q.isBlank()) emptyList() else contactsReader.searchContacts(q, limit = 6)) }
+        }
+
+    private val notesFlow = _query
+        .debounce(200L)
+        .flatMapLatest { q ->
+            flow { emit(if (q.isBlank()) emptyList() else noteRepo.search(q).take(6)) }
         }
 
     val state: StateFlow<SearchUiState> = combine(
         _query,
-        resultsFlow,
-        contactRepo.observeAll(),
-        historyDao.observeRecent(10),
-        contactMatchesFlow
-    ) { q, calls, contacts, recent, contactMatches ->
-        val byNumber: Map<String, ContactMeta> = contacts.associateBy { it.normalizedNumber }
-        val rows = calls.map { call ->
-            val meta = byNumber[call.normalizedNumber]
-            CallRow(
-                call = call,
-                displayName = meta?.displayName ?: call.cachedName,
-                isUnsaved = meta?.let { !it.isInSystemContacts && !it.isAutoSaved } ?: true,
-                tags = emptyList(),
-                tagOverflowCount = 0
-            )
-        }
+        contactsFlow,
+        callsFlow,
+        notesFlow,
+        historyDao.observeRecent(10)
+    ) { q, contacts, calls, notes, recent ->
         SearchUiState(
             query = q,
-            results = rows,
-            contactMatches = contactMatches,
+            contacts = contacts,
+            calls = calls.take(8),
+            notes = notes,
             recent = recent.map { it.query }
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SearchUiState())
 
     fun setQuery(q: String) { _query.value = q }
+    fun clearQuery() { _query.value = "" }
 
     fun selectRecent(q: String) {
         _query.value = q
-        viewModelScope.launch { runCatching { historyDao.insert(SearchHistoryEntity(query = q)) } }
+        saveToHistory()
     }
 
     fun saveToHistory() {
