@@ -81,11 +81,30 @@ Cross-layer rules:
 What to read for state:
 
 - `RELEASE-PLAN.md` — phased plan to ship v1.0.0, with explicit you/Claude split. Read first.
+- `RELEASE-CHECKLIST.md` — **end-to-end procedure for cutting a new release.** Start here whenever the user asks "ship a release" / "send to testers" / "bump version".
 - `CHANGELOG.md` — what each version added.
 - `DECISIONS.md` — every fallback / deferral / trade-off.
 - `docs/architecture.md` — layering, sync pipeline diagram, lead-score formula.
 - `TODO.md` — outstanding punch-list (P0 → P3).
 - `DEVELOPING.md` — how to build, install, debug.
+
+## Tester distribution
+
+Testers download from **https://callnest.pooniya.com/download**, which is served
+from the web repo at `/home/primathon/Documents/p_projet/a_web/callNest-web`.
+Every release commits the signed APK + an entry in `src/content/releases.ts`
+to that repo's `main` branch; Cloudflare Pages auto-deploys in ~2 minutes.
+
+Two docs cover the tester-facing side (both live in the web repo):
+
+- `TESTER-DISTRIBUTION.md` — locations of every release artefact, the **WhatsApp
+  broadcast template** with version + highlights placeholders, first-time installer
+  onboarding hints.
+- `RELEASE-CHECKLIST.md` — the web-side slice of the release procedure (`npm run sync-release`, committing the new APK, etc.).
+
+If a future session is asked "what version did we ship?", "send testers the new
+build", or "how do I do a release?", read those two files + this repo's
+`RELEASE-CHECKLIST.md` first.
 
 ## How to work in this repo
 
