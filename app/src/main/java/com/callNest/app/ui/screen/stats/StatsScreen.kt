@@ -1,6 +1,8 @@
 package com.callNest.app.ui.screen.stats
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
+import com.callNest.app.ui.theme.NeoElevation
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -128,7 +130,10 @@ fun StatsScreen(
         }
     ) {
         PullToRefreshBox(
-            isRefreshing = state.loading,
+            // Only show the spinner for user-initiated pulls. Cold-start
+            // loading uses the inline NeoProgressBar below; otherwise both
+            // would render and content would jump on first load.
+            isRefreshing = state.isRefreshing,
             onRefresh = viewModel::refresh,
             modifier = Modifier.fillMaxSize()
         ) {
@@ -225,6 +230,12 @@ private fun StatsBody(
         item { HourlyHeatmap(cells = snapshot.heatmap) }
         item { SectionTitle("Calls by day of week") }
         item { DayOfWeekBars(cells = snapshot.heatmap) }
+        item { SectionTitle("Peak hour") }
+        item { PeakHourCallout(cells = snapshot.heatmap) }
+        item { SectionTitle("Saved vs unsaved") }
+        item { SavedVsUnsavedBar(snapshot.overview) }
+        item { SectionTitle("Quick stats") }
+        item { QuickStatsGrid(snapshot.overview) }
         item { SectionTitle(stringResource(R.string.stats_chart_top_numbers)) }
         item {
             TopNumbersList(
@@ -369,6 +380,132 @@ private fun DayOfWeekBars(cells: List<HourlyHeatmapCell>) {
                     )
                 }
             }
+        }
+    }
+}
+
+/** Hour of day with the highest call volume across the selected range. */
+@Composable
+private fun PeakHourCallout(cells: List<HourlyHeatmapCell>) {
+    val (hour, count) = remember(cells) {
+        val agg = IntArray(24)
+        cells.forEach { agg[it.hour.coerceIn(0, 23)] += it.count }
+        val maxHour = (0..23).maxByOrNull { agg[it] } ?: 0
+        maxHour to agg[maxHour]
+    }
+    val label = "%02d:00 – %02d:00".format(hour, (hour + 1) % 24)
+    com.callNest.app.ui.components.neo.NeoSurface(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        elevation = NeoElevation.ConvexSmall,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(14.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = NeoColors.AccentBlue
+            )
+            Text(
+                text = "$count calls landed in this window — your busiest hour.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = SageColors.TextSecondary
+            )
+        }
+    }
+}
+
+/** Stacked horizontal bar showing the saved/unsaved split of the range. */
+@Composable
+private fun SavedVsUnsavedBar(overview: OverviewMetrics) {
+    val total = overview.totalCalls.coerceAtLeast(1)
+    val unsaved = (overview.unsavedRate * total).toInt().coerceIn(0, total)
+    val saved = total - unsaved
+    val savedPct = if (total > 0) (saved.toDouble() / total * 100).toInt() else 0
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+    ) {
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth().height(16.dp)
+        ) {
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .weight(saved.toFloat().coerceAtLeast(0.01f))
+                    .fillMaxHeight()
+                    .background(NeoColors.AccentBlue, androidx.compose.foundation.shape.RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
+            )
+            Spacer(Modifier.width(2.dp))
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .weight(unsaved.toFloat().coerceAtLeast(0.01f))
+                    .fillMaxHeight()
+                    .background(NeoColors.AccentAmber, androidx.compose.foundation.shape.RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp))
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Saved · $saved ($savedPct%)",
+                style = MaterialTheme.typography.labelMedium,
+                color = NeoColors.AccentBlue
+            )
+            Text(
+                text = "Unsaved · $unsaved (${100 - savedPct}%)",
+                style = MaterialTheme.typography.labelMedium,
+                color = NeoColors.AccentAmber
+            )
+        }
+    }
+}
+
+/** Four-up grid of headline numbers — easy at-a-glance for the user. */
+@Composable
+private fun QuickStatsGrid(overview: OverviewMetrics) {
+    val avgMin = overview.avgDurationSec / 60
+    val avgSec = overview.avgDurationSec % 60
+    val totalMin = (overview.totalTalkTimeSec / 60).toInt()
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StatTile("Total talk time", "${totalMin} min", Modifier.weight(1f))
+            StatTile("Avg duration", "%02d:%02d".format(avgMin, avgSec), Modifier.weight(1f))
+        }
+        Spacer(Modifier.height(8.dp))
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StatTile("Missed rate", "%.1f%%".format(overview.missedRate * 100), Modifier.weight(1f))
+            StatTile("Unsaved rate", "%.1f%%".format(overview.unsavedRate * 100), Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun StatTile(label: String, value: String, modifier: Modifier = Modifier) {
+    com.callNest.app.ui.components.neo.NeoSurface(
+        modifier = modifier,
+        elevation = NeoElevation.ConcaveSmall,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+        color = SageColors.SurfaceAlt
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = SageColors.TextPrimary
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = SageColors.TextSecondary
+            )
         }
     }
 }

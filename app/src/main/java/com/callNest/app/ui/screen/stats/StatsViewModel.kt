@@ -25,6 +25,7 @@ data class StatsUiState(
     val presetIndex: Int = 2,
     val snapshot: StatsSnapshot? = null,
     val loading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val sortByDuration: Boolean = false,
     val exportToast: String? = null
@@ -94,9 +95,19 @@ class StatsViewModel @Inject constructor(
         }
     }
 
-    /** Re-run aggregates for the current range. */
+    /**
+     * User-initiated pull-to-refresh. Drives [StatsUiState.isRefreshing] so
+     * the PTR spinner is distinct from the cold-start `loading` flag.
+     */
     fun refresh() {
-        viewModelScope.launch { recompute() }
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isRefreshing = true)
+            try {
+                recompute()
+            } finally {
+                _state.value = _state.value.copy(isRefreshing = false)
+            }
+        }
     }
 
     /** Toggle the Top Numbers sort order between count- and duration-desc. */

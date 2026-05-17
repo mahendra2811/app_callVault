@@ -33,11 +33,14 @@ class InsightsViewModel @Inject constructor(
     private val _state = MutableStateFlow(InsightsUiState(loading = true))
     val state: StateFlow<InsightsUiState> = _state.asStateFlow()
 
-    init { refresh() }
+    init { refresh(userInitiated = false) }
 
-    fun refresh() {
+    fun refresh(userInitiated: Boolean = true) {
         viewModelScope.launch {
-            _state.update { it.copy(loading = true, error = null) }
+            _state.update {
+                if (userInitiated) it.copy(isRefreshing = true, error = null)
+                else it.copy(loading = true, error = null)
+            }
             try {
                 val (todayFrom, todayTo) = todayWindow()
                 val total = callDao.totalCount(todayFrom, todayTo)
@@ -49,6 +52,7 @@ class InsightsViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         loading = false,
+                        isRefreshing = false,
                         error = null,
                         today = TodayMetrics(total, missed, unsaved, followUps),
                         sevenDay = sevenDay
@@ -59,6 +63,7 @@ class InsightsViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         loading = false,
+                        isRefreshing = false,
                         error = t.message ?: "Couldn't load insights."
                     )
                 }
@@ -83,6 +88,7 @@ data class TodayMetrics(
 
 data class InsightsUiState(
     val loading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val today: TodayMetrics = TodayMetrics(0, 0, 0, 0),
     val sevenDay: StatsSnapshot? = null

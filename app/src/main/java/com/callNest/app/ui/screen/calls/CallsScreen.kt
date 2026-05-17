@@ -395,22 +395,24 @@ private fun QuickChip(label: String, selected: Boolean, onTap: () -> Unit) {
              else com.callNest.app.ui.theme.SageColors.TextPrimary
     com.callNest.app.ui.components.neo.NeoSurface(
         modifier = Modifier
-            .height(32.dp)
+            .height(34.dp)
             .clickable(onClick = onTap),
         elevation = com.callNest.app.ui.theme.NeoElevation.Flat,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(17.dp),
         color = bg
     ) {
         androidx.compose.foundation.layout.Box(
             modifier = Modifier
-                .padding(horizontal = 14.dp, vertical = 6.dp),
+                .fillMaxSize()
+                .padding(horizontal = 14.dp),
             contentAlignment = Alignment.Center
         ) {
             androidx.compose.material3.Text(
                 text = label,
                 color = fg,
                 style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }

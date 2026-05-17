@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -214,21 +215,28 @@ private fun PanelChip(label: String, selected: Boolean, onTap: () -> Unit) {
     val fg = if (selected) Color.White else SageColors.TextPrimary
     NeoSurface(
         modifier = Modifier
-            .height(32.dp)
+            .height(34.dp)
             .clickable(onClick = onTap),
         elevation = NeoElevation.Flat,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(17.dp),
         color = bg
     ) {
+        // Box must fillMaxSize so Alignment.Center actually centers against
+        // the 34dp pill height. With a wrap-content Box the text rode high
+        // because the chip used baseline alignment for the line box, not
+        // the visual centre.
         Box(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 14.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = label,
                 color = fg,
                 style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }

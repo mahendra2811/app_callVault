@@ -62,8 +62,8 @@ fun InsightsScreen(
 
     NeoScaffold(modifier = modifier) {
         PullToRefreshBox(
-            isRefreshing = state.loading,
-            onRefresh = viewModel::refresh,
+            isRefreshing = state.isRefreshing,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier.fillMaxSize()
         ) {
         Column(

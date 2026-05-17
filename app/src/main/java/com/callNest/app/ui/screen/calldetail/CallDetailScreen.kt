@@ -132,8 +132,7 @@ fun CallDetailScreen(
                 ActionBar(
                     normalizedNumber = state.normalizedNumber,
                     displayName = state.contact?.displayName,
-                    onSaveToContacts = {},
-                    onBlock = {}
+                    onSaveToContacts = {}
                 )
             }
             item("stats") { StatsCard(stats = state.stats) }

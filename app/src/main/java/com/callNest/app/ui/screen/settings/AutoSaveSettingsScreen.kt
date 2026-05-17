@@ -210,34 +210,22 @@ private fun AutoSaveSettingsContent(
                 NeoToggle(checked = state.includeSimTag, onChange = onIncludeSimTag)
             }
 
-            // Per-SIM include filter — opt out of one SIM line entirely while
-            // keeping the other flowing into auto-save.
-            Column {
-                Text(
-                    text = "Apply auto-save to",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = SageColors.TextSecondary,
-                    modifier = Modifier.padding(bottom = 6.dp)
-                )
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "SIM 1 calls",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = SageColors.TextPrimary,
-                        modifier = Modifier.weight(1f)
-                    )
-                    NeoToggle(checked = simFilter.includeSim1, onChange = onIncludeSim1)
+            // 3-way SIM filter selector. Maps to the two underlying boolean
+            // flags so the use-case keeps working without changes:
+            //   Both     → sim1=true, sim2=true   (default for new installs)
+            //   Only SIM 1 → sim1=true, sim2=false
+            //   Only SIM 2 → sim1=false, sim2=true
+            SimModeSelector(
+                includeSim1 = simFilter.includeSim1,
+                includeSim2 = simFilter.includeSim2,
+                onSelect = { mode ->
+                    when (mode) {
+                        SimMode.Both    -> { onIncludeSim1(true);  onIncludeSim2(true) }
+                        SimMode.OnlySim1 -> { onIncludeSim1(true);  onIncludeSim2(false) }
+                        SimMode.OnlySim2 -> { onIncludeSim1(false); onIncludeSim2(true) }
+                    }
                 }
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "SIM 2 calls",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = SageColors.TextPrimary,
-                        modifier = Modifier.weight(1f)
-                    )
-                    NeoToggle(checked = simFilter.includeSim2, onChange = onIncludeSim2)
-                }
-            }
+            )
 
             // Suffix is brand-locked to "callNest" and applied silently when saving;
             // no UI surface anymore. (See AutoSaveContactUseCase.BRAND_SUFFIX.)
@@ -312,6 +300,79 @@ private fun AutoSaveSettingsContent(
                 placeholder = stringResource(R.string.auto_save_region_hint)
             )
             Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+/** Which SIM lines feed into auto-save. */
+private enum class SimMode { Both, OnlySim1, OnlySim2 }
+
+/**
+ * Segmented 3-way selector for the SIM filter. Replaces two independent
+ * toggles so the user can't end up with "both off" (a state that silently
+ * disables auto-save with no obvious cause).
+ */
+@Composable
+private fun SimModeSelector(
+    includeSim1: Boolean,
+    includeSim2: Boolean,
+    onSelect: (SimMode) -> Unit
+) {
+    val current = when {
+        includeSim1 && includeSim2 -> SimMode.Both
+        includeSim1 -> SimMode.OnlySim1
+        includeSim2 -> SimMode.OnlySim2
+        else -> SimMode.Both // safety net — neither selected falls back to Both
+    }
+    Column {
+        Text(
+            text = "Apply auto-save to",
+            style = MaterialTheme.typography.labelLarge,
+            color = SageColors.TextSecondary,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
+        Text(
+            text = "Pick which SIM's incoming calls get auto-saved.",
+            style = MaterialTheme.typography.bodySmall,
+            color = SageColors.TextTertiary,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            SimModeChip("Both",  current == SimMode.Both,    Modifier.weight(1f)) { onSelect(SimMode.Both) }
+            SimModeChip("SIM 1", current == SimMode.OnlySim1, Modifier.weight(1f)) { onSelect(SimMode.OnlySim1) }
+            SimModeChip("SIM 2", current == SimMode.OnlySim2, Modifier.weight(1f)) { onSelect(SimMode.OnlySim2) }
+        }
+    }
+}
+
+@Composable
+private fun SimModeChip(
+    label: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onTap: () -> Unit
+) {
+    NeoSurface(
+        modifier = modifier
+            .height(40.dp)
+            .clickable(onClick = onTap),
+        elevation = if (selected) NeoElevation.ConcaveSmall else NeoElevation.ConvexSmall,
+        shape = RoundedCornerShape(12.dp),
+        color = if (selected) NeoColors.AccentBlue else NeoColors.Base
+    ) {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = label,
+                color = if (selected) androidx.compose.ui.graphics.Color.White else SageColors.TextPrimary,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }

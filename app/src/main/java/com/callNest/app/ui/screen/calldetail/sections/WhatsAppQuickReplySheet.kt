@@ -39,12 +39,16 @@ fun WhatsAppQuickReplySheet(
     displayName: String? = null,
     onDismiss: () -> Unit,
     onManageTemplates: (() -> Unit)? = null,
+    business: Boolean = false,
     viewModel: TemplatesViewModel = hiltViewModel(),
 ) {
     val templates by viewModel.templates.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val digits = normalizedNumber.filter { it.isDigit() }
+    // Force routing through com.whatsapp / com.whatsapp.w4b so users with
+    // both apps land in the intended inbox, not the system picker.
+    val targetPkg = if (business) "com.whatsapp.w4b" else "com.whatsapp"
 
     val fallback = stringResource(R.string.template_fallback_name)
     fun launch(text: String?) {
@@ -53,7 +57,12 @@ fun WhatsAppQuickReplySheet(
         }
         val url = if (rendered.isNullOrBlank()) "https://wa.me/$digits"
         else "https://wa.me/$digits?text=${Uri.encode(rendered)}"
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+        val direct = Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(targetPkg)
+        val opened = runCatching { context.startActivity(direct) }.isSuccess
+        if (!opened) {
+            // Target app not installed — fall back to system picker.
+            runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+        }
         onDismiss()
     }
 
