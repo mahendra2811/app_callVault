@@ -6,6 +6,30 @@ All notable changes to callNest are documented in this file.
 
 _Nothing yet._
 
+## [1.0.2] — Tester drop (2026-05-17)
+
+**Build artefacts**
+- `CallNest-1.0.2.apk` — 21.3 MB (22,319,487 bytes)
+- SHA-256: `591674d166ef2c498c499dd4b503dd8846cb8b0dc221ee775bdb70070b75c35f`
+- versionCode 3
+
+### Added
+- Auto-save SIM filter is now a 3-way segmented selector: **Both / SIM 1 / SIM 2** (default Both). Replaces the previous two independent toggles, which could end up in a "both off" state that silently disabled auto-save.
+- Call-detail action bar now shows **WhatsApp** and **WhatsApp Business** as two distinct icons with **W** / **WB** labels.
+- New `ic_whatsapp_business.xml` drawable rebuilt from the official Business logo SVG (chat bubble + "+" mark).
+- Stats screen new sections:
+  - **Peak hour** callout card (your busiest 1-hour window in the range)
+  - **Saved vs unsaved** horizontal stacked bar with percentages
+  - **Quick stats** 2×2 grid (total talk time, avg duration, missed rate, unsaved rate)
+
+### Changed
+- Pull-to-refresh: Stats and Insights VMs now expose a separate `isRefreshing` flag so the PTR spinner only triggers on user pulls — content no longer jumps on cold start or preset switches.
+- WhatsApp deep links force-route through the correct package (`com.whatsapp` / `com.whatsapp.w4b`) so users with both apps land in the intended inbox; falls back to system picker if the target package isn't installed.
+
+### Fixed
+- Filter chip text was riding high above centre — inner Box now `fillMaxSize()` + `Alignment.Center` with explicit `TextAlign.Center`. Chip pill bumped 32→34dp.
+- Call-detail Block icon removed (Android's dialer-level block covers the use case; double-blocking confused testers).
+
 ## [1.0.1] — Tester drop (2026-05-14)
 
 **Build artefacts**
